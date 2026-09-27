@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#667eea">
   <meta name="description" content="جستجوی هوشمند - کاملاً کلاینت‌ساید، بدون سرور">
-  <title>جستجوی هوشمند | نسخه ۳.۲</title>
+  <title>جستجوی هوشمند | نسخه ۴.۰</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
@@ -29,7 +29,7 @@
         <i class="fas fa-brain text-3xl text-purple-600 dark:text-purple-400"></i>
       </div>
       <h1 class="text-3xl md:text-4xl font-bold text-white mb-1">جستجوی هوشمند</h1>
-      <p class="text-white/85 text-sm md:text-base">نسخه ۳.۲ — فایل‌های جدا · ۶۱۰ کلیدواژه · مناسب GitHub Pages</p>
+      <p class="text-white/85 text-sm md:text-base">نسخه ۴.۰ — موتور ترکیب هوشمند · Fuzzy Search · ۱۵۰۰+ کلیدواژه مخفی</p>
     </div>
 
     <!-- Search Box -->
@@ -69,21 +69,6 @@
       </div>
     </div>
 
-    <!-- Keywords Section -->
-    <div class="glass rounded-xl shadow-lg p-4 mb-5">
-      <button id="toggleKeywords" class="w-full flex items-center justify-between text-sm font-semibold text-gray-700 dark:text-indigo-200">
-        <span><i class="fas fa-tags ml-2 text-purple-500"></i> کلمات کلیدی پیشنهادی <span id="kwCount" class="text-xs font-normal text-gray-400"></span></span>
-        <i id="kwArrow" class="fas fa-chevron-down transition-transform"></i>
-      </button>
-      <div id="kwSection" class="kw-section mt-3">
-        <div id="keywordsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-          <div class="col-span-full text-center text-gray-400 py-4">
-            <i class="fas fa-spinner fa-spin ml-2"></i> در حال بارگذاری کلیدواژه‌ها...
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- History -->
     <div id="historySection" class="glass rounded-xl shadow-lg p-4 mb-5 hidden">
       <div class="flex items-center justify-between mb-2">
@@ -97,8 +82,8 @@
     <div id="loadingState" class="hidden">
       <div class="glass rounded-2xl shadow-xl p-10 text-center">
         <div class="loader mx-auto mb-4"></div>
-        <p class="text-gray-600 dark:text-indigo-200">در حال جستجوی هوشمند از چندین منبع...</p>
-        <p class="text-xs text-gray-400 dark:text-indigo-400 mt-2">ویکی‌پدیا فارسی + انگلیسی + دانشنامه + گسترش پرس‌وجو</p>
+        <p class="text-gray-600 dark:text-indigo-200">در حال جستجوی هوشمند با موتور ترکیب و Fuzzy Search...</p>
+        <p class="text-xs text-gray-400 dark:text-indigo-400 mt-2">ویکی‌پدیا فارسی + انگلیسی + دانشنامه</p>
       </div>
     </div>
 
@@ -123,7 +108,7 @@
     <div id="emptyState" class="glass rounded-2xl shadow-xl p-8 md:p-11 text-center">
       <i class="fas fa-compass text-5xl text-purple-300 dark:text-purple-500 mb-3"></i>
       <h3 class="text-lg font-bold text-gray-800 dark:text-indigo-100 mb-1">جستجوی هوشمند را شروع کنید</h3>
-      <p class="text-gray-600 dark:text-indigo-300 text-sm">از کلمات کلیدی بالا استفاده کنید یا موضوع خود را بنویسید</p>
+      <p class="text-gray-600 dark:text-indigo-300 text-sm">موتور ترکیب هوشمند و Fuzzy Search در پس‌زمینه فعال است</p>
     </div>
 
     <!-- Error -->
@@ -135,7 +120,7 @@
     </div>
 
     <div class="mt-8 text-center text-white/50 text-xs">
-      نسخه ۳.۲ — ساختار کامل فایل‌ها · ۶۱۰ کلیدواژه در <code class="bg-white/10 px-1 rounded">data/keywords.json</code>
+      نسخه ۴.۰ — ۱۵۰۶ کلیدواژه مخفی · موتور ترکیب هوشمند · الگوریتم Fuzzy Search
     </div>
   </div>
 
