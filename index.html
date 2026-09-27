@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="midnight">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,57 +11,96 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-  <!-- ========== HOME (Immersive) ========== -->
   <div id="homeView" class="home-view">
-    <div class="logo-wrap">
-      <img src="assets/logo.svg" alt="لوگو" width="92" height="92">
-      <h1>جستجوی هوشمند</h1>
-      <p class="version">نسخه ۸.۰</p>
+    <div class="home-tools a-down">
+      <button class="icon-btn" id="aboutBtn" type="button" aria-label="درباره" title="درباره">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 8h.01"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="تنظیمات" title="تنظیمات">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
     </div>
-    <div class="search-box-home">
-      <input type="text" id="homeInput" placeholder="جستجو کنید..." autocomplete="off" autofocus>
-      <button id="homeSearchBtn" type="button">جستجو</button>
+
+    <div class="logo-wrap">
+      <img class="a-logo a-float" src="assets/logo.svg" alt="لوگو" width="86" height="86">
+      <h1 class="a-up" data-i18n="title">جستجوی هوشمند</h1>
+      <p class="version a-up">نسخه ۹.۰</p>
+    </div>
+    <div class="search-box-home a-scale a-glow">
+      <input type="text" id="homeInput" data-i18n-ph="searchPh" placeholder="جستجو کنید..." autocomplete="off">
+      <button id="homeSearchBtn" type="button" data-i18n="search">جستجو</button>
     </div>
   </div>
 
-  <!-- ========== RESULTS (Search-engine style) ========== -->
   <div id="resultsView" class="results-view">
     <header class="topbar">
-      <img src="assets/logo.svg" alt="لوگو" class="logo-mini" id="logoHome" title="بازگشت">
+      <img src="assets/logo.svg" alt="لوگو" class="logo-mini" id="logoHome" title="خانه">
       <div class="search-inline">
-        <input type="text" id="resultsInput" placeholder="جستجو کنید..." autocomplete="off">
-        <button id="resultsSearchBtn" type="button">جستجو</button>
+        <input type="text" id="resultsInput" data-i18n-ph="searchPh" placeholder="جستجو کنید..." autocomplete="off">
+        <button id="resultsSearchBtn" type="button" data-i18n="search">جستجو</button>
       </div>
       <span class="meta" id="resultMeta"></span>
     </header>
-
     <main class="results-main">
       <div class="filters-bar">
-        <button class="chip active" data-source="all">همه</button>
-        <button class="chip" data-source="web">وب</button>
-        <button class="chip" data-source="wiki">ویکی‌پدیا و دانشنامه</button>
-        <button class="chip" data-limit="3">۳ نتیجه</button>
-        <button class="chip" data-limit="5">۵</button>
-        <button class="chip" data-limit="10">۱۰</button>
+        <button class="chip active" data-source="all" data-i18n="all">همه</button>
+        <button class="chip" data-source="web" data-i18n="web">وب</button>
+        <button class="chip" data-source="wiki" data-i18n="wiki">ویکی‌پدیا و دانشنامه</button>
       </div>
-
-      <div id="loadingState" class="loading-box hidden">
+      <div id="loadingState" class="center-box hidden">
         <div class="loader"></div>
-        <p>در حال جستجو...</p>
+        <p data-i18n="loading">در حال جستجو...</p>
       </div>
-
       <div id="resultsList"></div>
-
-      <div id="emptyState" class="empty-box hidden">
-        <p>نتیجه‌ای یافت نشد</p>
-      </div>
-
-      <div id="errorState" class="error-box hidden">
-        <p id="errorMessage">خطایی رخ داد</p>
-        <button id="retryBtn" class="chip" style="margin-top:1rem">تلاش مجدد</button>
+      <div id="emptyState" class="center-box hidden"><p data-i18n="empty">نتیجه‌ای یافت نشد</p></div>
+      <div id="errorState" class="center-box hidden">
+        <p id="errorMessage" data-i18n="error">خطایی رخ داد</p>
+        <button id="retryBtn" class="chip" style="margin-top:1rem" data-i18n="retry">تلاش مجدد</button>
       </div>
     </main>
+  </div>
+
+  <!-- Settings popup -->
+  <div class="overlay" id="settingsOverlay">
+    <div class="sheet" role="dialog" aria-labelledby="setTitle">
+      <button class="close-x" id="closeSettings" type="button" aria-label="بستن">×</button>
+      <h3 id="setTitle" data-i18n="settings">تنظیمات</h3>
+      <label data-i18n="theme">تم</label>
+      <div class="row-btns" id="themeBtns">
+        <button class="theme-swatch active" data-theme="midnight">Midnight</button>
+        <button class="theme-swatch" data-theme="ivory">Ivory</button>
+        <button class="theme-swatch" data-theme="ocean">Ocean</button>
+        <button class="theme-swatch" data-theme="ember">Ember</button>
+      </div>
+      <label data-i18n="lang">زبان سایت</label>
+      <select id="langSelect">
+        <option value="fa">فارسی</option>
+        <option value="en">English</option>
+      </select>
+      <label data-i18n="limit">تعداد نتایج</label>
+      <select id="limitSelect">
+        <option value="3" selected>۳</option>
+        <option value="5">۵</option>
+        <option value="10">۱۰</option>
+        <option value="15">۱۵</option>
+        <option value="25">۲۵</option>
+      </select>
+      <label data-i18n="source">منبع</label>
+      <select id="sourceSelect">
+        <option value="all" selected>همه</option>
+        <option value="web">وب</option>
+        <option value="wiki">ویکی‌پدیا و دانشنامه</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- About popup -->
+  <div class="overlay" id="aboutOverlay">
+    <div class="sheet" role="dialog">
+      <button class="close-x" id="closeAbout" type="button">×</button>
+      <h3 data-i18n="about">درباره پروژه</h3>
+      <div class="about-body" id="aboutBody"></div>
+    </div>
   </div>
 
   <script src="js/smart-engine.js"></script>
