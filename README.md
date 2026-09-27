@@ -1,26 +1,38 @@
-# جستجوی هوشمند (Smart Search) v4.0
+# جستجوی هوشمند v5.0
 
-کاملاً کلاینت‌ساید · بدون سرور · بدون کلید API
+کاملاً کلاینت‌ساید · Clean Code · بدون سرور
 
-## ساختار
+## ساختار (جداسازی کامل)
 
 ```
 smart-search/
 ├── index.html
 ├── css/style.css
-├── js/app.js                 # موتور ترکیب + Fuzzy Search + لود بهبودیافته
-├── data/keywords.json        # ۱۵۰۶ کلیدواژه (مخفی از UI)
+├── js/
+│   ├── smart-engine.js      # موتور هوشمند (جدا + ۵ ارتقا)
+│   ├── search-engines.js    # ۶ موتور جستجو
+│   └── app.js               # UI و orchestration
+├── data/keywords.json       # ۳۲۰۰ کلیدواژه
 ├── assets/
 └── README.md
 ```
 
-## ویژگی‌های نسخه ۴.۰
+## موتورهای جستجو
 
-- **۱۵۰۶ کلیدواژه** در فایل JSON (دیگر در سایت نمایش داده نمی‌شوند)
-- **موتور ترکیب هوشمند**: ترکیب خودکار کلیدواژه‌های مرتبط + expansions
-- **الگوریتم Fuzzy Search** (Levenshtein + token overlap) برای رتبه‌بندی و گسترش پرس‌وجو
-- **لود بهبودیافته JSON**: کش در localStorage + retry + timeout
-- فیلتر منبع، تعداد نتایج، تاریخچه، Dark Mode، لینک گوگل
+1. ویکی‌پدیا فارسی
+2. ویکی‌پدیا انگلیسی
+3. DuckDuckGo Instant Answer
+4. **Open Library** (جدید)
+5. **Wikidata** (جدید)
+6. **Hacker News Algolia** (جدید)
+
+## ۵ ارتقای موتور هوشمند
+
+1. نرمال‌سازی متن فارسی (ی/ک و حذف اعراب)
+2. Fuzzy Score بهبودیافته (Levenshtein + token + length)
+3. ترکیب وزن‌دار بر اساس گروه
+4. تشخیص ساده intent
+5. انتخاب متنوع variants (جلوگیری از تکراری نزدیک)
 
 ## اجرا
 
@@ -28,6 +40,4 @@ smart-search/
 python -m http.server 8000
 ```
 
-سپس http://localhost:8000
-
-یا مستقیم روی GitHub Pages آپلود کنید.
+سپس روی GitHub Pages آپلود کنید.

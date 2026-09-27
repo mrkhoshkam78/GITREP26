@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#667eea">
-  <meta name="description" content="جستجوی هوشمند - کاملاً کلاینت‌ساید، بدون سرور">
-  <title>جستجوی هوشمند | نسخه ۴.۰</title>
+  <meta name="description" content="جستجوی هوشمند - کاملاً کلاینت‌ساید">
+  <title>جستجوی هوشمند | نسخه ۵.۰</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
@@ -20,7 +20,6 @@
 <body class="px-4 py-6 md:py-9">
   <div class="max-w-6xl mx-auto">
 
-    <!-- Header -->
     <div class="text-center mb-6 md:mb-9 relative">
       <button id="themeToggle" class="absolute left-0 top-0 p-2.5 rounded-xl glass shadow-md hover:scale-105 transition" title="حالت تاریک/روشن">
         <i id="themeIcon" class="fas fa-moon text-purple-600 text-lg"></i>
@@ -29,14 +28,13 @@
         <i class="fas fa-brain text-3xl text-purple-600 dark:text-purple-400"></i>
       </div>
       <h1 class="text-3xl md:text-4xl font-bold text-white mb-1">جستجوی هوشمند</h1>
-      <p class="text-white/85 text-sm md:text-base">نسخه ۴.۰ — موتور ترکیب هوشمند · Fuzzy Search · ۱۵۰۰+ کلیدواژه مخفی</p>
+      <p class="text-white/85 text-sm md:text-base">نسخه ۵.۰ — ۶ موتور · موتور هوشمند جدا · ۳۲۰۰ کلیدواژه · Clean Code</p>
     </div>
 
-    <!-- Search Box -->
     <div class="glass rounded-2xl shadow-2xl p-5 md:p-6 mb-5">
       <div class="flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
-          <input type="text" id="searchInput" placeholder="موضوع را بنویسید... (مثال: هوش مصنوعی در پزشکی)"
+          <input type="text" id="searchInput" placeholder="موضوع را بنویسید..."
             class="search-input w-full px-5 py-3.5 pr-12 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition text-base bg-white" autocomplete="off">
           <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           <button id="clearInput" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
@@ -48,7 +46,6 @@
         </button>
       </div>
 
-      <!-- Result Limit -->
       <div class="mt-4 flex flex-wrap items-center gap-2">
         <span class="text-sm text-gray-500 dark:text-indigo-300">تعداد نتایج:</span>
         <button class="limit-btn active px-3 py-1 rounded-lg border border-purple-300 dark:border-purple-700 text-sm bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-200" data-limit="5">۵</button>
@@ -58,18 +55,18 @@
         <button class="limit-btn px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-limit="25">۲۵</button>
       </div>
 
-      <!-- Filters -->
       <div class="mt-3 flex flex-wrap items-center gap-2">
         <span class="text-sm text-gray-500 dark:text-indigo-300">منبع:</span>
         <label class="filter-chip active px-3 py-1 rounded-lg border border-purple-300 dark:border-purple-700 text-sm bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" data-source="all">همه</label>
         <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="ویکی‌پدیا فارسی">ویکی فارسی</label>
         <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="ویکی‌پدیا انگلیسی">ویکی انگلیسی</label>
         <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="دانشنامه">دانشنامه</label>
-        <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="وب">وب</label>
+        <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="کتابخانه باز">کتابخانه</label>
+        <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="ویکی‌داده">ویکی‌داده</label>
+        <label class="filter-chip px-3 py-1 rounded-lg border border-gray-300 dark:border-indigo-700 text-sm text-gray-600 dark:text-indigo-300" data-source="هکر نیوز">هکر نیوز</label>
       </div>
     </div>
 
-    <!-- History -->
     <div id="historySection" class="glass rounded-xl shadow-lg p-4 mb-5 hidden">
       <div class="flex items-center justify-between mb-2">
         <h3 class="text-sm font-semibold text-gray-700 dark:text-indigo-200"><i class="fas fa-history ml-1"></i> تاریخچه</h3>
@@ -78,23 +75,21 @@
       <div id="historyList" class="flex flex-wrap gap-2"></div>
     </div>
 
-    <!-- Loading -->
     <div id="loadingState" class="hidden">
       <div class="glass rounded-2xl shadow-xl p-10 text-center">
         <div class="loader mx-auto mb-4"></div>
-        <p class="text-gray-600 dark:text-indigo-200">در حال جستجوی هوشمند با موتور ترکیب و Fuzzy Search...</p>
-        <p class="text-xs text-gray-400 dark:text-indigo-400 mt-2">ویکی‌پدیا فارسی + انگلیسی + دانشنامه</p>
+        <p class="text-gray-600 dark:text-indigo-200">در حال جستجو از ۶ موتور قدرتمند...</p>
+        <p class="text-xs text-gray-400 dark:text-indigo-400 mt-2">ویکی‌پدیا · دانشنامه · کتابخانه باز · ویکی‌داده · هکر نیوز</p>
       </div>
     </div>
 
-    <!-- Results -->
     <div id="resultsContainer" class="hidden">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h2 class="text-white text-xl font-bold">نتایج</h2>
         <div class="flex items-center gap-3">
           <span id="resultCount" class="text-white/90 text-sm bg-white/15 px-3 py-1 rounded-full"></span>
           <a id="googleLink" href="#" target="_blank" rel="noopener" class="text-white/80 hover:text-white text-sm flex items-center gap-1 transition bg-white/10 px-3 py-1 rounded-full">
-            <i class="fab fa-google"></i> جستجو در گوگل
+            <i class="fab fa-google"></i> گوگل
           </a>
           <button id="clearResults" class="text-white/80 hover:text-white text-sm flex items-center gap-1">
             <i class="fas fa-times"></i> پاک
@@ -104,14 +99,12 @@
       <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
 
-    <!-- Empty -->
     <div id="emptyState" class="glass rounded-2xl shadow-xl p-8 md:p-11 text-center">
       <i class="fas fa-compass text-5xl text-purple-300 dark:text-purple-500 mb-3"></i>
       <h3 class="text-lg font-bold text-gray-800 dark:text-indigo-100 mb-1">جستجوی هوشمند را شروع کنید</h3>
-      <p class="text-gray-600 dark:text-indigo-300 text-sm">موتور ترکیب هوشمند و Fuzzy Search در پس‌زمینه فعال است</p>
+      <p class="text-gray-600 dark:text-indigo-300 text-sm">۶ موتور + موتور ترکیب هوشمند + Fuzzy Search</p>
     </div>
 
-    <!-- Error -->
     <div id="errorState" class="hidden glass rounded-2xl shadow-xl p-8 text-center">
       <i class="fas fa-exclamation-triangle text-4xl text-amber-500 mb-3"></i>
       <h3 class="text-lg font-bold text-gray-800 dark:text-indigo-100 mb-1">خطایی رخ داد</h3>
@@ -120,10 +113,12 @@
     </div>
 
     <div class="mt-8 text-center text-white/50 text-xs">
-      نسخه ۴.۰ — ۱۵۰۶ کلیدواژه مخفی · موتور ترکیب هوشمند · الگوریتم Fuzzy Search
+      نسخه ۵.۰ — Clean Code · ۳۲۰۰ کلیدواژه · موتور هوشمند جدا · ۶ موتور جستجو
     </div>
   </div>
 
+  <script src="js/smart-engine.js"></script>
+  <script src="js/search-engines.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
