@@ -1,1 +1,22 @@
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Artistic geometric mark: abstract search + knowledge node -->
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e5e5e5"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer ring -->
+  <circle cx="52" cy="52" r="36" stroke="url(#g)" stroke-width="4" fill="none" opacity="0.9"/>
+  <!-- Inner diamond / node -->
+  <path d="M52 28 L72 52 L52 76 L32 52 Z" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linejoin="round"/>
+  <!-- Center point -->
+  <circle cx="52" cy="52" r="6" fill="#ffffff"/>
+  <!-- Search handle -->
+  <line x1="78" y1="78" x2="98" y2="98" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Subtle accent dots -->
+  <circle cx="52" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/>
+  <circle cx="72" cy="52" r="2.5" fill="#ffffff" opacity="0.7"/>
+  <circle cx="52" cy="76" r="2.5" fill="#ffffff" opacity="0.7"/>
+  <circle cx="32" cy="52" r="2.5" fill="#ffffff" opacity="0.7"/>
+</svg>
