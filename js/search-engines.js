@@ -26,7 +26,18 @@ const SearchEngines = (() => {
   function stripHtml(html) {
     const d = document.createElement('div');
     d.innerHTML = html || '';
-    return d.textContent || '';
+    let t = (d.textContent || '').replace(/\s+/g, ' ').trim();
+    return t;
+  }
+
+  function smartSummary(text, max = 160) {
+    text = stripHtml(text);
+    if (!text) return 'توضیحی در دسترس نیست';
+    if (text.length <= max) return text;
+    // cut at last space before max
+    const cut = text.slice(0, max);
+    const lastSpace = cut.lastIndexOf(' ');
+    return (lastSpace > 40 ? cut.slice(0, lastSpace) : cut) + '…';
   }
 
   // ---------- Wikipedia ----------
@@ -42,7 +53,7 @@ const SearchEngines = (() => {
         : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
       return data.query.search.map(item => ({
         title: item.title,
-        summary: stripHtml(item.snippet) + '...',
+        summary: smartSummary(item.snippet),
         url: `${base}/wiki/${encodeURIComponent(item.title.replace(/ /g, '_'))}`,
         source,
         sourceIcon: 'fa-brands fa-wikipedia-w',

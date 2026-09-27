@@ -239,15 +239,16 @@
 
       all.sort((a, b) => {
         const score = (item) => {
-          let s = SmartEngine.fuzzyScore(query, item.title) * 12;
+          let s = SmartEngine.fuzzyScore(query, item.title) * 14;
           const t = (item.title || '').toLowerCase();
           const q = query.toLowerCase();
-          if (t.includes(q)) s += 4; // full phrase boost
+          if (t.includes(q)) s += 6;               // full phrase
+          if (item.summary && item.summary.toLowerCase().includes(q)) s += 2;
           if (item.source.includes('فارسی')) s += 2.5;
           if (item.source === 'دانشنامه') s += 2;
           if (item.engine === 'wikidata') s += 1.2;
           if (item.engine === 'openlibrary') s += 1;
-          if (item.engine === 'hackernews') s += 0.8;
+          if (item.engine === 'hackernews') s += 0.7;
           return s;
         };
         return score(b) - score(a);
