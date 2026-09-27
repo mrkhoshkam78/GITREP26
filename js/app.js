@@ -175,7 +175,7 @@
 
     list.forEach((item, i) => {
       const card = document.createElement('div');
-      card.className = 'glass rounded-xl shadow-lg p-5 card-hover fade-in';
+      card.className = 'glass rounded-xl shadow-lg p-5 card-hover fade-in anim-scale';
       card.style.animationDelay = `${i * 0.05}s`;
       card.innerHTML = `
         <div class="flex items-start justify-between mb-2.5">
@@ -239,11 +239,15 @@
 
       all.sort((a, b) => {
         const score = (item) => {
-          let s = SmartEngine.fuzzyScore(query, item.title) * 10;
+          let s = SmartEngine.fuzzyScore(query, item.title) * 12;
+          const t = (item.title || '').toLowerCase();
+          const q = query.toLowerCase();
+          if (t.includes(q)) s += 4; // full phrase boost
           if (item.source.includes('فارسی')) s += 2.5;
           if (item.source === 'دانشنامه') s += 2;
           if (item.engine === 'wikidata') s += 1.2;
           if (item.engine === 'openlibrary') s += 1;
+          if (item.engine === 'hackernews') s += 0.8;
           return s;
         };
         return score(b) - score(a);
