@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 160" fill="none">
+  <circle cx="40" cy="50" r="12" fill="#6366f1"/>
+  <circle cx="120" cy="30" r="9" fill="#ec4899"/>
+  <circle cx="200" cy="60" r="14" fill="#22d3ee"/>
+  <circle cx="90" cy="120" r="10" fill="#34d399"/>
+  <circle cx="240" cy="120" r="8" fill="#fbbf24"/>
+  <circle cx="160" cy="100" r="7" fill="#a78bfa"/>
+  <path d="M40 50L120 30L200 60M120 30L90 120M200 60L240 120M90 120L40 50M160 100L120 30M160 100L200 60" stroke="#94a3b8" stroke-width="2" opacity=".45"/>
+</svg>

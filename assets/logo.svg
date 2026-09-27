@@ -1,22 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
-  <!-- Artistic geometric mark: abstract search + knowledge node -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#e5e5e5"/>
+    <linearGradient id="beam" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="45%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#e879f9"/>
     </linearGradient>
+    <linearGradient id="coreFill" x1="30%" y1="20%" x2="70%" y2="90%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#7dd3fc" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <!-- Outer ring -->
-  <circle cx="52" cy="52" r="36" stroke="url(#g)" stroke-width="4" fill="none" opacity="0.9"/>
-  <!-- Inner diamond / node -->
-  <path d="M52 28 L72 52 L52 76 L32 52 Z" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linejoin="round"/>
-  <!-- Center point -->
-  <circle cx="52" cy="52" r="6" fill="#ffffff"/>
-  <!-- Search handle -->
-  <line x1="78" y1="78" x2="98" y2="98" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-  <!-- Subtle accent dots -->
-  <circle cx="52" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/>
-  <circle cx="72" cy="52" r="2.5" fill="#ffffff" opacity="0.7"/>
-  <circle cx="52" cy="76" r="2.5" fill="#ffffff" opacity="0.7"/>
-  <circle cx="32" cy="52" r="2.5" fill="#ffffff" opacity="0.7"/>
+  <!-- Abstract knowledge orb -->
+  <circle cx="58" cy="52" r="34" fill="url(#orb)"/>
+  <!-- Outer arc (open lens) -->
+  <path d="M28 52 A30 30 0 1 1 88 52" stroke="url(#beam)" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+  <!-- Inner signal bars (intelligence) -->
+  <rect x="46" y="58" width="5" height="14" rx="2.5" fill="#22d3ee" opacity="0.95"/>
+  <rect x="55" y="48" width="5" height="24" rx="2.5" fill="#6366f1" opacity="0.95"/>
+  <rect x="64" y="40" width="5" height="32" rx="2.5" fill="#a78bfa" opacity="0.95"/>
+  <!-- Focus node -->
+  <circle cx="58" cy="52" r="7" fill="url(#coreFill)"/>
+  <circle cx="58" cy="52" r="3" fill="#ffffff"/>
+  <!-- Directional ray (discovery) -->
+  <path d="M90 78 L112 100" stroke="url(#beam)" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="112" cy="100" r="5" fill="#e879f9"/>
 </svg>
