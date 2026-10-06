@@ -1,375 +1,53 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="midnight" data-layout="shell">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0b">
-  <title>جستجوی هوشمند</title>
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#10120f" />
+  <title>Atelier — Prompt Engineering Studio</title>
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='14' width='64' height='64' fill='%23b5522a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='32' fill='white' font-family='Georgia'%3EA%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
-
-<!-- ===================== LAYOUT: SHELL (unchanged) ===================== -->
-<div class="app" id="layoutShell">
-  <aside class="side" id="sidebar">
-    <div class="side-top">
-      <div class="side-brand">
-        <img src="assets/logo.svg" alt="" width="28" height="28">
-        <span data-i18n="title">جستجوی هوشمند</span>
-      </div>
-      <button type="button" class="side-close" id="sideClose" aria-label="بستن">✕</button>
-    </div>
-    <nav class="side-nav">
-      <button type="button" class="side-link is-active" data-go="home" id="navHome">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z" stroke-linejoin="round"/></svg>
-        <span data-i18n="navHome">خانه</span>
-      </button>
-      <button type="button" class="side-link" data-source="all"><span data-i18n="all">همه منابع</span></button>
-      <button type="button" class="side-link" data-source="web"><span data-i18n="web">وب</span></button>
-      <button type="button" class="side-link" data-source="wiki"><span data-i18n="wiki">دانشنامه</span></button>
-      <button type="button" class="side-link" data-source="code"><span data-i18n="code">کد</span></button>
-      <button type="button" class="side-link" data-source="science"><span data-i18n="science">علم</span></button>
-    </nav>
-    <div class="side-foot">
-      <p class="side-label" data-i18n="theme">تم</p>
-      <div class="side-themes" id="themeRow">
-        <button type="button" class="dot is-on" data-theme="midnight" title="Midnight" style="--d:#111"></button>
-        <button type="button" class="dot" data-theme="ivory" title="Ivory" style="--d:#eee"></button>
-        <button type="button" class="dot" data-theme="ocean" title="Ocean" style="--d:#0d9488"></button>
-        <button type="button" class="dot" data-theme="ember" title="Ember" style="--d:#f97316"></button>
-        <button type="button" class="dot" data-theme="aurora" title="Aurora" style="--d:#8b5cf6"></button>
-        <button type="button" class="dot" data-theme="forge" title="Forge" style="--d:#eab308"></button>
-        <button type="button" class="dot" data-theme="day" title="Day" style="--d:#6366f1"></button>
-      </div>
-      <button type="button" class="side-textbtn" id="settingsBtn" data-i18n="settings">تنظیمات</button>
-      <button type="button" class="side-textbtn" id="aboutBtn" data-i18n="about">درباره</button>
-    </div>
-  </aside>
-  <div class="side-backdrop" id="sideBackdrop" hidden></div>
-  <div class="main">
-    <header class="top">
-      <button type="button" class="menu-btn" id="menuBtn" aria-label="منو">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
-      </button>
-      <form class="search" id="searchForm" autocomplete="off">
-        <svg class="search-ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3" stroke-linecap="round"/></svg>
-        <input type="search" id="qInput" data-i18n-ph="searchPh" placeholder="جستجو در ۵۰ منبع..." enterkeyhint="search">
-        <button type="submit" class="search-btn" data-i18n="search">جستجو</button>
-      </form>
-      <span class="top-meta" id="resultMeta"></span>
-    </header>
-    <div class="body">
-      <section id="homePanel" class="panel panel-home">
-        <div class="dash">
-          <div class="dash-hero">
-            <h1 data-i18n="welcome">چه چیزی می‌خواهید پیدا کنید؟</h1>
-            <p data-i18n="welcomeSub">۵۰ منبع عمومی · بدون سرور · روی دستگاه شما</p>
-          </div>
-          <div class="bento">
-            <button type="button" class="tile" data-q="هوش مصنوعی"><span class="tile-k" data-i18n="tileAi">هوش مصنوعی</span><span class="tile-d" data-i18n="tileAiD">مدل‌ها، ابزارها، مقالات</span></button>
-            <button type="button" class="tile" data-q="برنامه نویسی"><span class="tile-k" data-i18n="tileCode">برنامه‌نویسی</span><span class="tile-d" data-i18n="tileCodeD">Stack Overflow و مستندات</span></button>
-            <button type="button" class="tile" data-q="تاریخ ایران"><span class="tile-k" data-i18n="tileHist">تاریخ ایران</span><span class="tile-d" data-i18n="tileHistD">دانشنامه و منابع</span></button>
-            <button type="button" class="tile" data-q="machine learning"><span class="tile-k" data-i18n="tileMl">یادگیری ماشین</span><span class="tile-d" data-i18n="tileMlD">arXiv و مقالات</span></button>
-            <button type="button" class="tile tile-wide" data-q="ساخت سایت"><span class="tile-k" data-i18n="tileWeb">ساخت سایت</span><span class="tile-d" data-i18n="tileWebD">راهنما، ابزار، نمونه</span></button>
-          </div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">A</div>
+        <div>
+          <h1>Atelier</h1>
+          <p data-i18n="brandSub">Prompt Engineering Studio</p>
         </div>
-      </section>
-      <section id="resultsPanel" class="panel panel-results" hidden>
-        <div id="loadingState" class="empty" hidden><div class="spin"></div><p data-i18n="loading">در حال جستجو...</p></div>
-        <div id="resultsList" class="rows"></div>
-        <div id="emptyState" class="empty" hidden><p data-i18n="empty">نتیجه‌ای یافت نشد</p></div>
-        <div id="errorState" class="empty" hidden>
-          <p id="errorMessage" data-i18n="error">خطایی رخ داد</p>
-          <button type="button" class="btn" id="retryBtn" data-i18n="retry">تلاش مجدد</button>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-foot">
+        <div class="stat-pill"><span data-i18n="savedCount">Saved prompts</span><strong id="statCount">0</strong></div>
+        <div class="stat-pill"><span data-i18n="offlineBadge">Storage</span><strong data-i18n="offlineValue">IndexedDB · offline</strong></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="kicker" id="kicker">Studio</p>
+          <h2 id="pageTitle">Prompt Builder</h2>
+          <p class="sub" id="pageSub"></p>
         </div>
-      </section>
-    </div>
+        <div class="tools">
+          <button class="icon-btn" id="themeBtn" title="Theme" aria-label="Toggle theme">◐</button>
+          <select id="uiLang" aria-label="Interface language">
+            <option value="en">English</option>
+            <option value="fa">فارسی</option>
+          </select>
+        </div>
+      </header>
+      <div id="view"></div>
+      <p class="footer-note" data-i18n="footer">Fully offline. Nothing leaves this browser.</p>
+    </main>
   </div>
-</div>
-
-<!-- ===================== LAYOUT: NOVA (full redesign) ===================== -->
-<div class="nova" id="layoutNova" hidden>
-  <div class="nv-bg" aria-hidden="true">
-    <span class="nv-orb nv-orb-a"></span>
-    <span class="nv-orb nv-orb-b"></span>
-    <span class="nv-orb nv-orb-c"></span>
-  </div>
-
-  <header class="nv-top">
-    <button type="button" class="nv-brand" id="nvHome">
-      <span class="nv-mark"><img src="assets/logo.svg" alt="" width="20" height="20"></span>
-      <span class="nv-brand-text" data-i18n="title">جستجوی هوشمند</span>
-    </button>
-    <nav class="nv-top-nav">
-      <button type="button" class="nv-link" id="nvAbout" data-i18n="about">درباره</button>
-      <button type="button" class="nv-link nv-link-strong" id="nvSettings" data-i18n="settings">تنظیمات</button>
-    </nav>
-  </header>
-
-  <!-- HOME -->
-  <main class="nv-home" id="nvStageHome">
-    <div class="nv-home-inner">
-      <div class="nv-badge" data-i18n="welcomeSub">۵۰ منبع · روی دستگاه شما</div>
-      <h1 class="nv-h1" data-i18n="welcome">جستجو کنید. عمیق‌تر پیدا کنید.</h1>
-      <p class="nv-lead" data-i18n="novaLead">از دانشنامه تا کد و مقالات علمی — یک جعبه، پنجاه منبع.</p>
-
-      <form class="nv-box" id="nvFormHome" autocomplete="off">
-        <div class="nv-box-row">
-          <span class="nv-box-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2" stroke-linecap="round"/></svg>
-          </span>
-          <input type="search" id="nvInputHome" data-i18n-ph="novaPh" placeholder="سؤال یا عبارت خود را بنویسید..." enterkeyhint="search" autofocus>
-          <button type="submit" class="nv-box-go" data-i18n="search">جستجو</button>
-        </div>
-        <div class="nv-box-hint">
-          <kbd>↵</kbd>
-          <span data-i18n="novaHint">برای جستجو Enter بزنید</span>
-        </div>
-      </form>
-
-      <div class="nv-pills" role="list">
-        <button type="button" class="nv-pill" data-q="هوش مصنوعی"><i class="fa-solid fa-brain"></i><span data-i18n="tileAi">هوش مصنوعی</span></button>
-        <button type="button" class="nv-pill" data-q="برنامه نویسی"><i class="fa-solid fa-code"></i><span data-i18n="tileCode">برنامه‌نویسی</span></button>
-        <button type="button" class="nv-pill" data-q="تاریخ ایران"><i class="fa-solid fa-landmark"></i><span data-i18n="tileHist">تاریخ ایران</span></button>
-        <button type="button" class="nv-pill" data-q="machine learning"><i class="fa-solid fa-chart-line"></i><span data-i18n="tileMl">یادگیری ماشین</span></button>
-        <button type="button" class="nv-pill" data-q="ساخت سایت"><i class="fa-solid fa-globe"></i><span data-i18n="tileWeb">ساخت سایت</span></button>
-      </div>
-    </div>
-  </main>
-
-  <!-- RESULTS -->
-  <main class="nv-results" id="nvStageResults" hidden>
-    <div class="nv-results-inner">
-      <form class="nv-box nv-box-compact" id="nvFormResults" autocomplete="off">
-        <div class="nv-box-row">
-          <span class="nv-box-icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2" stroke-linecap="round"/></svg>
-          </span>
-          <input type="search" id="nvInputResults" data-i18n-ph="searchPh" placeholder="جستجو..." enterkeyhint="search">
-          <button type="submit" class="nv-box-go" data-i18n="search">جستجو</button>
-        </div>
-      </form>
-
-      <div class="nv-control">
-        <div class="nv-tabs" id="nvChips" role="tablist">
-          <button type="button" class="nv-tab is-on" data-source="all" data-i18n="all">همه</button>
-          <button type="button" class="nv-tab" data-source="web" data-i18n="web">وب</button>
-          <button type="button" class="nv-tab" data-source="wiki" data-i18n="wiki">دانشنامه</button>
-          <button type="button" class="nv-tab" data-source="code" data-i18n="code">کد</button>
-          <button type="button" class="nv-tab" data-source="science" data-i18n="science">علم</button>
-        </div>
-        <div class="nv-meta-line">
-          <span id="nvMeta" class="nv-meta-count"></span>
-          <span class="nv-meta-label" data-i18n="novaResults">نتیجه</span>
-        </div>
-      </div>
-
-      <div id="nvLoading" class="nv-status" hidden>
-        <div class="nv-skeleton">
-          <div class="nv-sk-card"></div>
-          <div class="nv-sk-card"></div>
-          <div class="nv-sk-card"></div>
-        </div>
-        <p data-i18n="loading">در حال جستجو...</p>
-      </div>
-      <div id="nvList" class="nv-feed"></div>
-      <div id="nvEmpty" class="nv-status" hidden>
-        <div class="nv-status-icon">∅</div>
-        <p data-i18n="empty">نتیجه‌ای یافت نشد</p>
-      </div>
-      <div id="nvError" class="nv-status" hidden>
-        <p id="nvErrorMsg" data-i18n="error">خطایی رخ داد</p>
-        <button type="button" class="nv-btn" id="nvRetry" data-i18n="retry">تلاش مجدد</button>
-      </div>
-    </div>
-  </main>
-</div>
-
-
-<!-- ===================== LAYOUT: DENSE — fullscreen immersive ===================== -->
-<div class="dense" id="layoutDense" hidden>
-  <div class="dn-glow" aria-hidden="true"></div>
-
-  <!-- floating top chrome -->
-  <header class="dn-chrome">
-    <button type="button" class="dn-brand" id="dnHome">
-      <span class="dn-brand-mark"><img src="assets/logo.svg" alt="" width="20" height="20"></span>
-      <span data-i18n="title">جستجوی هوشمند</span>
-      <em>DENSE</em>
-    </button>
-    <div class="dn-chrome-actions">
-      <button type="button" class="dn-chip-btn" id="dnAbout" data-i18n="about">درباره</button>
-      <button type="button" class="dn-chip-btn dn-chip-fill" id="dnSettings" data-i18n="settings">تنظیمات</button>
-    </div>
-  </header>
-
-  <!-- FULLSCREEN HOME -->
-  <section class="dn-immersive" id="dnHome">
-    <div class="dn-immersive-art">
-      <img src="assets/illust/hero-search.svg" alt="" width="560" height="420">
-    </div>
-    <div class="dn-immersive-copy">
-      <p class="dn-kicker" data-i18n="welcomeSub">۵۰+ منبع · روی دستگاه شما</p>
-      <h1 data-i18n="dnHomeTitle">جستجوی تمام‌صفحه</h1>
-      <p class="dn-sub" data-i18n="dnHomeSub">یک صحنه بزرگ، رنگ زیاد، و نتایج در همان فضای immersive.</p>
-      <form class="dn-mega" id="dnForm" autocomplete="off">
-        <div class="dn-mega-field">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3" stroke-linecap="round"/></svg>
-          <input type="search" id="dnInput" data-i18n-ph="searchPh" placeholder="هر چیزی را جستجو کنید..." enterkeyhint="search">
-          <button type="submit" class="dn-mega-go" data-i18n="search">جستجو</button>
-        </div>
-      </form>
-      <div class="dn-quick-row">
-        <button type="button" class="dn-pill dn-p1" data-q="هوش مصنوعی"><i class="fa-solid fa-brain"></i><span data-i18n="tileAi">هوش مصنوعی</span></button>
-        <button type="button" class="dn-pill dn-p2" data-q="برنامه نویسی"><i class="fa-solid fa-code"></i><span data-i18n="tileCode">برنامه‌نویسی</span></button>
-        <button type="button" class="dn-pill dn-p3" data-q="تاریخ ایران"><i class="fa-solid fa-landmark"></i><span data-i18n="tileHist">تاریخ ایران</span></button>
-        <button type="button" class="dn-pill dn-p4" data-q="machine learning"><i class="fa-solid fa-chart-line"></i><span data-i18n="tileMl">یادگیری ماشین</span></button>
-        <button type="button" class="dn-pill dn-p5" data-q="ساخت سایت"><i class="fa-solid fa-globe"></i><span data-i18n="tileWeb">ساخت سایت</span></button>
-      </div>
-      <div class="dn-cat-row">
-        <button type="button" class="dn-cat" data-q="وب">
-          <img src="assets/illust/web.svg" alt="" width="56" height="56">
-          <span data-i18n="web">وب</span>
-        </button>
-        <button type="button" class="dn-cat" data-q="دانشنامه">
-          <img src="assets/illust/wiki.svg" alt="" width="56" height="56">
-          <span data-i18n="wiki">دانشنامه</span>
-        </button>
-        <button type="button" class="dn-cat" data-q="برنامه نویسی">
-          <img src="assets/illust/code.svg" alt="" width="56" height="56">
-          <span data-i18n="code">کد</span>
-        </button>
-        <button type="button" class="dn-cat" data-q="علم">
-          <img src="assets/illust/science.svg" alt="" width="56" height="56">
-          <span data-i18n="science">علم</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- FULLSCREEN RESULTS -->
-  <section class="dn-results-fs" id="dnResultsWrap" hidden>
-    <div class="dn-results-bar">
-      <form class="dn-mega dn-mega-slim" id="dnForm2" autocomplete="off">
-        <div class="dn-mega-field">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3" stroke-linecap="round"/></svg>
-          <input type="search" id="dnInput2" data-i18n-ph="searchPh" placeholder="جستجو..." enterkeyhint="search">
-          <button type="submit" class="dn-mega-go" data-i18n="search">جستجو</button>
-        </div>
-      </form>
-      <div class="dn-filters" id="dnChips">
-        <button type="button" class="dn-f is-on" data-source="all" data-i18n="all">همه</button>
-        <button type="button" class="dn-f dn-fw" data-source="web" data-i18n="web">وب</button>
-        <button type="button" class="dn-f dn-fk" data-source="wiki" data-i18n="wiki">دانشنامه</button>
-        <button type="button" class="dn-f dn-fc" data-source="code" data-i18n="code">کد</button>
-        <button type="button" class="dn-f dn-fs" data-source="science" data-i18n="science">علم</button>
-        <span class="dn-live" id="dnLive">—</span>
-      </div>
-      <div class="dn-kpis" id="dnKpis" hidden>
-        <div class="dn-kpi"><b id="dnKpiTotal">0</b><span data-i18n="dnKpiTotal">کل</span></div>
-        <div class="dn-kpi dn-kw"><img src="assets/illust/web.svg" width="20" height="20" alt=""><b id="dnKpiWeb">0</b></div>
-        <div class="dn-kpi dn-kk"><img src="assets/illust/wiki.svg" width="20" height="20" alt=""><b id="dnKpiWiki">0</b></div>
-        <div class="dn-kpi dn-kc"><img src="assets/illust/code.svg" width="20" height="20" alt=""><b id="dnKpiCode">0</b></div>
-        <div class="dn-kpi dn-ks"><img src="assets/illust/science.svg" width="20" height="20" alt=""><b id="dnKpiScience">0</b></div>
-        <div class="dn-kpi"><b id="dnKpiShown">0</b><span data-i18n="dnKpiShown">نمایش</span></div>
-      </div>
-    </div>
-    <div id="dnLoading" class="dn-status" hidden>
-      <div class="dn-grid-sk"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <p data-i18n="loading">در حال جستجو...</p>
-    </div>
-    <div id="dnList" class="dn-grid"></div>
-    <div id="dnEmpty" class="dn-status" hidden>
-      <img src="assets/illust/empty.svg" alt="" width="200" height="150">
-      <p data-i18n="empty">نتیجه‌ای یافت نشد</p>
-    </div>
-    <div id="dnError" class="dn-status" hidden>
-      <p id="dnErrorMsg" data-i18n="error">خطایی رخ داد</p>
-      <button type="button" class="dn-mega-go" id="dnRetry" data-i18n="retry">تلاش مجدد</button>
-    </div>
-  </section>
-</div>
-
-<!-- SHARED MODALS -->
-<div class="overlay" id="settingsOverlay" hidden>
-  <div class="sheet" role="dialog" aria-modal="true">
-    <button type="button" class="x" id="closeSettings" aria-label="بستن">✕</button>
-    <h2 data-i18n="settings">تنظیمات</h2>
-    <label data-i18n="layout">قالب</label>
-    <div class="layout-picks" id="layoutPicks">
-      <button type="button" class="layout-pick is-on" data-layout="shell">
-        <span class="lp-name" data-i18n="layoutShell">Shell</span>
-        <span class="lp-desc" data-i18n="layoutShellD">سایدبار · ورک‌اسپیس</span>
-      </button>
-      <button type="button" class="layout-pick" data-layout="nova">
-        <span class="lp-name" data-i18n="layoutNova">Nova</span>
-        <span class="lp-desc" data-i18n="layoutNovaD">جستجوی مدرن ۲۰۲۶</span>
-      </button>
-      <button type="button" class="layout-pick" data-layout="dense">
-        <span class="lp-name" data-i18n="layoutDense">Dense</span>
-        <span class="lp-desc" data-i18n="layoutDenseD">شلوغ · چندستونه · KPI</span>
-      </button>
-    </div>
-    <label data-i18n="lang">زبان</label>
-    <select id="langSelect"><option value="fa">فارسی</option><option value="en">English</option></select>
-    <label data-i18n="limit">تعداد نتایج</label>
-    <select id="limitSelect">
-      <option value="5" selected>۵</option>
-      <option value="10">۱۰</option>
-      <option value="15">۱۵</option>
-      <option value="25">۲۵</option>
-    </select>
-    <label data-i18n="source">فیلتر پیش‌فرض</label>
-    <select id="sourceSelect">
-      <option value="all" selected>همه</option>
-      <option value="web">وب</option>
-      <option value="wiki">دانشنامه</option>
-      <option value="code">کد</option>
-      <option value="science">علم</option>
-    </select>
-    <details class="cse-box" id="cseBox">
-      <summary class="cse-summary">
-        <span>Google CSE</span>
-        <span class="cse-badge" id="cseBadge" data-state="off">خاموش</span>
-      </summary>
-      <div class="cse-body">
-        <p class="cse-hint">کلید API و CX را وارد کنید، بعد «اتصال» را بزنید.</p>
-        <label>API Key</label>
-        <input type="password" id="googleCseKey" placeholder="AIza..." autocomplete="off">
-        <label>CX (Search Engine ID)</label>
-        <input type="text" id="googleCseCx" placeholder="xxxxxxxxxxxxxxxxx" autocomplete="off">
-        <div class="cse-actions">
-          <button type="button" class="cse-connect" id="cseConnectBtn">اتصال و تست</button>
-          <button type="button" class="cse-disconnect" id="cseDisconnectBtn">قطع</button>
-        </div>
-        <p class="cse-status" id="cseStatus" hidden></p>
-      </div>
-    </details>
-    <label data-i18n="theme">تم</label>
-    <div class="side-themes" style="margin-top:6px">
-      <button type="button" class="dot is-on" data-theme="midnight" style="--d:#111"></button>
-      <button type="button" class="dot" data-theme="ivory" style="--d:#eee"></button>
-      <button type="button" class="dot" data-theme="ocean" style="--d:#0d9488"></button>
-      <button type="button" class="dot" data-theme="ember" style="--d:#f97316"></button>
-      <button type="button" class="dot" data-theme="aurora" style="--d:#8b5cf6"></button>
-      <button type="button" class="dot" data-theme="forge" style="--d:#eab308"></button>
-      <button type="button" class="dot" data-theme="day" style="--d:#6366f1"></button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="aboutOverlay" hidden>
-  <div class="sheet" role="dialog" aria-modal="true">
-    <button type="button" class="x" id="closeAbout" aria-label="بستن">✕</button>
-    <h2 data-i18n="about">درباره</h2>
-    <div id="aboutBody" class="about"></div>
-  </div>
-</div>
-
-<script src="js/smart-engine.js" defer></script>
-<script src="js/search-engines.js" defer></script>
-<script src="js/app.js" defer></script>
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast" hidden></div>
+  <script src="js/data.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
