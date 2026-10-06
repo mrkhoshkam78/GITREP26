@@ -232,9 +232,9 @@ function roleLine(draft, lang) {
   if (draft.profile && draft.profile.body) return draft.profile.body;
   const roleName = label(ROLES, draft.role, lang);
   const catName = label(CATEGORIES, draft.category, lang);
-  if (lang === "fa") return "تو " + roleName + " هستی و در حوزه " + catName + " کار می‌کنی. فرض پنهان را علنی کن.";
-  if (lang === "bi") return "You are a " + label(ROLES, draft.role, "en") + " working in " + label(CATEGORIES, draft.category, "en") + ".\nتو " + label(ROLES, draft.role, "fa") + " هستی.";
-  return "You are a " + roleName + " working in " + catName + ". Surface hidden assumptions.";
+  if (lang === "fa") return "تو یک " + roleName + " باتجربه در حوزهٔ " + catName + " هستی. فرض‌های پنهان را آشکار کن و از کلی‌گویی بپرهیز.";
+  if (lang === "bi") return "You are a " + label(ROLES, draft.role, "en") + " working in " + label(CATEGORIES, draft.category, "en") + ".\nتو یک " + label(ROLES, draft.role, "fa") + " در حوزهٔ " + label(CATEGORIES, draft.category, "fa") + " هستی.";
+  return "You are a " + roleName + " working in " + catName + ". Surface hidden assumptions and avoid vague advice.";
 }
 
 function frameworkBullets(draft) {
@@ -259,51 +259,127 @@ function frameworkBullets(draft) {
   return packs[fw] || ["Stay inside the stated goal.", "Separate facts from recommendations."];
 }
 
+function localizeBullets(lines, lang) {
+  if (lang !== "fa") return lines;
+  const map = {
+    "State boundaries and module ownership.": "مرز ماژول‌ها و مالکیت را مشخص کن.",
+    "Call out coupling you refuse to increase.": "هر وابستگی که نباید بیشتر شود را نام ببر.",
+    "Prefer reversible structure over clever abstraction.": "ساختار برگشت‌پذیر را بر انتزاع پیچیده ترجیح بده.",
+    "Stay inside the named stack unless a gap blocks the goal.": "در پشته اعلام‌شده بمان مگر مانعی جدی باشد.",
+    "Do not introduce a new dependency without a one-line reason.": "بدون دلیل یک‌خطی وابستگی جدید اضافه نکن.",
+    "Match existing conventions.": "از قراردادهای موجود پروژه پیروی کن.",
+    "Slice the goal into shippable increments.": "هدف را به برش‌های قابل انتشار تقسیم کن.",
+    "Each feature needs a user-visible outcome and a non-goal.": "هر قابلیت باید نتیجه قابل‌مشاهده و محدودهٔ خارج از هدف داشته باشد.",
+    "Flag dependencies between slices.": "وابستگی بین برش‌ها را علامت بزن.",
+    "Treat input as untrusted.": "ورودی را غیرقابل‌اعتماد فرض کن.",
+    "Name authn/authz, secrets, and data exposure risks.": "احراز هویت، مجوزها، اسرار و ریسک افشای داده را نام ببر.",
+    "Do not propose security-through-obscurity.": "امنیت از طریق پنهان‌کاری پیشنهاد نکن.",
+    "Name the budget (latency, memory, or cost).": "بودجهٔ تأخیر، حافظه یا هزینه را مشخص کن.",
+    "Optimize only after identifying the hot path.": "فقط پس از یافتن مسیر داغ بهینه‌سازی کن.",
+    "Include how to measure the change.": "نحوهٔ اندازه‌گیری تغییر را بنویس.",
+    "Add characterization tests before behavior changes.": "پیش از تغییر رفتار، آزمون توصیف‌گر اضافه کن.",
+    "Cover the failure path, not only the happy path.": "مسیر شکست را هم پوشش بده، نه فقط مسیر موفق.",
+    "State what remains untested.": "آنچه هنوز آزمون نشده را بنویس.",
+    "Include rollout, flag, and rollback.": "انتشار تدریجی، پرچم و بازگشت را مشخص کن.",
+    "Name the signal that means the change is safe.": "نشانهٔ ایمن‌بودن تغییر را نام ببر.",
+    "Avoid big-bang releases.": "از انتشار یک‌باره و بزرگ پرهیز کن.",
+    "Stay inside the stated goal.": "در محدودهٔ هدف اعلام‌شده بمان.",
+    "Separate facts from recommendations.": "واقعیت‌ها را از پیشنهادها جدا کن."
+  };
+  return lines.map((line) => map[line] || line);
+}
+
 function buildLayers(draft, insight) {
   const lang = draft.language || "en";
+  const fa = lang === "fa";
   const style = STYLE_GUIDES[draft.style] || STYLE_GUIDES.technical;
   const model = MODEL_GUIDES[draft.model] || MODEL_GUIDES.chatgpt;
   const industry = INDUSTRY_RULES[draft.industry] || INDUSTRY_RULES.general;
   const prefs = prefsOf(draft);
   const fw = selectFramework(draft);
   const detail = draft.detail || "advanced";
-  const requirements = frameworkBullets(draft).map((line) => "- " + line);
-  if (draft.stack && draft.stack.trim() && draft.model !== "midjourney") requirements.push("- Stack to respect: " + draft.stack.trim());
-  if (prefs.always) requirements.push("- Always include: " + prefs.always);
-  if (!insight.metrics && detail === "expert") requirements.push("- Where a number is unknown, ask for it instead of inventing one.");
+
+  const reqSource = localizeBullets(frameworkBullets(draft), lang);
+  const requirements = reqSource.map((line) => "- " + line);
+  if (draft.stack && draft.stack.trim() && draft.model !== "midjourney") {
+    requirements.push(fa ? "- پشتهٔ فناوری: " + draft.stack.trim() : "- Technology stack: " + draft.stack.trim());
+  }
+  if (prefs.always) {
+    requirements.push(fa ? "- همیشه لحاظ کن: " + prefs.always : "- Always include: " + prefs.always);
+  }
+  if (detail === "expert" && !insight.metrics) {
+    requirements.push(fa ? "- اگر عددی مشخص نیست، حدس نزن؛ بپرس." : "- If a number is unknown, ask instead of inventing it.");
+  }
+
   const constraints = [];
   if (draft.constraints && draft.constraints.trim()) constraints.push(draft.constraints.trim());
-  constraints.push("- Industry frame: " + industry);
-  if (prefs.rules) constraints.push("- User rules: " + prefs.rules);
-  if (prefs.banned) constraints.push("- Never do: " + prefs.banned);
-  constraints.push(lang === "fa" ? "- داده، نقل‌قول و API نساز." : "- Do not invent data, quotations, or APIs.");
-  const workflow = detail === "basic"
-    ? ["1. Answer the goal directly.", "2. Note the single largest risk."]
-    : detail === "expert"
-      ? ["1. Restate the goal in one line and list assumptions.", "2. Produce the deliverable.", "3. Separate unknowns from recommendations.", "4. Add a verification step and a rollback or dissent.", "5. Stop when the acceptance criteria are met."]
-      : ["1. List assumptions.", "2. Produce the deliverable.", "3. Separate unknowns and risks."];
-  const format = (draft.format && draft.format.trim()) ? draft.format.trim() : defaultFormat(draft, insight);
+  constraints.push(fa ? "- چارچوب صنعت: " + industry : "- Industry context: " + industry);
+  if (prefs.rules) constraints.push(fa ? "- قواعد کاربر: " + prefs.rules : "- User rules: " + prefs.rules);
+  if (prefs.banned) constraints.push(fa ? "- هرگز انجام نده: " + prefs.banned : "- Never do: " + prefs.banned);
+  constraints.push(fa ? "- داده، نقل‌قول یا API ساختگی تولید نکن." : "- Do not invent data, quotations, or APIs.");
+
+  const format = (draft.format && draft.format.trim())
+    ? draft.format.trim()
+    : defaultFormat(draft, insight, lang);
+
   const quality = [];
   if (draft.quality && draft.quality.trim()) quality.push(draft.quality.trim());
-  quality.push(lang === "fa" ? "- هر ادعا یا قابل بررسی است یا فرض علامت‌خورده." : "- Every claim is checkable or marked as an assumption.");
-  if (detail === "expert") quality.push(lang === "fa" ? "- پاسخ کلی بدون اقدام بعدی مردود است." : "- Generic advice with no next action fails the bar.");
+  quality.push(fa ? "- هر ادعا باید قابل‌بررسی باشد یا به‌عنوان فرض علامت بخورد." : "- Every claim must be checkable or marked as an assumption.");
+  if (detail === "basic") {
+    quality.push(fa ? "- مستقیم به هدف پاسخ بده و بزرگ‌ترین ریسک را ذکر کن." : "- Answer the goal directly and note the single largest risk.");
+  } else if (detail === "expert") {
+    quality.push(fa ? "- فرض‌ها را فهرست کن، پاسخ را بساز، ناشناخته‌ها را جدا کن، و گام راستی‌آزمایی بده." : "- List assumptions, produce the deliverable, separate unknowns, and add a verification step.");
+    quality.push(fa ? "- پاسخ کلی بدون اقدام بعدی پذیرفته نیست." : "- Generic advice without a next action is not acceptable.");
+  } else {
+    quality.push(fa ? "- فرض‌ها را بنویس، تحویل‌پذیر را تولید کن، ریسک‌ها را جدا کن." : "- List assumptions, produce the deliverable, then separate risks.");
+  }
+  quality.push(fa ? model.fa : model.en);
+
+  const goalBody = (draft.goal && draft.goal.trim())
+    ? draft.goal.trim()
+    : (fa ? "نتیجهٔ نهایی و قابل‌تحویل را مشخص کن." : "State the finished, deliverable outcome.");
+  const goalExtra = fa
+    ? "تحویل‌پذیر مورد انتظار: " + insight.deliverable
+    : "Expected deliverable: " + insight.deliverable;
+
+  const contextBody = (draft.context && draft.context.trim())
+    ? draft.context.trim()
+    : (fa
+      ? "زمینه کافی نیست. یک سؤال دقیق بپرس، سپس با فرض علامت‌خورده ادامه بده."
+      : "Context is incomplete. Ask one precise question, then continue with labeled assumptions.");
+
+  // Hierarchy: Role → Goal → Context → Requirements → Constraints → Output Format → Quality Rules
   return [
-    { key: "role", title: heading("Role", "نقش", lang), body: roleLine(draft, lang) + "\n" + (lang === "fa" ? style.fa : style.en) },
-    { key: "objective", title: heading("Objective", "هدف", lang), body: (draft.goal || "State the finished outcome.").trim() + "\nDeliverable: " + insight.deliverable + "." },
-    { key: "context", title: heading("Context", "زمینه", lang), body: (draft.context && draft.context.trim()) ? draft.context.trim() : "Context was not provided. Ask one precise question, then continue with the assumption labeled." },
-    { key: "requirements", title: heading("Requirements", "الزامات", lang), body: requirements.join("\n") + "\nFramework: " + fw + "." },
+    { key: "role", title: heading("Role", "نقش", lang), body: roleLine(draft, lang) + "\n" + (fa ? style.fa : style.en) },
+    { key: "goal", title: heading("Goal", "هدف", lang), body: goalBody + "\n" + goalExtra },
+    { key: "context", title: heading("Context", "زمینه", lang), body: contextBody },
+    { key: "requirements", title: heading("Requirements", "الزامات", lang), body: requirements.join("\n") },
     { key: "constraints", title: heading("Constraints", "محدودیت‌ها", lang), body: constraints.join("\n") },
-    { key: "workflow", title: heading("Workflow", "گردش کار", lang), body: workflow.join("\n") },
-    { key: "format", title: heading("Output format", "قالب خروجی", lang), body: format },
-    { key: "quality", title: heading("Quality criteria", "معیار کیفیت", lang), body: quality.join("\n") + "\n" + (lang === "fa" ? model.fa : model.en) }
+    { key: "format", title: heading("Output Format", "قالب خروجی", lang), body: format },
+    { key: "quality", title: heading("Quality Rules", "قواعد کیفیت", lang), body: quality.join("\n") }
   ];
 }
 
-function defaultFormat(draft, insight) {
-  if (draft.model === "midjourney") return "One prompt line: subject, setting, lighting, lens, material, mood, negative constraints. No essay.";
-  if (draft.model === "codingai") return "Files to touch, invariants, steps, tests, and a do-not-change list.";
-  if (insight.deliverable === "decision memo") return "Five-line brief, options, recommendation, and what would change your mind.";
-  return "Lead with the answer. Then steps. Then risks. Use Markdown headings.";
+function defaultFormat(draft, insight, lang) {
+  const fa = lang === "fa";
+  if (draft.model === "midjourney") {
+    return fa
+      ? "یک خط پرامپت: سوژه، صحنه، نور، لنز، جنس، حال‌وهوا، محدودیت‌های منفی. بدون توضیح اضافه."
+      : "One prompt line: subject, setting, lighting, lens, material, mood, negatives. No essay.";
+  }
+  if (draft.model === "codingai") {
+    return fa
+      ? "فایل‌های درگیر، ناوردها، گام‌ها، آزمون‌ها، و فهرست چیزهایی که نباید تغییر کند."
+      : "Files to touch, invariants, steps, tests, and a do-not-change list.";
+  }
+  if (insight.deliverable === "decision memo") {
+    return fa
+      ? "خلاصه پنج‌خطی، گزینه‌ها، توصیه، و آنچه نظر را عوض می‌کند."
+      : "Five-line brief, options, recommendation, and what would change your mind.";
+  }
+  return fa
+    ? "ابتدا پاسخ اصلی، سپس گام‌ها، سپس ریسک‌ها. از عناوین مارک‌داون استفاده کن."
+    : "Lead with the answer. Then steps. Then risks. Use Markdown headings.";
 }
 
 function renderLayers(layers) {

@@ -3,7 +3,7 @@ const state = {
   view: "studio",
   step: 0,
   uiLang: localStorage.getItem("atelier-lang") || "en",
-  theme: localStorage.getItem("atelier-theme") || "dark",
+  theme: localStorage.getItem("atelier-theme") || "light",
   prompts: [],
   components: [],
   profiles: [],
@@ -111,9 +111,9 @@ function renderStudio() {
       ${choiceButtons(ROLES, d.role, "set-role")}
       <div style="height:10px"></div>
       <label class="field">${esc(t("customRole"))}<input id="f-customRole" value="${esc(d.customRole || "")}" placeholder="Staff engineer who refuses hidden coupling" /></label>
-      <div class="section-title" style="margin-top:16px"><h3>Expert profiles</h3></div>
+      <div class="section-title" style="margin-top:16px"><h3>${esc(state.uiLang === "fa" ? "پروفایل متخصص" : "Expert profiles")}</h3></div>
       <div class="chips">
-        <button type="button" class="chip ${!d.profileId ? "on" : ""}" data-profile="">None</button>
+        <button type="button" class="chip ${!d.profileId ? "on" : ""}" data-profile="">${esc(state.uiLang === "fa" ? "هیچ‌کدام" : "None")}</button>
         ${state.profiles.map((profile) => `<button type="button" class="chip ${d.profileId === profile.id ? "on" : ""}" data-profile="${profile.id}">${esc(profile.title)}</button>`).join("")}
       </div>`;
   } else if (step === 1) {
@@ -174,10 +174,10 @@ function renderStudio() {
       <section class="card">
         <div class="stepper">${steps.map((name, i) => `<button type="button" data-step="${i}" class="${i === step ? "on" : ""}">${i + 1}. ${esc(name)}</button>`).join("")}</div>
         <div class="card-pad">${body}
-          <div class="actions" style="padding:16px 0 0">
+          <div class="studio-actions">
             <button class="btn" id="backBtn" ${step === 0 ? "disabled" : ""}>${esc(t("back"))}</button>
             <button class="btn" id="nextBtn" ${step === 5 ? "disabled" : ""}>${esc(t("next"))}</button>
-            <button class="btn primary" id="genBtn">${esc(t("generate"))}</button>
+            <button class="btn primary" id="genBtn">${esc(state.preview ? (state.uiLang === "fa" ? "بازتولید پرامپت" : "Regenerate") : t("generate"))}</button>
           </div>
         </div>
       </section>
@@ -265,7 +265,7 @@ function bindStudio() {
   $("#view").querySelectorAll("[data-step]").forEach((btn) => btn.onclick = () => { readDraftFields(); state.step = Number(btn.dataset.step); state.preview = composePrompt(state.draft); render(); });
   $("#backBtn").onclick = () => { readDraftFields(); state.step = Math.max(0, state.step - 1); state.preview = composePrompt(state.draft); render(); };
   $("#nextBtn").onclick = () => { readDraftFields(); state.step = Math.min(5, state.step + 1); state.preview = composePrompt(state.draft); render(); };
-  $("#genBtn").onclick = () => { readDraftFields(); state.preview = composePrompt(state.draft); render(); toast(state.uiLang === "fa" ? "ساخته شد" : "Assembled"); };
+  $("#genBtn").onclick = () => { readDraftFields(); updatePreviewPane(true); toast(state.uiLang === "fa" ? "پرامپت بازتولید شد" : "Prompt regenerated"); };
   $("#view").querySelectorAll("[data-set-cat]").forEach((b) => b.onclick = () => { state.draft.category = b.dataset.setCat; refreshPreview(); });
   $("#view").querySelectorAll("[data-set-role]").forEach((b) => b.onclick = () => { state.draft.role = b.dataset.setRole; refreshPreview(); });
   $("#view").querySelectorAll("[data-set-detail]").forEach((b) => b.onclick = () => { state.draft.detail = b.dataset.setDetail; refreshPreview(); });
@@ -284,9 +284,59 @@ function bindStudio() {
   $("#copyBtn").onclick = copyPreview;
   $("#saveBtn").onclick = saveCurrent;
   $("#anBtn").onclick = () => { readDraftFields(); state.preview = composePrompt(state.draft); openAnalysis(state.preview); };
-  $("#impBtn").onclick = () => { readDraftFields(); state.preview = improvePrompt(composePrompt(state.draft), state.draft.language); render(); toast(state.uiLang === "fa" ? "بهبود اعمال شد" : "Improved"); };
+  $("#impBtn").onclick = () => { readDraftFields(); state.preview = improvePrompt(composePrompt(state.draft), state.draft.language); updatePreviewPane(true); toast(state.uiLang === "fa" ? "بهبود اعمال شد" : "Improved"); };
   $("#varBtn").onclick = openVariations;
   $("#view").querySelectorAll("[data-exp]").forEach((b) => b.onclick = () => exportCurrent(b.dataset.exp));
+  bindLiveFields();
+}
+
+function bindLiveFields() {
+  const ids = ["f-title","f-goal","f-context","f-notes","f-constraints","f-stack","f-quality","f-format","f-tags","f-custom","f-folder","f-customRole"];
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const evt = el.tagName === "SELECT" ? "change" : "input";
+    el.addEventListener(evt, () => {
+      readDraftFields();
+      scheduleLivePreview();
+    });
+  });
+}
+
+let liveTimer = null;
+function scheduleLivePreview() {
+  clearTimeout(liveTimer);
+  const view = document.getElementById("promptView");
+  if (view) view.classList.add("is-updating");
+  liveTimer = setTimeout(() => updatePreviewPane(false), 180);
+}
+
+function updatePreviewPane(flash) {
+  state.draft.profile = state.profiles.find((profile) => profile.id === state.draft.profileId) || null;
+  state.preview = composePrompt(state.draft);
+  const view = document.getElementById("promptView");
+  if (view) {
+    view.textContent = state.preview;
+    view.classList.remove("is-updating");
+  }
+  const lineTag = document.querySelector(".preview-head .tag");
+  if (lineTag) lineTag.textContent = state.preview.split("\n").length + " " + t("lines");
+  const meta = document.querySelector(".preview .meta-row");
+  if (meta) {
+    const d = state.draft;
+    meta.innerHTML = `
+      <span class="tag">${esc(label(CATEGORIES, d.category, state.uiLang === "fa" ? "fa" : "en"))}</span>
+      <span class="tag">${esc(label(ROLES, d.role, state.uiLang === "fa" ? "fa" : "en"))}</span>
+      <span class="tag">${esc(label(MODELS, d.model, "en"))}</span>
+      <span class="tag">${esc(d.detail)}</span>`;
+  }
+  if (flash) {
+    const btn = document.getElementById("genBtn");
+    if (btn) {
+      btn.classList.add("generating");
+      setTimeout(() => btn.classList.remove("generating"), 280);
+    }
+  }
 }
 
 function refreshPreview() {
