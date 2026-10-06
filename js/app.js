@@ -20,8 +20,8 @@ const state = {
     stack: "",
     quality: "",
     format: "",
-    length: 15,
-    customLines: 18,
+    length: 60,
+    customLines: 60,
     detail: "advanced",
     model: "chatgpt",
     language: "en",
@@ -170,7 +170,7 @@ function renderStudio() {
   }
 
   $("#view").innerHTML = `
-    <div class="layout">
+    <div class="layout anim-page">
       <section class="card">
         <div class="stepper">${steps.map((name, i) => `<button type="button" data-step="${i}" class="${i === step ? "on" : ""}">${i + 1}. ${esc(name)}</button>`).join("")}</div>
         <div class="card-pad">${body}
@@ -318,6 +318,9 @@ function updatePreviewPane(flash) {
   if (view) {
     view.textContent = state.preview;
     view.classList.remove("is-updating");
+    view.classList.remove("is-generated");
+    void view.offsetWidth;
+    view.classList.add("is-generated");
   }
   const lineTag = document.querySelector(".preview-head .tag");
   if (lineTag) lineTag.textContent = state.preview.split("\n").length + " " + t("lines");
@@ -466,7 +469,7 @@ function renderLibrary() {
         ${CATEGORIES.map((c) => `<button class="chip ${state.libCat === c.id ? "on" : ""}" data-cat="${c.id}">${esc(state.uiLang === "fa" ? c.fa : c.en)}</button>`).join("")}
       </div>
     </div>
-    ${items.length ? `<div class="cards">${items.map(cardHtml).join("")}</div>` : `<div class="empty">${esc(t("emptyLib"))}</div>`}`;
+    ${items.length ? `<div class="cards">${items.map(cardHtml).join("")}</div>` : `<div class="empty"><img class="hero-illu" src="assets/empty-library.svg" alt="" width="160" height="120" /><div>${esc(t("emptyLib"))}</div></div>`}`;
   $("#libSearch").oninput = (e) => { state.libQuery = e.target.value; renderLibrary(); };
   $("#view").querySelectorAll("[data-cat]").forEach((b) => b.onclick = () => { state.libCat = b.dataset.cat; renderLibrary(); });
   bindCards();
@@ -474,7 +477,7 @@ function renderLibrary() {
 
 function cardHtml(p) {
   const cat = CATEGORIES.find((c) => c.id === p.category);
-  return `<article class="card prompt-card">
+  return `<article class="card prompt-card anim-card">
     <div class="meta-row" style="padding:0">
       <span class="tag">${esc(cat ? (state.uiLang === "fa" ? cat.fa : cat.en) : p.category)}</span>
       <span class="tag">${esc(t("folders." + (p.folder || "Inbox")))}</span>
@@ -619,7 +622,7 @@ function renderComponents() {
       <button class="btn primary" id="newComp">${esc(t("newComponent"))}</button>
     </div>
     ${items.length ? `<div class="cards">${items.map((c) => `
-      <article class="card prompt-card">
+      <article class="card prompt-card anim-card">
         <span class="tag">${esc(c.type)}</span>
         <h3>${esc(c.title)}</h3>
         <p>${esc(c.body)}</p>
