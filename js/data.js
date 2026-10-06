@@ -39,7 +39,23 @@ const I18N = {
     confirmReset: "Erase all local prompts, components, and versions?",
     analyzerPh: "Paste a prompt to score…", run: "Score prompt",
     detailHelp: "Expert adds acceptance criteria, failure modes, and a verification step.",
-    lengthHelp: "Targets approximate line count of the assembled prompt."
+    lengthHelp: "Targets approximate line count of the assembled prompt.",
+    designTemplate: "Design template",
+    designControls: "Design controls",
+    templateClassic: "Classic",
+    templateGlass: "Glass v2.01",
+    templateClassicDesc: "Solid surfaces, crisp product look.",
+    templateGlassDesc: "Frosted glass panels, deeper blur, brighter depth.",
+    accentColor: "Accent color",
+    accent2Color: "Secondary accent",
+    radiusControl: "Corner radius",
+    blurControl: "Glass blur",
+    alphaControl: "Glass opacity",
+    spaceControl: "Spacing density",
+    elevControl: "Shadow strength",
+    applyDesign: "Apply design",
+    resetDesign: "Reset design",
+    versionLabel: "Version"
   },
   fa: {
     brandSub: "استودیوی مهندسی پرامپت",
@@ -80,7 +96,23 @@ const I18N = {
     confirmReset: "همه پرامپت‌ها، اجزا و نسخه‌ها پاک شوند؟",
     analyzerPh: "پرامپت را برای امتیازدهی اینجا بگذارید…", run: "امتیاز پرامپت",
     detailHelp: "سطح خبره معیار پذیرش، حالت شکست و گام راستی‌آزمایی اضافه می‌کند.",
-    lengthHelp: "طول تقریبی پرامپت ساخته‌شده را هدف می‌گیرد."
+    lengthHelp: "طول تقریبی پرامپت ساخته‌شده را هدف می‌گیرد.",
+    designTemplate: "قالب طراحی",
+    designControls: "کنترل‌های طراحی",
+    templateClassic: "کلاسیک",
+    templateGlass: "شیشه‌ای v2.01",
+    templateClassicDesc: "سطوح مات و ظاهر محصولی واضح.",
+    templateGlassDesc: "پنل‌های شیشه‌ای مات، بلور بیشتر و عمق روشن‌تر.",
+    accentColor: "رنگ اصلی",
+    accent2Color: "رنگ فرعی",
+    radiusControl: "گردی گوشه‌ها",
+    blurControl: "بلور شیشه",
+    alphaControl: "شفافیت شیشه",
+    spaceControl: "تراکم فاصله",
+    elevControl: "قدرت سایه",
+    applyDesign: "اعمال طراحی",
+    resetDesign: "بازنشانی طراحی",
+    versionLabel: "نسخه"
   }
 };
 

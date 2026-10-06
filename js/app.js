@@ -4,6 +4,9 @@ const state = {
   step: 0,
   uiLang: localStorage.getItem("atelier-lang") || "en",
   theme: localStorage.getItem("atelier-theme") || "light",
+  template: localStorage.getItem("atelier-template") || "classic",
+  design: safeJson(localStorage.getItem("atelier-design")) || null,
+  version: "v2.01",
   prompts: [],
   components: [],
   profiles: [],
@@ -54,17 +57,59 @@ function toast(msg) {
   toast._t = setTimeout(() => { el.hidden = true; }, 2200);
 }
 
+function defaultDesign() {
+  return {
+    accent: "#2563eb",
+    accent2: "#7c3aed",
+    radius: 16,
+    blur: 22,
+    alpha: 58,
+    space: 100,
+    elev: 100
+  };
+}
+
+function applyDesignVars() {
+  const root = document.documentElement;
+  root.dataset.template = state.template || "classic";
+  const d = Object.assign(defaultDesign(), state.design || {});
+  state.design = d;
+  root.style.setProperty("--accent", d.accent);
+  root.style.setProperty("--accent-2", d.accent2);
+  root.style.setProperty("--radius", d.radius + "px");
+  root.style.setProperty("--radius-sm", Math.max(8, d.radius - 4) + "px");
+  root.style.setProperty("--glass-blur", d.blur + "px");
+  const alpha = Math.min(0.95, Math.max(0.25, d.alpha / 100));
+  root.style.setProperty("--glass-alpha", String(alpha));
+  root.style.setProperty("--space", String(d.space / 100));
+  const elev = d.elev / 100;
+  root.style.setProperty("--elev-strength", String(elev));
+  if (state.template === "glass") {
+    // elev alpha driven by control
+    const light = state.theme !== "dark";
+    const base = light ? "255,255,255" : "18,26,43";
+    root.style.setProperty("--elev", `rgba(${base},${alpha})`);
+    root.style.setProperty("--elev-2", light ? `rgba(248,250,252,${Math.min(0.9, alpha + 0.05)})` : `rgba(26,35,54,${Math.min(0.85, alpha + 0.05)})`);
+  } else {
+    root.style.removeProperty("--elev");
+    root.style.removeProperty("--elev-2");
+  }
+  const badge = document.getElementById("versionBadge");
+  if (badge) badge.textContent = state.version;
+}
+
 function applyChrome() {
   document.documentElement.lang = state.uiLang === "fa" ? "fa" : "en";
   document.documentElement.dir = state.uiLang === "fa" ? "rtl" : "ltr";
   document.documentElement.dataset.theme = state.theme;
+  applyDesignVars();
   $("#themeBtn").textContent = state.theme === "dark" ? "☾" : "☀";
   $("#uiLang").value = state.uiLang;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     el.textContent = t(el.dataset.i18n);
   });
   const page = t("pages")[state.view];
-  $("#kicker").textContent = page[0];
+  $("#kicker").textContent = page[0] + " · " + state.version;
   $("#pageTitle").textContent = page[1];
   $("#pageSub").textContent = page[2];
   $("#statCount").textContent = String(state.prompts.length);
@@ -718,23 +763,113 @@ function renderAnalyzer() {
 }
 
 function renderSettings() {
+  const design = Object.assign(defaultDesign(), state.design || {});
+  const fa = state.uiLang === "fa";
   $("#view").innerHTML = `
-    <section class="card card-pad" style="max-width:720px">
-      <div class="section-title"><h3>${esc(t("pages.settings")[1])}</h3></div>
-      <p style="color:var(--muted)">${state.prompts.length} prompts · ${state.components.length} components · ${state.profiles.length} profiles · IndexedDB (${DB_NAME})</p>
-      <label class="field">${esc(t("rules"))}<textarea id="pref-rules">${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).rules || "")}</textarea></label>
-      <div style="height:8px"></div>
-      <label class="field">Never do<textarea id="pref-banned">${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).banned || "")}</textarea></label>
-      <div style="height:8px"></div>
-      <label class="field">Always include<input id="pref-always" value="${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).always || "")}" /></label>
-      <div class="actions" style="padding-left:0">
-        <button class="btn teal" id="savePrefs">Save preferences</button>
-        <button class="btn" id="expAll">${esc(t("exportAll"))}</button>
-        <button class="btn" id="impAll">${esc(t("importAll"))}</button>
-        <button class="btn danger" id="resetBtn">${esc(t("reset"))}</button>
-      </div>
-      <input id="impFile" type="file" accept="application/json" hidden />
-    </section>`;
+    <div class="settings-stack anim-page">
+      <section class="card card-pad">
+        <div class="section-title"><h3>${esc(t("pages.settings")[1])}</h3><span>${esc(state.version)}</span></div>
+        <p style="color:var(--muted);margin:0 0 8px">${state.prompts.length} prompts · ${state.components.length} components · ${state.profiles.length} profiles · IndexedDB</p>
+        <div class="section-title"><h3>${esc(t("designTemplate"))}</h3></div>
+        <div class="template-cards">
+          <button type="button" class="template-card ${state.template === "classic" ? "on" : ""}" data-template="classic">
+            <strong>${esc(t("templateClassic"))}</strong>
+            <span>${esc(t("templateClassicDesc"))}</span>
+          </button>
+          <button type="button" class="template-card ${state.template === "glass" ? "on" : ""}" data-template="glass">
+            <strong>${esc(t("templateGlass"))}</strong>
+            <span>${esc(t("templateGlassDesc"))}</span>
+          </button>
+        </div>
+        <div class="section-title"><h3>${esc(t("designControls"))}</h3></div>
+        <div class="design-grid">
+          <label class="field">${esc(t("accentColor"))}<input type="color" id="d-accent" value="${esc(design.accent)}" /></label>
+          <label class="field">${esc(t("accent2Color"))}<input type="color" id="d-accent2" value="${esc(design.accent2)}" /></label>
+          <label class="field">${esc(t("radiusControl"))} <span id="d-radius-val">${design.radius}px</span>
+            <input type="range" id="d-radius" min="8" max="28" value="${design.radius}" />
+          </label>
+          <label class="field">${esc(t("blurControl"))} <span id="d-blur-val">${design.blur}px</span>
+            <input type="range" id="d-blur" min="0" max="40" value="${design.blur}" />
+          </label>
+          <label class="field">${esc(t("alphaControl"))} <span id="d-alpha-val">${design.alpha}%</span>
+            <input type="range" id="d-alpha" min="30" max="95" value="${design.alpha}" />
+          </label>
+          <label class="field">${esc(t("spaceControl"))} <span id="d-space-val">${design.space}%</span>
+            <input type="range" id="d-space" min="80" max="130" value="${design.space}" />
+          </label>
+          <label class="field">${esc(t("elevControl"))} <span id="d-elev-val">${design.elev}%</span>
+            <input type="range" id="d-elev" min="50" max="150" value="${design.elev}" />
+          </label>
+        </div>
+        <div class="studio-actions">
+          <button class="btn primary" id="applyDesign">${esc(t("applyDesign"))}</button>
+          <button class="btn ghost" id="resetDesign">${esc(t("resetDesign"))}</button>
+        </div>
+      </section>
+      <section class="card card-pad">
+        <div class="section-title"><h3>${esc(t("rules"))}</h3></div>
+        <label class="field">${esc(t("rules"))}<textarea id="pref-rules">${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).rules || "")}</textarea></label>
+        <div class="section-gap"></div>
+        <label class="field">Never do<textarea id="pref-banned">${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).banned || "")}</textarea></label>
+        <div class="section-gap"></div>
+        <label class="field">Always include<input id="pref-always" value="${esc((safeJson(localStorage.getItem("atelier-prefs")) || {}).always || "")}" /></label>
+        <div class="studio-actions">
+          <button class="btn teal" id="savePrefs">${esc(fa ? "ذخیره ترجیحات" : "Save preferences")}</button>
+          <button class="btn" id="expAll">${esc(t("exportAll"))}</button>
+          <button class="btn" id="impAll">${esc(t("importAll"))}</button>
+          <button class="btn danger" id="resetBtn">${esc(t("reset"))}</button>
+        </div>
+        <input id="impFile" type="file" accept="application/json" hidden />
+      </section>
+    </div>`;
+
+  const bindRange = (id, labelId, suffix) => {
+    const el = document.getElementById(id);
+    const lab = document.getElementById(labelId);
+    if (!el) return;
+    el.oninput = () => { lab.textContent = el.value + suffix; };
+  };
+  bindRange("d-radius", "d-radius-val", "px");
+  bindRange("d-blur", "d-blur-val", "px");
+  bindRange("d-alpha", "d-alpha-val", "%");
+  bindRange("d-space", "d-space-val", "%");
+  bindRange("d-elev", "d-elev-val", "%");
+
+  $("#view").querySelectorAll("[data-template]").forEach((btn) => {
+    btn.onclick = () => {
+      state.template = btn.dataset.template;
+      localStorage.setItem("atelier-template", state.template);
+      if (state.template === "glass" && !state.design) state.design = defaultDesign();
+      applyDesignVars();
+      render();
+      toast(state.template === "glass" ? (fa ? "قالب شیشه‌ای فعال شد" : "Glass template on") : (fa ? "قالب کلاسیک فعال شد" : "Classic template on"));
+    };
+  });
+
+  $("#applyDesign").onclick = () => {
+    state.design = {
+      accent: $("#d-accent").value,
+      accent2: $("#d-accent2").value,
+      radius: Number($("#d-radius").value),
+      blur: Number($("#d-blur").value),
+      alpha: Number($("#d-alpha").value),
+      space: Number($("#d-space").value),
+      elev: Number($("#d-elev").value)
+    };
+    localStorage.setItem("atelier-design", JSON.stringify(state.design));
+    applyDesignVars();
+    toast(t("saved"));
+  };
+  $("#resetDesign").onclick = () => {
+    state.design = defaultDesign();
+    state.template = "classic";
+    localStorage.setItem("atelier-design", JSON.stringify(state.design));
+    localStorage.setItem("atelier-template", "classic");
+    applyDesignVars();
+    render();
+    toast(t("resetDesign"));
+  };
+
   $("#savePrefs").onclick = () => {
     const prefs = { rules: $("#pref-rules").value.trim(), banned: $("#pref-banned").value.trim(), always: $("#pref-always").value.trim() };
     localStorage.setItem("atelier-prefs", JSON.stringify(prefs));
