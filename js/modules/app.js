@@ -1,5 +1,5 @@
 /**
- * GPE V3 — Main Application Controller
+ * GITREP26 V4 — Main Application Controller
  */
 import { i18n } from './i18n.js';
 import { storage } from './storage.js';
@@ -34,7 +34,9 @@ class App {
       github.setToken(token);
     }
     this.applyTheme(this.settings.theme);
+    this.applyAccent(this.settings.accent || 'purple');
     this.applyAnim(this.settings.anim || 'full');
+    this.online = navigator.onLine;
     await this.loadData();
     this.bind();
     this.render();
@@ -137,6 +139,28 @@ class App {
     });
     document.getElementById('btn-collapse-all')?.addEventListener('click', () => this.collapseAll(true));
     document.getElementById('btn-expand-all')?.addEventListener('click', () => this.collapseAll(false));
+    document.querySelectorAll('[data-accent]').forEach(b => {
+      b.addEventListener('click', () => {
+        this.applyAccent(b.dataset.accent);
+        this.settings.accent = b.dataset.accent;
+        storage.saveSettings(this.settings);
+        this.renderSettings();
+      });
+    });
+    document.getElementById('btn-new-collection')?.addEventListener('click', () => {
+      const name = prompt(i18n.t('collections_new') + ':');
+      if (name) { storage.createCollection(name); this.renderCollections(); }
+    });
+    // Autocomplete
+    const search = document.getElementById('search-input');
+    if (search) {
+      search.addEventListener('input', () => this.updateSuggestions(search.value));
+      search.addEventListener('keydown', e => this.suggestKey(e));
+      search.addEventListener('blur', () => setTimeout(() => this.hideSuggestions(), 150));
+      search.addEventListener('focus', () => this.updateSuggestions(search.value));
+    }
+    window.addEventListener('online', () => { this.online = true; this.toast(i18n.t('online_mode')); });
+    window.addEventListener('offline', () => { this.online = false; this.toast(i18n.t('offline_mode')); });
     window.addEventListener('langchange', () => this.render());
     window.addEventListener('ratelimit', e => {
       this.updateRateUI(e.detail);
@@ -245,6 +269,9 @@ class App {
     this.renderDynamic();
     this.renderSettings();
     this.renderFavorites();
+    this.renderDashboard();
+    this.renderCollections();
+    this.renderCompare();
     i18n.apply();
   }
 
@@ -307,11 +334,12 @@ class App {
 
   renderSettings() {
     const token = document.getElementById('token-input');
-    // Restore from dedicated key every time settings view renders
     const saved = storage.getToken();
     this.settings.token = saved;
-    if (token) {
+    // Never overwrite input while user is focused/typing
+    if (token && document.activeElement !== token) {
       token.value = saved || '';
+      token.setAttribute('value', saved || '');
       token.dataset.saved = saved ? '1' : '0';
     }
     document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === this.settings.theme));
@@ -466,12 +494,22 @@ class App {
     const cats = (repo.categories||[]).map(c=>`<span class="chip chip-cat">${this.esc(c)}</span>`).join('');
     const tags = (repo.tags||repo.topics||[]).map(t=>`<span class="chip">${this.esc(t)}</span>`).join('');
     const similar = this.repos.filter(r => r.id !== repo.id && (r.categories||[]).some(c => (repo.categories||[]).includes(c))).slice(0,3);
+    const pTags = storage.getTags(repo.id);
+    const monitored = storage.isMonitored(repo.id);
+    const inCompare = storage.getCompare().includes(repo.id);
     body.innerHTML = `
       <button class="modal-close icon-btn" onclick="app.closeModal()"><svg class="icon"><use href="#icon-close"></use></svg></button>
       <div class="d-header">
         <img src="${repo.owner?.avatar_url||''}" class="d-avatar" alt="" width="56" height="56" onerror="this.style.display='none'">
         <div><h2>${this.esc(repo.full_name)}</h2><p class="d-desc">${this.esc(translator.display(repo.description||'', i18n.lang))}</p></div>
       </div>
+      <div class="d-sec chips">
+        <button class="btn btn-ghost btn-sm" onclick="app.toggleCompare(${repo.id})">${inCompare ? '✓ Compare' : '+ Compare'}</button>
+        <button class="btn btn-ghost btn-sm" onclick="app.toggleMonitor(${repo.id})">${monitored ? '✓ Monitor' : '+ Monitor'}</button>
+        <button class="btn btn-ghost btn-sm" onclick="app.addPersonalTag(${repo.id})">+ Tag</button>
+      </div>
+      ${pTags.length ? `<div class="d-sec"><h4>Personal tags</h4><div class="chips">${pTags.map(tg => `<span class="chip">${this.esc(tg)}</span>`).join('')}</div></div>` : ''}
+      <div class="d-sec"><h4>README</h4><div class="readme-preview" id="readme-box">…</div></div>
       <div class="d-stats">
         <div class="stat"><b>⭐ ${this.fmt(repo.stargazers_count)}</b><small>${i18n.t('card_stars')}</small></div>
         <div class="stat"><b>🍴 ${this.fmt(repo.forks_count)}</b><small>${i18n.t('card_forks')}</small></div>
@@ -495,6 +533,23 @@ class App {
         <button class="btn btn-ghost" onclick="app.closeModal()">${i18n.t('close')}</button>
       </div>`;
     modal.classList.add('open');
+    // Lazy README + files when online + token/guest API
+    const parts = (repo.full_name || '').split('/');
+    if (parts.length === 2) {
+      const box = document.getElementById('readme-box');
+      github.getReadme(parts[0], parts[1]).then(md => {
+        if (box) box.textContent = md ? md.slice(0, 2500) : 'README not available';
+      }).catch(() => { if (box) box.textContent = 'README not available'; });
+      github.getContents(parts[0], parts[1]).then(files => {
+        if (!files.length) return;
+        const sec = document.createElement('div');
+        sec.className = 'd-sec';
+        sec.innerHTML = '<h4>Files</h4><ul class="file-tree">' +
+          files.slice(0, 15).map(f => '<li>' + (f.type === 'dir' ? '📁 ' : '📄 ') + this.esc(f.name) + '</li>').join('') +
+          '</ul>';
+        body.appendChild(sec);
+      }).catch(() => {});
+    }
   }
 
   closeModal() { document.getElementById('modal')?.classList.remove('open'); }
@@ -530,48 +585,89 @@ class App {
     this.applyFilters();
   }
 
+  /**
+   * CRITICAL: Capture input value synchronously, validate first,
+   * only persist on success. Never wipe a good stored token on failure.
+   */
   async saveSettings() {
-    const raw = document.getElementById('token-input')?.value || '';
-    const token = raw.trim();
-    // Persist via dedicated key first
-    storage.saveToken(token);
-    this.settings.token = token;
-    storage.saveSettings(this.settings);
-    github.setToken(token);
+    const input = document.getElementById('token-input');
+    // Read IMMEDIATELY before any await / re-render
+    const typed = (input && typeof input.value === 'string') ? input.value.trim() : '';
+    const existing = storage.getToken();
+
+    // Persist non-token settings without touching token
+    const s = storage.getSettings();
+    s.theme = this.settings.theme;
+    s.language = this.settings.language;
+    s.anim = this.settings.anim;
+    s.accent = this.settings.accent || s.accent || 'purple';
+    // Keep existing token in settings object
+    s.token = existing;
+    storage.saveSettings(s);
+    this.settings = s;
 
     const statusEl = document.getElementById('auth-detail');
     if (statusEl) statusEl.textContent = i18n.t('auth_checking');
 
-    if (token) {
-      const result = await github.validateToken(token);
+    // Empty input: do NOT clear existing token unless field was intentionally emptied
+    // and user confirms via Clear Token button. Here we only validate if typed.
+    if (!typed) {
+      if (existing) {
+        // Restore field from storage so UI doesn't look wiped
+        if (input) input.value = existing;
+        this.toast(i18n.t('toast_token_saved') + ' (kept)');
+        github.setToken(existing);
+        const r = await github.validateToken(existing, { keepOnFailure: true });
+        this.updateAuthUI(r);
+        this.updateRateUI(r.rate || github.rate);
+      } else {
+        this.updateAuthUI({ status: 'guest', ok: true });
+        this.toast(i18n.t('auth_guest'));
+      }
+      this._fillTokenInput(storage.getToken());
+      return;
+    }
+
+    // Validate typed token FIRST
+    const result = await github.validateToken(typed, { keepOnFailure: true });
+    if (result.ok && result.status === 'authenticated') {
+      storage.saveToken(typed);
+      this.settings.token = typed;
+      github.setToken(typed);
       this.updateAuthUI(result);
       this.updateRateUI(result.rate || github.rate);
-      if (result.ok && result.status === 'authenticated') {
-        this.toast(i18n.t('toast_token_saved') + (result.user ? ` (@${result.user.login})` : ''));
-      } else if (result.status === 'invalid') {
-        this.toast(i18n.t('auth_invalid'));
-      } else {
-        this.toast(result.message || i18n.t('toast_error'));
-      }
+      this.toast(i18n.t('toast_token_saved') + (result.user ? ' (@' + result.user.login + ')' : ''));
+      this._fillTokenInput(typed);
     } else {
-      github.setToken('');
-      this.updateAuthUI({ status: 'guest', ok: true });
-      this.updateRateUI({});
-      this.toast(i18n.t('token_cleared'));
+      // Failed: keep previous stored token; restore typed text in input for editing
+      if (existing) {
+        github.setToken(existing);
+        this.settings.token = existing;
+      }
+      this.updateAuthUI(result);
+      this.updateRateUI(result.rate || github.rate);
+      this.toast(result.status === 'invalid' ? i18n.t('auth_invalid') : (result.message || i18n.t('toast_error')));
+      this._fillTokenInput(typed);
     }
-    this.renderSettings();
+  }
+
+  _fillTokenInput(value) {
+    const input = document.getElementById('token-input');
+    if (input) {
+      input.value = value || '';
+      // Prevent password manager from wiping
+      input.setAttribute('value', value || '');
+    }
   }
 
   async clearToken() {
     storage.clearToken();
     this.settings.token = '';
     github.setToken('');
-    const input = document.getElementById('token-input');
-    if (input) input.value = '';
+    this._fillTokenInput('');
     this.updateAuthUI({ status: 'guest', ok: true });
     this.updateRateUI({});
     this.toast(i18n.t('token_cleared'));
-    this.renderSettings();
   }
 
   toggleDescOriginal(checked) {
@@ -669,6 +765,216 @@ class App {
     return d.innerHTML;
   }
 }
+
+
+  applyAccent(accent) {
+    document.documentElement.setAttribute('data-accent', accent || 'purple');
+    const map = {
+      purple: ['#8b5cf6', '#06b6d4'],
+      turquoise: ['#06b6d4', '#22d3ee'],
+      green: ['#10b981', '#34d399'],
+      blue: ['#3b82f6', '#60a5fa'],
+      orange: ['#f97316', '#fb923c'],
+      red: ['#ef4444', '#f87171']
+    };
+    const pair = map[accent] || map.purple;
+    document.documentElement.style.setProperty('--accent', pair[0]);
+    document.documentElement.style.setProperty('--accent2', pair[1]);
+    document.documentElement.style.setProperty('--glow', pair[0] + '55');
+  }
+
+  updateSuggestions(q) {
+    const box = document.getElementById('suggest-box');
+    if (!box) return;
+    q = (q || '').trim().toLowerCase();
+    if (q.length < 1) { box.hidden = true; return; }
+    const items = [];
+    this.categories.forEach(c => {
+      const name = i18n.lang === 'fa' ? c.name_fa : c.name_en;
+      if (name.toLowerCase().includes(q) || c.name_en.toLowerCase().includes(q))
+        items.push({ type: 'category', label: name, id: c.id, icon: 'categories' });
+      (c.subcategories || []).forEach(s => {
+        const sn = i18n.lang === 'fa' ? s.name_fa : s.name_en;
+        if (sn.toLowerCase().includes(q)) items.push({ type: 'sub', label: sn, id: c.id, icon: 'categories' });
+      });
+    });
+    [...new Set(this.repos.map(r => r.language).filter(Boolean))].forEach(l => {
+      if (l.toLowerCase().includes(q)) items.push({ type: 'language', label: l, icon: 'code' });
+    });
+    this.repos.forEach(r => {
+      if ((r.name || '').toLowerCase().includes(q) || (r.full_name || '').toLowerCase().includes(q))
+        items.push({ type: 'repo', label: r.full_name || r.name, id: r.id, icon: 'explore' });
+    });
+    const ranked = items.slice(0, 10);
+    if (!ranked.length) { box.hidden = true; return; }
+    box.innerHTML = ranked.map((it, i) =>
+      `<button type="button" class="suggest-item" data-type="${it.type}" data-id="${it.id || ''}" data-label="${this.esc(it.label)}">
+        <svg class="icon sm"><use href="#icon-${it.icon || 'search'}"></use></svg>
+        <span>${this.esc(it.label)}</span><small>${it.type}</small>
+      </button>`
+    ).join('');
+    box.hidden = false;
+    box.querySelectorAll('.suggest-item').forEach(el => {
+      el.addEventListener('mousedown', e => {
+        e.preventDefault();
+        this.applySuggestion(el.dataset.type, el.dataset.id, el.dataset.label);
+      });
+    });
+    this._suggestIdx = -1;
+  }
+
+  applySuggestion(type, id, label) {
+    const search = document.getElementById('search-input');
+    if (type === 'category' || type === 'sub') this.openCat(id);
+    else if (type === 'repo') this.showDetail(Number(id));
+    else {
+      if (search) search.value = label;
+      this.filters.q = label;
+      if (type === 'language') this.filters.language = label;
+      this.applyFilters();
+      this.navigate('explore');
+    }
+    this.hideSuggestions();
+  }
+
+  hideSuggestions() {
+    const box = document.getElementById('suggest-box');
+    if (box) box.hidden = true;
+  }
+
+  suggestKey(e) {
+    const box = document.getElementById('suggest-box');
+    if (!box || box.hidden) return;
+    const items = [...box.querySelectorAll('.suggest-item')];
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); this._suggestIdx = Math.min((this._suggestIdx || -1) + 1, items.length - 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this._suggestIdx = Math.max((this._suggestIdx || 0) - 1, 0); }
+    else if (e.key === 'Enter' && this._suggestIdx >= 0) { e.preventDefault(); items[this._suggestIdx].dispatchEvent(new Event('mousedown')); return; }
+    else if (e.key === 'Escape') { this.hideSuggestions(); return; }
+    else return;
+    items.forEach((el, i) => el.classList.toggle('active', i === this._suggestIdx));
+  }
+
+  renderDashboard() {
+    const el = document.getElementById('dash-grid');
+    if (!el) return;
+    const favs = storage.getFavorites();
+    const hist = storage.getHistory().slice(0, 8);
+    const searches = storage.getSearchHistory().slice(0, 8);
+    const cols = storage.getCollections();
+    const langs = {};
+    this.repos.forEach(r => { if (r.language) langs[r.language] = (langs[r.language] || 0) + 1; });
+    const topLangs = Object.entries(langs).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    el.innerHTML = `
+      <div class="dash-card"><h3>${i18n.t('section_favorites')}</h3><p class="dash-num">${favs.length}</p></div>
+      <div class="dash-card"><h3>${i18n.t('section_history')}</h3><p class="dash-num">${hist.length}</p></div>
+      <div class="dash-card"><h3>${i18n.t('nav_collections')}</h3><p class="dash-num">${cols.length}</p></div>
+      <div class="dash-card wide"><h3>${i18n.t('section_history')}</h3>
+        <ul class="dash-list">${hist.map(h => `<li><button onclick="app.showDetail(${h.id})">${this.esc(h.full_name || h.name)}</button></li>`).join('') || '<li>—</li>'}</ul></div>
+      <div class="dash-card wide"><h3>Searches</h3>
+        <ul class="dash-list">${searches.map(s => `<li><button type="button" data-q="${this.esc(s)}">${this.esc(s)}</button></li>`).join('') || '<li>—</li>'}</ul></div>
+      <div class="dash-card wide"><h3>Languages</h3>
+        <div class="chips">${topLangs.map(([l, n]) => `<span class="chip">${this.esc(l)} · ${n}</span>`).join('')}</div></div>`;
+    el.querySelectorAll('[data-q]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const q = btn.getAttribute('data-q');
+        const inp = document.getElementById('search-input');
+        if (inp) inp.value = q;
+        this.filters.q = q;
+        this.applyFilters();
+        this.navigate('explore');
+      });
+    });
+  }
+
+  renderCollections() {
+    const el = document.getElementById('collections-list');
+    if (!el) return;
+    const list = storage.getCollections();
+    if (!list.length) {
+      el.innerHTML = `<div class="empty-state"><p>${i18n.t('collections_empty')}</p></div>`;
+      return;
+    }
+    el.innerHTML = list.map(c => `
+      <div class="collection-card">
+        <div class="col-head">
+          <h3>${this.esc(c.name)}</h3>
+          <span class="cat-count">${(c.repoIds || []).length}</span>
+          <button class="btn btn-ghost btn-sm" data-rename="${c.id}">Rename</button>
+          <button class="btn btn-ghost btn-sm" data-del="${c.id}">Delete</button>
+        </div>
+        <p class="col-notes">${this.esc(c.notes || '')}</p>
+        <div class="chips">${(c.repoIds || []).map(id => {
+          const r = this.repos.find(x => x.id === id);
+          return r ? `<button class="chip" onclick="app.showDetail(${id})">${this.esc(r.name)}</button>` : '';
+        }).join('')}</div>
+      </div>`).join('');
+    el.querySelectorAll('[data-rename]').forEach(b => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-rename');
+      const c = storage.getCollections().find(x => x.id === id);
+      const name = prompt('Name', c?.name || '');
+      if (name) { storage.updateCollection(id, { name }); this.renderCollections(); }
+    }));
+    el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+      storage.deleteCollection(b.getAttribute('data-del'));
+      this.renderCollections();
+    }));
+  }
+
+  renderCompare() {
+    const el = document.getElementById('compare-table');
+    if (!el) return;
+    const ids = storage.getCompare();
+    const repos = ids.map(id => this.repos.find(r => r.id === id) || this.liveResults.find(r => r.id === id)).filter(Boolean);
+    if (repos.length < 2) {
+      el.innerHTML = `<div class="empty-state"><p>Select 2–3 projects to compare</p></div>`;
+      return;
+    }
+    const rows = [
+      ['Name', r => r.full_name],
+      ['Stars', r => r.stargazers_count],
+      ['Forks', r => r.forks_count],
+      ['Language', r => r.language],
+      ['License', r => r.license || '—'],
+      ['Quality', r => r.quality_score],
+      ['Activity', r => r.activity_score],
+      ['Updated', r => this.fmtDate(r.updated_at)],
+    ];
+    el.innerHTML = `<table class="cmp"><thead><tr><th></th>${repos.map(r => `<th>${this.esc(r.name)}</th>`).join('')}</tr></thead><tbody>${
+      rows.map(([label, fn]) => {
+        const vals = repos.map(fn);
+        const nums = vals.map(v => typeof v === 'number' ? v : -1);
+        const max = Math.max(...nums);
+        return `<tr><td>${label}</td>${vals.map((v, i) => `<td class="${nums[i]===max && max>0?'best':''}">${this.esc(String(typeof v==='number'?this.fmt(v):v))}</td>`).join('')}</tr>`;
+      }).join('')
+    }</tbody></table>`;
+  }
+
+
+  addPersonalTag(repoId) {
+    const tag = prompt('Tag:');
+    if (tag && tag.trim()) {
+      storage.addTag(repoId, tag.trim());
+      this.showDetail(repoId);
+    }
+  }
+
+  toggleMonitor(repoId, e) {
+    e?.stopPropagation();
+    const repo = this.repos.find(r => r.id === repoId) || this.liveResults.find(r => r.id === repoId);
+    if (!repo) return;
+    const on = storage.toggleMonitor(repo);
+    this.toast(on ? 'Monitoring on' : 'Monitoring off');
+    this.showDetail(repoId);
+  }
+
+  toggleCompare(id, e) {
+    e?.stopPropagation();
+    storage.toggleCompare(id);
+    this.toast('Compare ' + storage.getCompare().length + '/3');
+    if (storage.getCompare().length >= 2) this.navigate('compare');
+  }
+
 
 const app = new App();
 window.app = app;

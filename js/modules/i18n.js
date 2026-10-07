@@ -3,7 +3,7 @@
  */
 const T = {
   en: {
-    nav_home:"Home", nav_explore:"Explore", nav_categories:"Categories", nav_favorites:"Favorites",
+    nav_home:"Home", nav_explore:"Explore", nav_categories:"Categories", nav_favorites:"Favorites", nav_dashboard:"Dashboard", nav_compare:"Compare",
     nav_collections:"Collections", nav_settings:"Settings", nav_search:"Search repositories...",
     hero_title:"Discover GitHub Projects", hero_subtitle:"Find open-source repositories by real-world usage, technology, and rich categories",
     hero_cta:"Start Exploring", hero_cta2:"Browse Categories", hero_badge:"Premium · Offline-first · Bilingual",
@@ -19,7 +19,7 @@ const T = {
     details_about:"About", details_stats:"Statistics", details_tags:"Tags", details_categories:"Categories",
     details_license:"License", details_language:"Language", details_owner:"Owner", details_scores:"Analysis Scores",
     details_topics:"Topics", details_similar:"Similar Projects", details_tech:"Technology",
-    settings_title:"Settings", settings_language:"Language", settings_theme:"Theme",
+    settings_title:"Settings", settings_language:"Language", settings_theme:"Theme", settings_accent:"Accent Color",
     settings_theme_dark:"Dark", settings_theme_light:"Light", settings_theme_system:"System",
     settings_token:"GitHub Personal Access Token", settings_token_ph:"ghp_xxxxxxxxxxxx",
     settings_token_help:"Stored only on this device. Used solely for GitHub API requests. Leave empty for Guest Mode.",
@@ -52,7 +52,7 @@ const T = {
     token_status:"Authentication status"
   },
   fa: {
-    nav_home:"خانه", nav_explore:"کاوش", nav_categories:"دسته‌بندی‌ها", nav_favorites:"علاقه‌مندی‌ها",
+    nav_home:"خانه", nav_explore:"کاوش", nav_categories:"دسته‌بندی‌ها", nav_favorites:"علاقه‌مندی‌ها", nav_dashboard:"داشبورد", nav_compare:"مقایسه",
     nav_collections:"مجموعه‌ها", nav_settings:"تنظیمات", nav_search:"جستجوی مخازن...",
     hero_title:"کشف پروژه‌های گیت‌هاب", hero_subtitle:"یافتن مخازن متن‌باز بر اساس کاربرد واقعی، فناوری و دسته‌بندی‌های غنی",
     hero_cta:"شروع کاوش", hero_cta2:"مشاهده دسته‌ها", hero_badge:"پرمیوم · آفلاین · دوزبانه",
@@ -68,7 +68,7 @@ const T = {
     details_about:"درباره", details_stats:"آمار", details_tags:"برچسب‌ها", details_categories:"دسته‌ها",
     details_license:"مجوز", details_language:"زبان", details_owner:"مالک", details_scores:"امتیازات تحلیل",
     details_topics:"موضوعات", details_similar:"پروژه‌های مشابه", details_tech:"فناوری",
-    settings_title:"تنظیمات", settings_language:"زبان", settings_theme:"تم",
+    settings_title:"تنظیمات", settings_language:"زبان", settings_theme:"تم", settings_accent:"رنگ تاکیدی",
     settings_theme_dark:"تاریک", settings_theme_light:"روشن", settings_theme_system:"سیستم",
     settings_token:"توکن دسترسی شخصی گیت‌هاب", settings_token_ph:"ghp_xxxxxxxxxxxx",
     settings_token_help:"فقط روی این دستگاه ذخیره می‌شود. صرفاً برای درخواست‌های API گیت‌هاب. برای حالت مهمان خالی بگذارید.",
