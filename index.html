@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Premium GitHub Project Explorer — Discover open-source by real-world usage categories">
+  <meta name="description" content="GITREP26 — Premium GitHub project discovery — Discover open-source by real-world usage categories">
   <meta name="theme-color" content="#07080c">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>GitHub Project Explorer</title>
+  <title>GITREP26</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%238B5CF6'/><path d='M10 16l4 4 8-8' stroke='%23fff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,19 +67,22 @@
     <button class="icon-btn" id="menu-btn" aria-label="Menu"><svg class="icon"><use href="#icon-menu"></use></svg></button>
     <a href="#" class="logo" data-nav="home" onclick="app.navigate('home');return false">
       <span class="logo-mark"><svg class="icon"><use href="#icon-check"></use></svg></span>
-      <span>GPE</span>
+      <span>GITREP26</span>
     </a>
     <nav class="nav">
       <a href="#" data-nav="home"><svg class="icon"><use href="#icon-home"></use></svg> <span data-i18n="nav_home">Home</span></a>
       <a href="#" data-nav="explore"><svg class="icon"><use href="#icon-explore"></use></svg> <span data-i18n="nav_explore">Explore</span></a>
       <a href="#" data-nav="categories"><svg class="icon"><use href="#icon-categories"></use></svg> <span data-i18n="nav_categories">Categories</span></a>
       <a href="#" data-nav="favorites"><svg class="icon"><use href="#icon-heart"></use></svg> <span data-i18n="nav_favorites">Favorites</span></a>
+      <a href="#" data-nav="dashboard"><svg class="icon"><use href="#icon-chart"></use></svg> <span data-i18n="nav_dashboard">Dashboard</span></a>
+      <a href="#" data-nav="collections"><svg class="icon"><use href="#icon-categories"></use></svg> <span data-i18n="nav_collections">Collections</span></a>
       <a href="#" data-nav="settings"><svg class="icon"><use href="#icon-settings"></use></svg> <span data-i18n="nav_settings">Settings</span></a>
     </nav>
     <div class="search-box">
       <svg class="icon"><use href="#icon-search"></use></svg>
-      <input type="search" id="search-input" data-i18n-ph="nav_search" placeholder="Search repositories..." autocomplete="off">
+      <input type="search" id="search-input" data-i18n-ph="nav_search" placeholder="Search repositories..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
       <div id="search-loading"></div>
+      <div id="suggest-box" class="suggest-box" hidden role="listbox"></div>
     </div>
     <div class="hdr-actions">
       <div class="lang-sw">
@@ -129,7 +132,7 @@
 
     <div id="view-explore" class="view">
       <h1 class="page-title" data-i18n="page_explore">Explore Projects</h1>
-      <div class="filters">
+      <div class="filters" id="filter-bar">
         <button class="f-chip" onclick="app.toggleFilter(this,'offline')" data-i18n="filter_offline">Offline</button>
         <button class="f-chip" onclick="app.toggleFilter(this,'lightweight')" data-i18n="filter_lightweight">Lightweight</button>
         <button class="f-chip" onclick="app.toggleFilter(this,'beginner')" data-i18n="filter_beginner">Beginner</button>
@@ -166,6 +169,25 @@
       <div class="cards" id="fav-grid"></div>
     </div>
 
+
+    <div id="view-dashboard" class="view">
+      <h1 class="page-title" data-i18n="nav_dashboard">Dashboard</h1>
+      <div class="dash-grid" id="dash-grid"></div>
+    </div>
+
+    <div id="view-collections" class="view">
+      <h1 class="page-title" data-i18n="nav_collections">Collections</h1>
+      <div class="col-toolbar">
+        <button class="btn btn-primary btn-sm" id="btn-new-collection" data-i18n="collections_new">New Collection</button>
+      </div>
+      <div id="collections-list" class="collections-list"></div>
+    </div>
+
+    <div id="view-compare" class="view">
+      <h1 class="page-title" data-i18n="nav_compare">Compare</h1>
+      <div id="compare-table" class="compare-table"></div>
+    </div>
+
     <div id="view-settings" class="view">
       <div class="settings">
         <h2 data-i18n="settings_title">Settings</h2>
@@ -186,6 +208,17 @@
             </div>
           </div>
           <div class="sg">
+            <label data-i18n="settings_accent">Accent Color</label>
+            <div class="opt-row accent-row">
+              <button type="button" data-accent="purple" class="accent-swatch" style="--sw:#8b5cf6" title="Purple"></button>
+              <button type="button" data-accent="turquoise" class="accent-swatch" style="--sw:#06b6d4" title="Turquoise"></button>
+              <button type="button" data-accent="green" class="accent-swatch" style="--sw:#10b981" title="Green"></button>
+              <button type="button" data-accent="blue" class="accent-swatch" style="--sw:#3b82f6" title="Blue"></button>
+              <button type="button" data-accent="orange" class="accent-swatch" style="--sw:#f97316" title="Orange"></button>
+              <button type="button" data-accent="red" class="accent-swatch" style="--sw:#ef4444" title="Red"></button>
+            </div>
+          </div>
+          <div class="sg">
             <label data-i18n="settings_anim">Animation Intensity</label>
             <div class="opt-row">
               <button type="button" data-anim="full" data-i18n="settings_anim_full">Full</button>
@@ -195,7 +228,7 @@
           </div>
           <div class="sg">
             <label data-i18n="settings_token">GitHub Personal Access Token</label>
-            <input type="password" id="token-input" data-i18n-ph="settings_token_ph" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+            <input type="text" id="token-input" class="token-input" data-i18n-ph="settings_token_ph" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
             <p class="sg-help" data-i18n="settings_token_help">Stored only on this device. Used solely for GitHub API requests. Leave empty for Guest Mode.</p>
             <div class="opt-row" style="margin-top:.6rem">
               <button type="submit" class="btn btn-primary btn-sm" data-i18n="validate_token">Validate & Save</button>

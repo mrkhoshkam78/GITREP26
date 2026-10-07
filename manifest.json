@@ -1,6 +1,6 @@
 {
-  "name": "GitHub Project Explorer",
-  "short_name": "GPE",
+  "name": "GITREP26",
+  "short_name": "GITREP26",
   "description": "Premium GitHub project discovery by real-world usage categories",
   "start_url": "./index.html",
   "display": "standalone",

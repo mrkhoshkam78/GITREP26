@@ -1,4 +1,4 @@
-const CACHE = 'gpe-v3';
+const CACHE = 'gitrep26-v4';
 const ASSETS = [
   './',
   './index.html',
