@@ -1,10 +1,11 @@
 /**
- * GPE V2 — Main Application Controller
+ * GPE V3 — Main Application Controller
  */
 import { i18n } from './i18n.js';
 import { storage } from './storage.js';
 import { analyzer } from './analyzer.js';
 import { github } from './github.js';
+import { translator } from './translator.js';
 
 class App {
   constructor() {
@@ -19,19 +20,34 @@ class App {
     this.settings = storage.getSettings();
     this.page = 1;
     this.liveResults = [];
+    this.defaultCollapsed = false; // new cards expanded by default
   }
 
   async init() {
     await storage.init();
     i18n.init();
-    if (this.settings.token) github.setToken(this.settings.token);
+    translator.loadShowOriginal();
+    // Robust token restore from dedicated storage key
+    const token = storage.getToken();
+    this.settings.token = token;
+    if (token) {
+      github.setToken(token);
+    }
     this.applyTheme(this.settings.theme);
     this.applyAnim(this.settings.anim || 'full');
     await this.loadData();
     this.bind();
     this.render();
     this.setupPWA();
-    if (github.hasToken()) github.rateLimit().catch(()=>{});
+    // Validate token & refresh rate limit without blocking UI
+    if (github.hasToken()) {
+      github.validateToken().then(r => {
+        this.updateAuthUI(r);
+        this.renderSettings();
+      }).catch(() => {});
+    } else {
+      this.updateAuthUI({ status: 'guest', ok: true });
+    }
     setTimeout(() => document.getElementById('loader')?.classList.add('hidden'), 700);
   }
 
@@ -108,6 +124,7 @@ class App {
       e.preventDefault();
       this.saveSettings();
     });
+    document.getElementById('btn-clear-token')?.addEventListener('click', () => this.clearToken());
     document.getElementById('btn-export')?.addEventListener('click', () => this.exportData());
     document.getElementById('btn-import')?.addEventListener('click', () => document.getElementById('import-file')?.click());
     document.getElementById('import-file')?.addEventListener('change', e => this.importData(e));
@@ -115,8 +132,16 @@ class App {
       await storage.clearCache();
       this.toast(i18n.t('toast_cache_cleared'));
     });
+    document.getElementById('desc-orig-toggle')?.addEventListener('change', e => {
+      this.toggleDescOriginal(e.target.checked);
+    });
+    document.getElementById('btn-collapse-all')?.addEventListener('click', () => this.collapseAll(true));
+    document.getElementById('btn-expand-all')?.addEventListener('click', () => this.collapseAll(false));
     window.addEventListener('langchange', () => this.render());
-    window.addEventListener('ratelimit', e => this.updateRateUI(e.detail));
+    window.addEventListener('ratelimit', e => {
+      this.updateRateUI(e.detail);
+      if (e.detail?.authStatus) this.updateAuthUI({ status: e.detail.authStatus });
+    });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.closeModal(); });
     // Mobile menu
     document.getElementById('menu-btn')?.addEventListener('click', () => {
@@ -282,23 +307,72 @@ class App {
 
   renderSettings() {
     const token = document.getElementById('token-input');
-    if (token) token.value = this.settings.token || '';
+    // Restore from dedicated key every time settings view renders
+    const saved = storage.getToken();
+    this.settings.token = saved;
+    if (token) {
+      token.value = saved || '';
+      token.dataset.saved = saved ? '1' : '0';
+    }
     document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === this.settings.theme));
     document.querySelectorAll('[data-anim]').forEach(b => b.classList.toggle('active', b.dataset.anim === (this.settings.anim||'full')));
-    const mode = document.getElementById('auth-mode');
-    if (mode) mode.textContent = github.hasToken() ? i18n.t('authenticated') : i18n.t('guest');
+    this.updateAuthUI({
+      status: github.authStatus,
+      user: github.authUser,
+      rate: github.rate,
+      ok: github.authStatus === 'authenticated' || github.authStatus === 'guest'
+    });
     this.updateRateUI(github.rate);
+    // Description toggle
+    const tog = document.getElementById('desc-orig-toggle');
+    if (tog) tog.checked = translator.showOriginal;
   }
 
-  updateRateUI(rate) {
+  updateAuthUI(info = {}) {
+    const mode = document.getElementById('auth-mode');
+    const detail = document.getElementById('auth-detail');
+    const status = info.status || github.authStatus || 'guest';
+    if (mode) {
+      mode.className = 'auth-badge ' + status;
+      const labels = {
+        authenticated: i18n.t('auth_ok'),
+        invalid: i18n.t('auth_invalid'),
+        error: i18n.t('auth_error'),
+        guest: i18n.t('auth_guest')
+      };
+      mode.textContent = labels[status] || status;
+    }
+    if (detail) {
+      if (status === 'authenticated' && (info.user || github.authUser)) {
+        const u = info.user || github.authUser;
+        detail.textContent = `@${u.login}` + (github.isAuthHeaderAttached() ? ' · ' + i18n.t('auth_header_ok') : '');
+      } else if (status === 'invalid') {
+        detail.textContent = info.message || i18n.t('auth_invalid');
+      } else if (status === 'guest') {
+        detail.textContent = i18n.t('settings_guest');
+      } else {
+        detail.textContent = info.message || '';
+      }
+    }
+  }
+
+  updateRateUI(rate = {}) {
     const el = document.getElementById('rate-display');
     if (!el) return;
-    if (rate.remaining == null) {
+    const r = rate.remaining != null ? rate : github.rate;
+    if (r.remaining == null) {
       el.textContent = github.hasToken() ? i18n.t('rate_unlimited') : '—';
+      el.classList.remove('low');
       return;
     }
-    el.textContent = `${rate.remaining} / ${rate.limit}`;
-    el.classList.toggle('low', rate.remaining < 10);
+    el.textContent = `${r.remaining} / ${r.limit}`;
+    el.classList.toggle('low', r.remaining < 10);
+    // Reset time hint
+    const resetEl = document.getElementById('rate-reset');
+    if (resetEl && r.reset) {
+      const mins = Math.max(0, Math.ceil((r.reset - Date.now()) / 60000));
+      resetEl.textContent = mins > 0 ? `↻ ${mins}m` : '';
+    }
   }
 
   card(repo, idx = 0) {
@@ -308,37 +382,72 @@ class App {
     const cats = (repo.categories||[]).slice(0,2);
     const avatar = repo.owner?.avatar_url || '';
     const fav = storage.isFav(repo.id);
-    return `<article class="repo-card" style="--d:${idx*0.04}s" data-id="${repo.id}">
+    const collapsed = storage.isCollapsed(repo.id);
+    const desc = translator.display(repo.description || '', i18n.lang);
+    const primaryCat = cats[0] || '';
+    return `<article class="repo-card ${collapsed ? 'collapsed' : 'expanded'}" style="--d:${idx * 0.05}s" data-id="${repo.id}">
       <div class="card-top">
         <img class="avatar" src="${avatar}" alt="" loading="lazy" width="40" height="40" onerror="this.style.opacity=0">
         <div class="card-titles">
           <h3 class="rname">${this.esc(repo.name)}</h3>
-          <span class="rowner">${this.esc(repo.owner?.login||'')}</span>
+          <span class="rowner">${this.esc(repo.owner?.login || '')}</span>
         </div>
-        <button class="icon-btn fav ${fav?'on':''}" onclick="app.toggleFav(${repo.id},event)" aria-label="Favorite">
-          <svg class="icon"><use href="#icon-heart${fav?'-fill':''}"></use></svg>
+        <button class="icon-btn collapse-btn" onclick="app.toggleCollapse(${repo.id},event)" title="${collapsed ? i18n.t('expand') : i18n.t('collapse')}" aria-label="Collapse">
+          <svg class="icon chevron ${collapsed ? '' : 'open'}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <button class="icon-btn fav ${fav ? 'on' : ''}" onclick="app.toggleFav(${repo.id},event)" aria-label="Favorite">
+          <svg class="icon"><use href="#icon-heart${fav ? '-fill' : ''}"></use></svg>
         </button>
       </div>
-      <p class="rdesc">${this.esc(repo.description||'')}</p>
-      <div class="chips">${cats.map(c=>`<span class="chip chip-cat">${this.esc(c)}</span>`).join('')}</div>
-      <div class="meta">
-        <span class="m-item"><svg class="icon sm"><use href="#icon-star"></use></svg> ${stars}</span>
-        <span class="m-item"><svg class="icon sm"><use href="#icon-fork"></use></svg> ${forks}</span>
-        <span class="m-item lang">${this.esc(repo.language||'—')}</span>
-        <span class="m-item">${updated}</span>
+      <div class="card-essential">
+        ${primaryCat ? `<span class="chip chip-cat">${this.esc(primaryCat)}</span>` : ''}
+        <span class="m-item lang">${this.esc(repo.language || '—')}</span>
+        <span class="m-item"><svg class="icon sm"><use href="#icon-star"></use></svg> <span class="stat-num" data-val="${repo.stargazers_count || 0}">${stars}</span></span>
+        ${repo.is_offline ? `<span class="badge-inline offline">Offline</span>` : ''}
+        ${repo.is_trending ? `<span class="badge-inline trend">Hot</span>` : ''}
       </div>
-      <div class="scores">
-        <div class="sc" title="${i18n.t('card_quality')}"><span>Q</span><div class="bar"><i style="width:${repo.quality_score||0}%"></i></div><b>${repo.quality_score||0}</b></div>
-        <div class="sc" title="${i18n.t('card_activity')}"><span>A</span><div class="bar"><i class="act" style="width:${repo.activity_score||0}%"></i></div><b>${repo.activity_score||0}</b></div>
-        <div class="sc" title="${i18n.t('card_beginner')}"><span>B</span><div class="bar"><i class="beg" style="width:${repo.beginner_score||0}%"></i></div><b>${repo.beginner_score||0}</b></div>
+      <div class="card-body">
+        <p class="rdesc">${this.esc(desc)}</p>
+        <div class="chips">${cats.map(c => `<span class="chip chip-cat">${this.esc(c)}</span>`).join('')}</div>
+        <div class="meta">
+          <span class="m-item"><svg class="icon sm"><use href="#icon-star"></use></svg> ${stars}</span>
+          <span class="m-item"><svg class="icon sm"><use href="#icon-fork"></use></svg> ${forks}</span>
+          <span class="m-item lang">${this.esc(repo.language || '—')}</span>
+          <span class="m-item">${updated}</span>
+        </div>
+        <div class="scores">
+          <div class="sc" title="${i18n.t('card_quality')}"><span>Q</span><div class="bar"><i style="width:${repo.quality_score || 0}%"></i></div><b class="stat-num" data-val="${repo.quality_score || 0}">${repo.quality_score || 0}</b></div>
+          <div class="sc" title="${i18n.t('card_activity')}"><span>A</span><div class="bar"><i class="act" style="width:${repo.activity_score || 0}%"></i></div><b>${repo.activity_score || 0}</b></div>
+          <div class="sc" title="${i18n.t('card_beginner')}"><span>B</span><div class="bar"><i class="beg" style="width:${repo.beginner_score || 0}%"></i></div><b>${repo.beginner_score || 0}</b></div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-ghost btn-sm" onclick="app.showDetail(${repo.id})">${i18n.t('card_details')}</button>
+          <a class="btn btn-primary btn-sm" href="${repo.html_url}" target="_blank" rel="noopener">${i18n.t('card_view')}</a>
+        </div>
       </div>
-      <div class="card-acts">
-        <button class="btn btn-ghost btn-sm" onclick="app.showDetail(${repo.id})">${i18n.t('card_details')}</button>
-        <a class="btn btn-primary btn-sm" href="${repo.html_url}" target="_blank" rel="noopener">${i18n.t('card_view')}</a>
-      </div>
-      ${repo.is_offline?`<span class="badge offline"><svg class="icon xs"><use href="#icon-offline"></use></svg></span>`:''}
-      ${repo.is_trending?`<span class="badge trend"><svg class="icon xs"><use href="#icon-trending"></use></svg></span>`:''}
     </article>`;
+  }
+
+  toggleCollapse(id, e) {
+    e?.stopPropagation();
+    storage.toggleCollapsed(id);
+    const card = document.querySelector(`.repo-card[data-id="${id}"]`);
+    if (card) {
+      card.classList.toggle('collapsed');
+      card.classList.toggle('expanded');
+      const chev = card.querySelector('.chevron');
+      if (chev) chev.classList.toggle('open');
+    } else {
+      this.renderDynamic();
+    }
+  }
+
+  collapseAll(collapsed = true) {
+    const ids = this.filtered.map(r => r.id);
+    // Also include section repos currently visible
+    this.repos.forEach(r => { if (!ids.includes(r.id)) ids.push(r.id); });
+    storage.setAllCollapsed(ids, collapsed);
+    this.renderDynamic();
   }
 
   empty() {
@@ -361,7 +470,7 @@ class App {
       <button class="modal-close icon-btn" onclick="app.closeModal()"><svg class="icon"><use href="#icon-close"></use></svg></button>
       <div class="d-header">
         <img src="${repo.owner?.avatar_url||''}" class="d-avatar" alt="" width="56" height="56" onerror="this.style.display='none'">
-        <div><h2>${this.esc(repo.full_name)}</h2><p class="d-desc">${this.esc(repo.description||'')}</p></div>
+        <div><h2>${this.esc(repo.full_name)}</h2><p class="d-desc">${this.esc(translator.display(repo.description||'', i18n.lang))}</p></div>
       </div>
       <div class="d-stats">
         <div class="stat"><b>⭐ ${this.fmt(repo.stargazers_count)}</b><small>${i18n.t('card_stars')}</small></div>
@@ -421,14 +530,53 @@ class App {
     this.applyFilters();
   }
 
-  saveSettings() {
-    const token = document.getElementById('token-input')?.value || '';
+  async saveSettings() {
+    const raw = document.getElementById('token-input')?.value || '';
+    const token = raw.trim();
+    // Persist via dedicated key first
+    storage.saveToken(token);
     this.settings.token = token;
     storage.saveSettings(this.settings);
     github.setToken(token);
-    if (token) github.rateLimit().catch(()=>{});
-    this.toast(i18n.t('toast_token_saved'));
+
+    const statusEl = document.getElementById('auth-detail');
+    if (statusEl) statusEl.textContent = i18n.t('auth_checking');
+
+    if (token) {
+      const result = await github.validateToken(token);
+      this.updateAuthUI(result);
+      this.updateRateUI(result.rate || github.rate);
+      if (result.ok && result.status === 'authenticated') {
+        this.toast(i18n.t('toast_token_saved') + (result.user ? ` (@${result.user.login})` : ''));
+      } else if (result.status === 'invalid') {
+        this.toast(i18n.t('auth_invalid'));
+      } else {
+        this.toast(result.message || i18n.t('toast_error'));
+      }
+    } else {
+      github.setToken('');
+      this.updateAuthUI({ status: 'guest', ok: true });
+      this.updateRateUI({});
+      this.toast(i18n.t('token_cleared'));
+    }
     this.renderSettings();
+  }
+
+  async clearToken() {
+    storage.clearToken();
+    this.settings.token = '';
+    github.setToken('');
+    const input = document.getElementById('token-input');
+    if (input) input.value = '';
+    this.updateAuthUI({ status: 'guest', ok: true });
+    this.updateRateUI({});
+    this.toast(i18n.t('token_cleared'));
+    this.renderSettings();
+  }
+
+  toggleDescOriginal(checked) {
+    translator.setShowOriginal(checked);
+    this.renderDynamic();
   }
 
   exportData() {

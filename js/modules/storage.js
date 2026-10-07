@@ -1,8 +1,10 @@
 /**
- * GPE V2 — LocalStorage + IndexedDB
+ * GPE V3 — LocalStorage + IndexedDB
+ * Token stored in dedicated key to prevent accidental loss on settings merge.
  */
-const DB = 'GPE_V2';
+const DB = 'GPE_V3';
 const VER = 1;
+const TOKEN_KEY = 'gpe_pat_token'; // dedicated, not inside settings JSON blob path alone
 
 class Storage {
   constructor() {
@@ -27,13 +29,77 @@ class Storage {
     try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch { return fb; }
   }
   set(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+  /** Dedicated token persistence — survives settings rewrites */
+  getToken() {
+    try {
+      // Prefer dedicated key
+      const dedicated = localStorage.getItem(TOKEN_KEY);
+      if (dedicated) return dedicated;
+      // Migrate from legacy settings blob
+      const s = this.get('gpe_settings', {});
+      if (s.token) {
+        this.saveToken(s.token);
+        return s.token;
+      }
+      return '';
+    } catch { return ''; }
+  }
+  saveToken(token) {
+    const t = (token || '').trim();
+    if (t) localStorage.setItem(TOKEN_KEY, t);
+    else localStorage.removeItem(TOKEN_KEY);
+    // Keep settings in sync for export/import
+    const s = this.getSettings();
+    s.token = t;
+    this.set('gpe_settings', s);
+    return t;
+  }
+  clearToken() {
+    localStorage.removeItem(TOKEN_KEY);
+    const s = this.getSettings();
+    s.token = '';
+    this.set('gpe_settings', s);
+  }
+
   getSettings() {
-    return this.get('gpe_settings', {
+    const s = this.get('gpe_settings', {
       theme: 'dark', language: 'en', token: '', anim: 'full',
       dataSource: 'local', imageQuality: 'high'
     });
+    // Always overlay dedicated token so it is never lost
+    s.token = this.getToken() || s.token || '';
+    return s;
   }
-  saveSettings(s) { this.set('gpe_settings', s); }
+  saveSettings(s) {
+    // Persist token via dedicated path first
+    if (s && 'token' in s) this.saveToken(s.token);
+    const copy = { ...s };
+    // Still store in settings for export compatibility
+    this.set('gpe_settings', copy);
+  }
+
+  getCollapsed() {
+    return this.get('gpe_collapsed', {}); // { [repoId]: true }
+  }
+  setCollapsed(map) {
+    this.set('gpe_collapsed', map);
+  }
+  isCollapsed(id) {
+    const m = this.getCollapsed();
+    return !!m[String(id)];
+  }
+  toggleCollapsed(id) {
+    const m = this.getCollapsed();
+    const k = String(id);
+    if (m[k]) delete m[k]; else m[k] = true;
+    this.setCollapsed(m);
+    return !!m[k];
+  }
+  setAllCollapsed(ids, collapsed) {
+    const m = collapsed ? Object.fromEntries(ids.map(id => [String(id), true])) : {};
+    this.setCollapsed(m);
+  }
   getFavorites() { return this.get('gpe_favs', []); }
   toggleFav(id) {
     const f = this.getFavorites();

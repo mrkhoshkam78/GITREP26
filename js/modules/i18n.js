@@ -42,8 +42,14 @@ const T = {
     toast_fav_add:"Added to favorites", toast_fav_remove:"Removed from favorites",
     toast_export:"Data exported", toast_import:"Data imported", toast_cache_cleared:"Cache cleared",
     toast_token_saved:"Token saved", toast_error:"Something went wrong",
-    rate_unlimited:"Unlimited (authenticated)", rate_limited:"Rate limited — try later",
-    collections_title:"Collections", collections_new:"New Collection", collections_empty:"No collections yet"
+    rate_unlimited:"Authenticated (higher limits)", rate_limited:"Rate limited — try later",
+    collections_title:"Collections", collections_new:"New Collection", collections_empty:"No collections yet",
+    collapse:"Collapse", expand:"Expand", collapse_all:"Collapse All", expand_all:"Expand All",
+    show_original:"Show original", show_translated:"Show Persian",
+    auth_ok:"Authenticated", auth_invalid:"Invalid token", auth_error:"Auth error", auth_guest:"Guest Mode",
+    auth_checking:"Verifying token…", auth_header_ok:"Authorization header attached",
+    token_cleared:"Token cleared", validate_token:"Validate & Save", clear_token:"Clear Token",
+    token_status:"Authentication status"
   },
   fa: {
     nav_home:"خانه", nav_explore:"کاوش", nav_categories:"دسته‌بندی‌ها", nav_favorites:"علاقه‌مندی‌ها",
@@ -85,8 +91,14 @@ const T = {
     toast_fav_add:"به علاقه‌مندی‌ها اضافه شد", toast_fav_remove:"از علاقه‌مندی‌ها حذف شد",
     toast_export:"داده خروجی گرفته شد", toast_import:"داده وارد شد", toast_cache_cleared:"کش پاک شد",
     toast_token_saved:"توکن ذخیره شد", toast_error:"خطایی رخ داد",
-    rate_unlimited:"نامحدود (احراز هویت شده)", rate_limited:"محدودیت نرخ — بعداً تلاش کنید",
-    collections_title:"مجموعه‌ها", collections_new:"مجموعه جدید", collections_empty:"هنوز مجموعه‌ای ندارید"
+    rate_unlimited:"احراز هویت شده (سقف بالاتر)", rate_limited:"محدودیت نرخ — بعداً تلاش کنید",
+    collections_title:"مجموعه‌ها", collections_new:"مجموعه جدید", collections_empty:"هنوز مجموعه‌ای ندارید",
+    collapse:"بستن", expand:"باز کردن", collapse_all:"بستن همه", expand_all:"باز کردن همه",
+    show_original:"نمایش اصل انگلیسی", show_translated:"نمایش فارسی",
+    auth_ok:"احراز هویت شده", auth_invalid:"توکن نامعتبر", auth_error:"خطای احراز هویت", auth_guest:"حالت مهمان",
+    auth_checking:"در حال بررسی توکن…", auth_header_ok:"هدر Authorization متصل است",
+    token_cleared:"توکن پاک شد", validate_token:"اعتبارسنجی و ذخیره", clear_token:"پاک کردن توکن",
+    token_status:"وضعیت احراز هویت"
   }
 };
 

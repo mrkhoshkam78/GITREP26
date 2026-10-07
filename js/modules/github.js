@@ -1,22 +1,42 @@
 /**
- * GPE V2 — GitHub API client (browser-side, optional PAT)
+ * GPE V3 — GitHub API client (browser-side, optional PAT)
+ * Token is never hardcoded; loaded from storage only.
  */
 class GitHub {
   constructor() {
     this.base = 'https://api.github.com';
     this.token = '';
     this.rate = { remaining: null, limit: null, reset: null };
+    this.authStatus = 'guest'; // guest | authenticated | invalid | error
+    this.authUser = null;
   }
-  setToken(t) { this.token = (t||'').trim(); }
+
+  setToken(t) {
+    this.token = (t || '').trim();
+    if (!this.token) {
+      this.authStatus = 'guest';
+      this.authUser = null;
+    }
+  }
+
   hasToken() { return !!this.token; }
+
   headers() {
     const h = {
       'Accept': 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28'
     };
-    if (this.token) h['Authorization'] = `Bearer ${this.token}`;
+    if (this.token) {
+      h['Authorization'] = `Bearer ${this.token}`;
+    }
     return h;
   }
+
+  /** Confirm Authorization header would be sent */
+  isAuthHeaderAttached() {
+    return !!(this.headers().Authorization);
+  }
+
   _updateRate(res) {
     const rem = res.headers.get('X-RateLimit-Remaining');
     const lim = res.headers.get('X-RateLimit-Limit');
@@ -24,11 +44,18 @@ class GitHub {
     if (rem !== null) this.rate.remaining = parseInt(rem, 10);
     if (lim !== null) this.rate.limit = parseInt(lim, 10);
     if (reset !== null) this.rate.reset = parseInt(reset, 10) * 1000;
-    window.dispatchEvent(new CustomEvent('ratelimit', { detail: { ...this.rate } }));
+    window.dispatchEvent(new CustomEvent('ratelimit', { detail: { ...this.rate, authStatus: this.authStatus } }));
   }
+
   async _fetch(url) {
     const res = await fetch(url, { headers: this.headers() });
     this._updateRate(res);
+    if (res.status === 401) {
+      this.authStatus = 'invalid';
+      const err = new Error('Invalid or expired token');
+      err.code = 'AUTH_INVALID';
+      throw err;
+    }
     if (res.status === 403 || res.status === 429) {
       const err = new Error('Rate limited');
       err.code = 'RATE_LIMIT';
@@ -40,6 +67,48 @@ class GitHub {
     }
     return res.json();
   }
+
+  /**
+   * Validate token by calling /user and /rate_limit.
+   * Returns { ok, status, user, rate, message }
+   */
+  async validateToken(token) {
+    const prev = this.token;
+    if (token !== undefined) this.setToken(token);
+    if (!this.token) {
+      this.authStatus = 'guest';
+      this.authUser = null;
+      return { ok: true, status: 'guest', user: null, rate: this.rate, message: 'Guest mode' };
+    }
+    try {
+      // /user requires auth — proves token works
+      const user = await this._fetch(`${this.base}/user`);
+      this.authUser = { login: user.login, avatar_url: user.avatar_url, name: user.name };
+      this.authStatus = 'authenticated';
+      // Refresh rate limit
+      await this.rateLimit();
+      return {
+        ok: true,
+        status: 'authenticated',
+        user: this.authUser,
+        rate: { ...this.rate },
+        message: `Authenticated as @${user.login}`,
+        authHeader: this.isAuthHeaderAttached()
+      };
+    } catch (e) {
+      if (e.code === 'AUTH_INVALID') {
+        this.authStatus = 'invalid';
+        this.authUser = null;
+        return { ok: false, status: 'invalid', user: null, rate: this.rate, message: e.message };
+      }
+      this.authStatus = 'error';
+      return { ok: false, status: 'error', user: null, rate: this.rate, message: e.message || 'Validation failed' };
+    } finally {
+      // keep token as set (caller decides persistence)
+      if (token === undefined) this.token = prev || this.token;
+    }
+  }
+
   async search(query, page = 1, perPage = 30, sort = 'stars') {
     const q = encodeURIComponent(query);
     const url = `${this.base}/search/repositories?q=${q}&sort=${sort}&order=desc&page=${page}&per_page=${perPage}`;
@@ -49,9 +118,11 @@ class GitHub {
       items: (data.items || []).map(i => this.normalize(i))
     };
   }
+
   async getRepo(owner, name) {
     return this.normalize(await this._fetch(`${this.base}/repos/${owner}/${name}`));
   }
+
   async getReadme(owner, name) {
     try {
       const data = await this._fetch(`${this.base}/repos/${owner}/${name}/readme`);
@@ -61,6 +132,7 @@ class GitHub {
     } catch { /* ignore */ }
     return null;
   }
+
   async rateLimit() {
     try {
       const data = await this._fetch(`${this.base}/rate_limit`);
@@ -70,12 +142,14 @@ class GitHub {
         limit: core.limit ?? null,
         reset: core.reset ? core.reset * 1000 : null
       };
-      window.dispatchEvent(new CustomEvent('ratelimit', { detail: { ...this.rate } }));
+      window.dispatchEvent(new CustomEvent('ratelimit', { detail: { ...this.rate, authStatus: this.authStatus } }));
       return this.rate;
-    } catch {
+    } catch (e) {
+      if (e.code === 'AUTH_INVALID') this.authStatus = 'invalid';
       return this.rate;
     }
   }
+
   normalize(item) {
     return {
       id: item.id,
@@ -96,5 +170,6 @@ class GitHub {
     };
   }
 }
+
 export const github = new GitHub();
 window.github = github;
