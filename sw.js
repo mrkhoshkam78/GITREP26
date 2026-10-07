@@ -1,4 +1,4 @@
-const CACHE = 'gpe-v2';
+const CACHE = 'gpe-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './js/modules/storage.js',
   './js/modules/analyzer.js',
   './js/modules/github.js',
+  './js/modules/translator.js',
   './js/modules/app.js',
   './data/sample-repos.json',
   './data/categories.json',
