@@ -1,68 +1,61 @@
-# GitHub Project Explorer (GPE) — V1
+# GitHub Project Explorer (GPE) — V2
 
 Premium, fully client-side GitHub project discovery platform.
 
-## Features
+## What's New in V2
 
-- **Category-based discovery** — 13 main categories with subcategories (AI, Web, Desktop, Mobile, Games, Data, Security, DevTools, Media, Productivity, Education, Engineering, Experimental)
-- **Bilingual** — English + Persian with full RTL support and live language switcher
-- **Offline-first** — Works from local sample data; PWA installable with service worker
-- **Smart filters** — Offline, Lightweight, Beginner-friendly, Active projects + search
-- **Repository analysis** — Rule-based quality, activity, and beginner scores (no external AI)
-- **Special sections** — Trending, Hidden Gems, Recently Updated, Offline, Lightweight, Beginner
-- **Optional live GitHub API** — Paste a personal token in Settings for live search
-- **Modern 2026 UI** — Glass effects, gradients, ambient motion, card animations, responsive
+- **Custom SVG icons only** — no emoji, no icon fonts
+- **14 rich category trees** with 100+ subcategories
+- **30 curated sample repositories** with full analysis scores
+- **Guest Mode + optional GitHub PAT** with live rate-limit display
+- **Favorites, search history, recently viewed**
+- **Import / export** local data as JSON
+- **Animation intensity** control (Full / Reduced / None)
+- **10 discovery sections**: Trending, Hidden Gems, Recent, Offline, Lightweight, Beginner, Popular, Maintained, Rising, Editor's Picks
+- **Modular ES modules** architecture
+- **PWA** installable + offline via service worker
 
 ## Quick Start
 
-1. Open `index.html` in a modern browser (Chrome, Firefox, Edge, Safari).
-2. Or serve locally for full PWA/offline behavior:
+Open `index.html` in a modern browser, or serve locally:
 
 ```bash
-# Python
 python -m http.server 8080
-
-# Node
-npx serve .
+# → http://localhost:8080
 ```
 
-Then visit `http://localhost:8080`.
+> **Note:** ES modules require HTTP (not `file://`) for full functionality. Use a local server.
 
-## Project Structure
+## Structure
 
 ```
 ├── index.html
 ├── manifest.json
 ├── sw.js
-├── css/
-│   └── styles.css
-├── js/
-│   ├── i18n.js          # Translations + RTL
-│   ├── storage.js       # LocalStorage + IndexedDB
-│   ├── analyzer.js      # Rule-based repo analyzer
-│   ├── github.js        # Optional GitHub API client
-│   └── app.js           # Main application
+├── css/styles.css
+├── js/modules/
+│   ├── i18n.js
+│   ├── storage.js
+│   ├── analyzer.js
+│   ├── github.js
+│   └── app.js
 ├── data/
-│   ├── sample-repos.json
-│   └── categories.json
-├── assets/
-├── images/
-└── icons/
+│   ├── categories.json
+│   └── sample-repos.json
+└── assets/svg/
 ```
 
 ## Settings
 
-- **Language**: EN / فارسی
-- **Theme**: Dark / Light / System
-- **GitHub Token**: Optional personal access token (stored only in localStorage)
-
-## Technical Notes
-
-- Pure HTML, CSS, JavaScript — no build step, no backend
-- Sample data includes 25 curated repositories with pre-computed scores
-- Service worker caches app shell + data for offline use
-- Designed for easy expansion in future versions
+| Setting | Description |
+|---------|-------------|
+| Language | English / فارسی (RTL) |
+| Theme | Dark / Light / System |
+| Animation | Full / Reduced / None |
+| GitHub PAT | Optional; stored locally only |
+| Rate Limit | Live remaining/limit display |
+| Cache | Clear, Export, Import |
 
 ## License
 
-MIT — free to use and extend.
+MIT
