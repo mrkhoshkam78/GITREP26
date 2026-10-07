@@ -1,29 +1,68 @@
-# Atelier — Prompt Engineering Studio
+# GitHub Project Explorer (GPE) — V1
 
-Offline-first prompt management studio. No network calls, no API keys.
+Premium, fully client-side GitHub project discovery platform.
 
-## Open
+## Features
 
-Serve the folder (IndexedDB is more reliable over http than file://):
+- **Category-based discovery** — 13 main categories with subcategories (AI, Web, Desktop, Mobile, Games, Data, Security, DevTools, Media, Productivity, Education, Engineering, Experimental)
+- **Bilingual** — English + Persian with full RTL support and live language switcher
+- **Offline-first** — Works from local sample data; PWA installable with service worker
+- **Smart filters** — Offline, Lightweight, Beginner-friendly, Active projects + search
+- **Repository analysis** — Rule-based quality, activity, and beginner scores (no external AI)
+- **Special sections** — Trending, Hidden Gems, Recently Updated, Offline, Lightweight, Beginner
+- **Optional live GitHub API** — Paste a personal token in Settings for live search
+- **Modern 2026 UI** — Glass effects, gradients, ambient motion, card animations, responsive
+
+## Quick Start
+
+1. Open `index.html` in a modern browser (Chrome, Firefox, Edge, Safari).
+2. Or serve locally for full PWA/offline behavior:
 
 ```bash
-cd prompt-engineering-studio
-python3 -m http.server 8765
+# Python
+python -m http.server 8080
+
+# Node
+npx serve .
 ```
 
-Then open http://localhost:8765
+Then visit `http://localhost:8080`.
 
-## What it does
+## Project Structure
 
-- Step-by-step builder across Coding, Design, AI, Business, Writing, Analysis, Marketing, and Game Development
-- Role, goal, context, constraints, stack, quality bar, output format
-- Length (5 / 10 / 15 / 30 / custom), detail (Basic / Advanced / Expert), model, language (English, Persian, bilingual), style
-- Library with search, tags, folders, favorite, duplicate, edit
-- Version history with restore
-- Quality analyzer and rule-based improver
-- Reusable components (role, objective, context, constraints, output)
-- Export TXT, Markdown, JSON; full library import/export
-- Dark / light theme, Persian RTL and English LTR
-- Persistence in IndexedDB
+```
+├── index.html
+├── manifest.json
+├── sw.js
+├── css/
+│   └── styles.css
+├── js/
+│   ├── i18n.js          # Translations + RTL
+│   ├── storage.js       # LocalStorage + IndexedDB
+│   ├── analyzer.js      # Rule-based repo analyzer
+│   ├── github.js        # Optional GitHub API client
+│   └── app.js           # Main application
+├── data/
+│   ├── sample-repos.json
+│   └── categories.json
+├── assets/
+├── images/
+└── icons/
+```
 
-Data never leaves the browser.
+## Settings
+
+- **Language**: EN / فارسی
+- **Theme**: Dark / Light / System
+- **GitHub Token**: Optional personal access token (stored only in localStorage)
+
+## Technical Notes
+
+- Pure HTML, CSS, JavaScript — no build step, no backend
+- Sample data includes 25 curated repositories with pre-computed scores
+- Service worker caches app shell + data for offline use
+- Designed for easy expansion in future versions
+
+## License
+
+MIT — free to use and extend.
