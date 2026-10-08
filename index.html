@@ -52,6 +52,8 @@
       <symbol id="icon-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></symbol>
       <symbol id="icon-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75L19 14z"/></symbol>
       <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
       <symbol id="icon-install" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
       <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
       <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
@@ -70,7 +72,7 @@
 
   <header class="header">
     <button class="icon-btn" id="menu-btn" aria-label="Menu"><svg class="icon"><use href="#icon-menu"></use></svg></button>
-    <a href="#" class="logo" data-nav="home" onclick="app.navigate('home');return false">
+    <a href="#" class="logo" data-nav="home" onclick="app.showLanding();return false">
       <span class="logo-mark"><img src="assets/webp/logo-128.webp" alt="" width="28" height="28" class="logo-img"></span>
       <span class="logo-text">GITREP26</span>
     </a>
@@ -94,7 +96,10 @@
         <button data-lang="en" class="active">EN</button>
         <button data-lang="fa">فا</button>
       </div>
-      <button class="icon-btn" id="install-btn" hidden title="Install"><svg class="icon"><use href="#icon-install"></use></svg></button>
+      <button class="icon-btn" id="theme-toggle" data-i18n-title="theme_toggle" title="Toggle theme" aria-label="Toggle theme">
+        <svg class="icon theme-icon-dark"><use href="#icon-moon"></use></svg>
+        <svg class="icon theme-icon-light" hidden><use href="#icon-sun"></use></svg>
+      </button>
       <button class="icon-btn" data-nav="settings" onclick="app.navigate('settings')" title="Settings"><svg class="icon"><use href="#icon-settings"></use></svg></button>
     </div>
   </header>
@@ -106,6 +111,24 @@
     <a href="#" data-nav="favorites"><svg class="icon"><use href="#icon-heart"></use></svg> <span data-i18n="nav_favorites">Favorites</span></a>
     <a href="#" data-nav="settings"><svg class="icon"><use href="#icon-settings"></use></svg> <span data-i18n="nav_settings">Settings</span></a>
   </nav>
+
+  
+  <div id="landing" class="landing">
+    <div class="landing-bg" aria-hidden="true"></div>
+    <div class="landing-inner">
+      <img src="assets/webp/logo-128.webp" alt="" class="landing-logo" width="96" height="96">
+      <h1 class="landing-brand">GITREP26</h1>
+      <p class="landing-title" data-i18n="landing_title">Discover open source</p>
+      <p class="landing-sub" data-i18n="landing_sub">Search GitHub by real-world usage, technology, and categories</p>
+      <div class="landing-search">
+        <svg class="icon"><use href="#icon-search"></use></svg>
+        <input type="search" id="landing-search" data-i18n-ph="landing_search_ph" placeholder="Search repositories, topics, languages…" autocomplete="off">
+        <button type="button" class="btn btn-primary" id="landing-go" data-i18n="landing_start">Start Exploring</button>
+      </div>
+      <p class="landing-hint" data-i18n="landing_hint">Press Enter to search · Esc to browse home</p>
+      <div class="landing-cats" id="landing-cats"></div>
+    </div>
+  </div>
 
   <main class="main">
     <div id="view-home" class="view active">
@@ -137,6 +160,10 @@
 
     <div id="view-explore" class="view">
       <h1 class="page-title" data-i18n="page_explore">Explore Projects</h1>
+      <div class="search-progress" id="search-progress" hidden>
+        <div class="search-progress-track"><i id="search-progress-bar"></i></div>
+        <span id="search-progress-label" data-i18n="search_progress">Searching…</span>
+      </div>
       <div class="filters" id="filter-bar">
         <button class="f-chip" onclick="app.toggleFilter(this,'offline')" data-i18n="filter_offline">Offline</button>
         <button class="f-chip" onclick="app.toggleFilter(this,'lightweight')" data-i18n="filter_lightweight">Lightweight</button>
@@ -154,6 +181,11 @@
         <span class="f-count" id="explore-count"></span>
       </div>
       <div class="cards" id="explore-grid"></div>
+      <div class="pagination" id="explore-pagination" hidden>
+        <button type="button" class="btn btn-ghost btn-sm" id="page-prev" data-i18n="search_prev">Previous</button>
+        <span class="page-info" id="page-info"></span>
+        <button type="button" class="btn btn-ghost btn-sm" id="page-next" data-i18n="search_next">Next</button>
+      </div>
     </div>
 
     <div id="view-categories" class="view">
@@ -270,8 +302,17 @@
               <input type="file" id="import-file" accept=".json" hidden>
             </div>
           </div>
+          <div class="sg">
+            <label data-i18n="settings_install">Install App</label>
+            <p class="sg-help" data-i18n="settings_install_help">Install GITREP26 as a Progressive Web App on this device.</p>
+            <button type="button" class="btn btn-ghost btn-sm" id="install-btn" hidden data-i18n="settings_install">Install App</button>
+          </div>
           <button type="button" class="btn btn-primary" id="btn-save-settings" data-i18n="settings_save">Save Settings</button>
         </form>
+        <div class="settings-version" id="settings-version">
+          <span data-i18n="version_label">Version</span>
+          <strong id="app-version-label">—</strong>
+        </div>
       </div>
     </div>
   </main>
