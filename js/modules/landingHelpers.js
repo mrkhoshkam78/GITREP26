@@ -71,7 +71,6 @@ export function installLandingHelpers(AppProto) {
     lightIcon.hidden = !isLight;
   };
 
-  // Improved search progress
   AppProto.setSearchProgress = function setSearchProgress(pct, label) {
     const wrap = document.getElementById('search-progress');
     const bar = document.getElementById('search-progress-bar');
@@ -80,10 +79,7 @@ export function installLandingHelpers(AppProto) {
     if (pct == null || pct < 0) {
       wrap.setAttribute('hidden', '');
       wrap.hidden = true;
-      if (bar) {
-        bar.style.width = '0%';
-        bar.style.setProperty('width', '0%');
-      }
+      if (bar) { bar.style.width = '0%'; bar.style.setProperty('width', '0%'); }
       this.searching = false;
       return;
     }
@@ -91,15 +87,10 @@ export function installLandingHelpers(AppProto) {
     wrap.hidden = false;
     this.searching = true;
     const w = Math.min(100, Math.max(0, Number(pct) || 0));
-    if (bar) {
-      bar.style.width = w + '%';
-      bar.style.setProperty('width', w + '%');
-    }
+    if (bar) { bar.style.width = w + '%'; bar.style.setProperty('width', w + '%'); }
     if (lab) lab.textContent = label || i18n.t('search_progress');
   };
 
-  // Don't re-filter live GitHub results by free-text query
-  const _origApply = AppProto.applyFilters;
   AppProto.applyFilters = function applyFilters() {
     let list = this.liveResults.length ? [...this.liveResults] : [...this.repos];
     const f = this.filters;

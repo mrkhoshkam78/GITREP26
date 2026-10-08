@@ -64,7 +64,7 @@
 
   <div id="loader">
     <div class="loader-mark">
-      <img src="assets/webp/logo-128.webp" alt="GITREP26" width="56" height="56" class="loader-logo">
+      <img src="assets/svg/logo.svg" alt="GITREP26" width="56" height="56" class="loader-logo">
     </div>
     <div class="loader-brand">GITREP26</div>
     <div class="loader-track"><i></i></div>
@@ -73,7 +73,7 @@
   <header class="header">
     <button class="icon-btn" id="menu-btn" aria-label="Menu"><svg class="icon"><use href="#icon-menu"></use></svg></button>
     <a href="#" class="logo" data-nav="home" onclick="app.showLanding();return false">
-      <span class="logo-mark"><img src="assets/webp/logo-128.webp" alt="" width="28" height="28" class="logo-img"></span>
+      <span class="logo-mark"><img src="assets/svg/logo.svg" alt="" width="28" height="28" class="logo-img"></span>
       <span class="logo-text">GITREP26</span>
     </a>
     <nav class="nav">
@@ -116,7 +116,7 @@
   <div id="landing" class="landing">
     <div class="landing-bg" aria-hidden="true"></div>
     <div class="landing-inner">
-      <img src="assets/webp/logo-128.webp" alt="" class="landing-logo" width="96" height="96">
+      <img src="assets/svg/logo.svg" alt="" class="landing-logo" width="96" height="96">
       <h1 class="landing-brand">GITREP26</h1>
       <p class="landing-title" data-i18n="landing_title">Discover open source</p>
       <p class="landing-sub" data-i18n="landing_sub">Search GitHub by real-world usage, technology, and categories</p>
@@ -322,5 +322,23 @@
   </div>
 
   <script type="module" src="js/modules/app.js"></script>
+  <script type="module">
+    import { installLandingHelpers } from './js/modules/landingHelpers.js';
+    function tryInstall() {
+      if (window.app && window.app.constructor) {
+        installLandingHelpers(window.app.constructor.prototype);
+        try {
+          if (!sessionStorage.getItem('gitrep26_entered')) window.app.showLanding?.();
+          window.app.updateThemeToggleIcon?.();
+        } catch (_) {}
+        return true;
+      }
+      return false;
+    }
+    if (!tryInstall()) {
+      let n = 0;
+      const t = setInterval(() => { if (tryInstall() || ++n > 50) clearInterval(t); }, 40);
+    }
+  </script>
 </body>
 </html>

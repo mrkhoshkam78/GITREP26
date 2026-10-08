@@ -144,7 +144,7 @@ const T = {
     maintenance_active:"فعالانه نگهداری می‌شود", maintenance_maintained:"نگهداری می‌شود", maintenance_stale:"راکد",
     toast_fav_add:"به علاقه‌مندی‌ها اضافه شد", toast_fav_remove:"از علاقه‌مندی‌ها حذف شد",
     toast_export:"داده خروجی گرفته شد", toast_import:"داده وارد شد", toast_cache_cleared:"کش پاک شد",
-    toast_saved:"Settings saved", toast_saved:"تنظیمات ذخیره شد", toast_token_saved:"توکن ذخیره شد", toast_error:"خطایی رخ داد",
+    toast_saved:"تنظیمات ذخیره شد", toast_token_saved:"توکن ذخیره شد", toast_error:"خطایی رخ داد",
     rate_unlimited:"احراز هویت شده (سقف بالاتر)", rate_limited:"محدودیت نرخ — بعداً تلاش کنید",
     collections_title:"مجموعه‌ها", collections_new:"مجموعه جدید", collections_empty:"هنوز مجموعه‌ای ندارید",
     collapse:"بستن", expand:"باز کردن", collapse_all:"بستن همه", expand_all:"باز کردن همه",
@@ -169,6 +169,13 @@ class I18n {
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
     document.body.classList.toggle('rtl', lang === 'fa');
     this.apply();
+    // Real-time: re-render dynamic UI when language changes
+    if (window.app && typeof window.app.render === 'function') {
+      try {
+        window.app.render();
+        window.app.fillLandingCats?.();
+      } catch (_) {}
+    }
     window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
   }
   apply(root = document) {
@@ -182,11 +189,19 @@ class I18n {
     });
     root.querySelectorAll('[data-i18n-title]').forEach(el => {
       const k = el.getAttribute('data-i18n-title');
-      if (k) el.title = this.t(k);
+      if (k) {
+        el.title = this.t(k);
+        el.setAttribute('aria-label', this.t(k));
+      }
     });
     root.querySelectorAll('[data-i18n-html]').forEach(el => {
       const k = el.getAttribute('data-i18n-html');
       if (k) el.innerHTML = this.t(k);
+    });
+    // Also translate option labels inside selects
+    root.querySelectorAll('option[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (k) el.textContent = this.t(k);
     });
   }
   init() {

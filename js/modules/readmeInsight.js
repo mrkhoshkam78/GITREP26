@@ -150,14 +150,18 @@ function firstParagraph(sections) {
 }
 
 function inferAudience(md, repo) {
-  const t = (md + ' ' + (repo.description || '')).toLowerCase();
-  if (/beginner|getting started|tutorial|learn|student/.test(t)) return { en: 'Beginners and learners', fa: 'مبتدیان و یادگیرندگان' };
-  if (/enterprise|production|devops|sre|ops team/.test(t)) return { en: 'DevOps / platform engineers', fa: 'مهندسان DevOps و پلتفرم' };
-  if (/data scientist|ml engineer|machine learning|researcher/.test(t)) return { en: 'ML engineers and researchers', fa: 'مهندسان یادگیری ماشین و پژوهشگران' };
-  if (/designer|design system|figma|ui\/ux/.test(t)) return { en: 'Designers and frontend developers', fa: 'طراحان و توسعه‌دهندگان فرانت‌اند' };
-  if (/game|godot|unity|unreal/.test(t)) return { en: 'Game developers', fa: 'توسعه‌دهندگان بازی' };
-  if (/self-host|homelab|privacy|local first/.test(t)) return { en: 'Self-hosters and privacy-focused users', fa: 'کاربران خودمیزبان و حریم‌خصوصی‌محور' };
-  if (/api|backend|server|microservice/.test(t)) return { en: 'Backend developers', fa: 'توسعه‌دهندگان بک‌اند' };
+  const t = (md + ' ' + (repo.description || '') + ' ' + (repo.topics || []).join(' ')).toLowerCase();
+  if (/beginner|getting started|tutorial|learn|student|education/.test(t)) return { en: 'Beginners and learners', fa: 'مبتدیان و یادگیرندگان' };
+  if (/enterprise|production|devops|sre|ops team|platform engineer/.test(t)) return { en: 'DevOps / platform engineers', fa: 'مهندسان DevOps و پلتفرم' };
+  if (/data scientist|ml engineer|machine learning|deep learning|researcher|llm|nlp/.test(t)) return { en: 'ML engineers and researchers', fa: 'مهندسان یادگیری ماشین و پژوهشگران' };
+  if (/designer|design system|figma|ui\/ux|frontend/.test(t)) return { en: 'Designers and frontend developers', fa: 'طراحان و توسعه‌دهندگان فرانت‌اند' };
+  if (/game|godot|unity|unreal|gamedev/.test(t)) return { en: 'Game developers', fa: 'توسعه‌دهندگان بازی' };
+  if (/self-host|homelab|privacy|local[- ]first|self hosted/.test(t)) return { en: 'Self-hosters and privacy-focused users', fa: 'کاربران خودمیزبان و حریم‌خصوصی‌محور' };
+  if (/security|pentest|hacking|cve|vulnerability/.test(t)) return { en: 'Security researchers and engineers', fa: 'پژوهشگران و مهندسان امنیت' };
+  if (/mobile|android|ios|flutter|react native/.test(t)) return { en: 'Mobile developers', fa: 'توسعه‌دهندگان موبایل' };
+  if (/cli|command[- ]line|terminal|shell/.test(t)) return { en: 'CLI power users and developers', fa: 'کاربران حرفه‌ای خط فرمان و توسعه‌دهندگان' };
+  if (/api|backend|server|microservice|rest|graphql/.test(t)) return { en: 'Backend developers', fa: 'توسعه‌دهندگان بک‌اند' };
+  if (/data|etl|analytics|pipeline|database/.test(t)) return { en: 'Data engineers and analysts', fa: 'مهندسان و تحلیل‌گران داده' };
   return { en: 'Developers and technical users', fa: 'توسعه‌دهندگان و کاربران فنی' };
 }
 

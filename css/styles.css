@@ -663,25 +663,36 @@ body.rtl .search-box .icon {
   color: var(--t1); opacity: .9;
 }
 
-/* Transparent logo */
+/* Transparent logo — SVG, no background plate */
 .logo-img, .loader-logo, .landing-logo {
   background: transparent !important;
   object-fit: contain;
   mix-blend-mode: normal;
+  filter: none !important;
 }
 .logo-mark, .loader-mark {
   background: transparent !important;
   box-shadow: none !important;
+  border-radius: 0 !important;
 }
 .loader-mark {
   background: transparent !important;
   animation: pulse 1.4s ease-in-out infinite;
 }
+.logo-img, .loader-logo, .landing-logo {
+  color: var(--accent);
+  /* SVG uses currentColor via stroke/fill when inlined; for <img> keep neutral */
+  opacity: 1;
+}
 [data-theme="light"] .logo-img,
-[data-theme="light"] .landing-logo { filter: none; }
+[data-theme="light"] .landing-logo,
+[data-theme="light"] .loader-logo {
+  filter: brightness(0.35) !important;
+}
 :root:not([data-theme="light"]) .logo-img,
-:root:not([data-theme="light"]) .landing-logo {
-  filter: brightness(1.25) contrast(1.05);
+:root:not([data-theme="light"]) .landing-logo,
+:root:not([data-theme="light"]) .loader-logo {
+  filter: brightness(1.35) contrast(1.05) !important;
 }
 
 /* Search progress */
@@ -717,7 +728,7 @@ body.rtl .search-box .icon {
 }
 .settings-version strong { color: var(--t2); font-weight: 600; }
 
-/* Immersive landing */
+/* Immersive landing — professional full-screen search */
 .landing {
   position: fixed; inset: 0; z-index: 9000;
   display: flex; align-items: center; justify-content: center;
@@ -746,31 +757,36 @@ body.rtl .search-box .icon {
 }
 .landing-inner {
   position: relative; z-index: 1; text-align: center;
-  max-width: 640px; width: 92%; padding: 2rem 1rem;
+  max-width: 720px; width: 92%; padding: 2.5rem 1.25rem;
+  display: flex; flex-direction: column; align-items: center;
 }
 .landing-logo {
-  width: 96px; height: 96px; margin: 0 auto 1rem;
+  width: 88px; height: 88px; margin: 0 auto 1.1rem;
   animation: landIn .7s ease both;
+  background: transparent !important;
 }
 .landing-brand {
-  font-size: 1.6rem; font-weight: 800; letter-spacing: .12em;
-  margin: 0 0 .5rem; animation: landIn .7s ease .08s both;
+  font-size: 1.35rem; font-weight: 800; letter-spacing: .14em;
+  margin: 0 0 .65rem; animation: landIn .7s ease .08s both;
   background: linear-gradient(135deg, var(--t1), var(--accent));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .landing-title {
-  font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800;
-  margin: 0 0 .5rem; animation: landIn .7s ease .12s both;
+  font-size: clamp(1.75rem, 4.5vw, 2.6rem); font-weight: 800;
+  margin: 0 0 .55rem; animation: landIn .7s ease .12s both;
+  letter-spacing: -0.02em; line-height: 1.15;
 }
 .landing-sub {
-  color: var(--t2); font-size: 1rem; margin: 0 0 1.75rem;
-  animation: landIn .7s ease .16s both;
+  color: var(--t2); font-size: 1.02rem; margin: 0 0 1.85rem;
+  animation: landIn .7s ease .16s both; max-width: 28rem; line-height: 1.5;
 }
 .landing-search {
   display: flex; align-items: center; gap: .5rem;
   background: var(--glass); border: 1px solid var(--border2);
-  border-radius: 16px; padding: .55rem .55rem .55rem 1rem;
+  border-radius: 18px; padding: .6rem .6rem .6rem 1.1rem;
   box-shadow: var(--shl); animation: landIn .7s ease .2s both;
+  width: 100%; max-width: 560px;
 }
 .landing-search .icon { color: var(--t3); flex-shrink: 0; }
 .landing-search input {
