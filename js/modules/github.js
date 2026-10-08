@@ -72,15 +72,28 @@ class GitHub {
    * @param {string} candidate
    * @param {{ keepOnFailure?: boolean }} opts
    */
+  /**
+   * Validate token against GitHub /user.
+   * - If candidate is undefined, validates the currently set this.token (does NOT clear it).
+   * - Only treats empty string as guest when explicitly passed.
+   */
   async validateToken(candidate, opts = {}) {
     const keepOnFailure = opts.keepOnFailure !== false;
     const prev = this.token;
-    const test = (candidate || '').trim();
+
+    // CRITICAL: undefined means "use current token", empty string means guest
+    let test;
+    if (candidate === undefined || candidate === null) {
+      test = (this.token || '').trim();
+    } else {
+      test = String(candidate).trim();
+    }
 
     if (!test) {
       this.authStatus = 'guest';
       this.authUser = null;
-      this.token = '';
+      // Only clear memory token when explicitly validating empty
+      if (candidate !== undefined && candidate !== null) this.token = '';
       return { ok: true, status: 'guest', user: null, rate: this.rate, message: 'Guest mode' };
     }
 
@@ -95,7 +108,7 @@ class GitHub {
         status: 'authenticated',
         user: this.authUser,
         rate: { ...this.rate },
-        message: `Authenticated as @${user.login}`,
+        message: 'Authenticated as @' + user.login,
         authHeader: this.isAuthHeaderAttached(),
         token: test
       };
@@ -105,22 +118,23 @@ class GitHub {
         this.authUser = null;
         if (keepOnFailure && prev) {
           this.setToken(prev);
-          this.authStatus = 'authenticated'; // previous may still be valid; re-check later
-        } else if (!keepOnFailure) {
-          this.setToken('');
+        } else {
+          // keep the tested token in memory so UI can still show it; storage decides persist
+          this.setToken(test);
         }
-        return { ok: false, status: 'invalid', user: null, rate: this.rate, message: e.message, token: test };
+        return { ok: false, status: 'invalid', user: null, rate: this.rate, message: e.message || 'Invalid token', token: test };
       }
-      // Network / rate limit: do not discard previous token
-      if (keepOnFailure && prev) this.setToken(prev);
-      this.authStatus = e.code === 'RATE_LIMIT' ? 'error' : 'error';
+      // Network / CORS / rate limit: keep token in memory — do not treat as invalid
+      this.setToken(test);
+      this.authStatus = 'error';
       return {
         ok: false,
         status: 'error',
         user: null,
         rate: this.rate,
-        message: e.message || 'Validation failed',
-        token: test
+        message: e.message || 'Network error during validation',
+        token: test,
+        networkError: true
       };
     }
   }

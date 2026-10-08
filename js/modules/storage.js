@@ -1,5 +1,5 @@
 /**
- * GITREP26 V4 — LocalStorage + IndexedDB
+ * GITREP26 V5 — LocalStorage + IndexedDB
  * Token stored in dedicated key; never wiped on failed validation from caller.
  */
 const DB = 'GITREP26_V4';
@@ -104,13 +104,14 @@ class Storage {
 
   saveSettings(s) {
     const copy = { ...(s || this.getSettings()) };
-    // Token is managed only via saveToken/clearToken — never wipe here accidentally
+    // Token is ONLY written via saveToken / clearToken — never wipe from settings save
     const existing = this.getToken();
-    if (copy.token && copy.token.trim()) {
-      this.saveToken(copy.token.trim());
-    } else {
-      copy.token = existing;
+    if (copy.token && String(copy.token).trim()) {
+      // Keep dedicated key in sync if settings carries a real token
+      this.saveToken(String(copy.token).trim());
     }
+    // Always mirror existing dedicated token into the blob (never blank it)
+    copy.token = this.getToken() || existing || '';
     this.set('gitrep26_settings', copy);
   }
 

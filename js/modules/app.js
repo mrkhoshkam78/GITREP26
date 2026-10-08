@@ -1,11 +1,12 @@
 /**
- * GITREP26 V4 — Main Application Controller
+ * GITREP26 V5 — Main Application Controller
  */
 import { i18n } from './i18n.js';
 import { storage } from './storage.js';
 import { analyzer } from './analyzer.js';
 import { github } from './github.js';
 import { translator } from './translator.js';
+import { readmeInsight } from './readmeInsight.js';
 
 class App {
   constructor() {
@@ -41,12 +42,19 @@ class App {
     this.bind();
     this.render();
     this.setupPWA();
-    // Validate token & refresh rate limit without blocking UI
-    if (github.hasToken()) {
-      github.validateToken().then(r => {
+    // Validate existing token without clearing it
+    if (token) {
+      github.setToken(token);
+      github.validateToken(undefined, { keepOnFailure: true }).then(r => {
         this.updateAuthUI(r);
+        this.updateRateUI(r.rate || github.rate);
+        this._fillTokenInput(storage.getToken());
         this.renderSettings();
-      }).catch(() => {});
+      }).catch(() => {
+        // Network fail — token still kept
+        this._fillTokenInput(storage.getToken());
+        this.updateAuthUI({ status: 'error', ok: false, message: 'Offline / network' });
+      });
     } else {
       this.updateAuthUI({ status: 'guest', ok: true });
     }
@@ -124,8 +132,10 @@ class App {
     });
     document.getElementById('settings-form')?.addEventListener('submit', e => {
       e.preventDefault();
-      this.saveSettings();
+      this.saveTokenFromInput();
     });
+    document.getElementById('btn-save-token')?.addEventListener('click', () => this.saveTokenFromInput());
+    document.getElementById('btn-save-settings')?.addEventListener('click', () => this.saveNonTokenSettings());
     document.getElementById('btn-clear-token')?.addEventListener('click', () => this.clearToken());
     document.getElementById('btn-export')?.addEventListener('click', () => this.exportData());
     document.getElementById('btn-import')?.addEventListener('click', () => document.getElementById('import-file')?.click());
@@ -344,6 +354,8 @@ class App {
     }
     document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === this.settings.theme));
     document.querySelectorAll('[data-anim]').forEach(b => b.classList.toggle('active', b.dataset.anim === (this.settings.anim||'full')));
+    document.querySelectorAll('[data-accent]').forEach(b => b.classList.toggle('active', b.dataset.accent === (this.settings.accent||'purple')));
+    document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === i18n.lang));
     this.updateAuthUI({
       status: github.authStatus,
       user: github.authUser,
@@ -491,6 +503,7 @@ class App {
     const modal = document.getElementById('modal');
     const body = document.getElementById('modal-body');
     if (!modal || !body) return;
+    this.currentRepo = repo;
     const cats = (repo.categories||[]).map(c=>`<span class="chip chip-cat">${this.esc(c)}</span>`).join('');
     const tags = (repo.tags||repo.topics||[]).map(t=>`<span class="chip">${this.esc(t)}</span>`).join('');
     const similar = this.repos.filter(r => r.id !== repo.id && (r.categories||[]).some(c => (repo.categories||[]).includes(c))).slice(0,3);
@@ -501,15 +514,43 @@ class App {
       <button class="modal-close icon-btn" onclick="app.closeModal()"><svg class="icon"><use href="#icon-close"></use></svg></button>
       <div class="d-header">
         <img src="${repo.owner?.avatar_url||''}" class="d-avatar" alt="" width="56" height="56" onerror="this.style.display='none'">
-        <div><h2>${this.esc(repo.full_name)}</h2><p class="d-desc">${this.esc(translator.display(repo.description||'', i18n.lang))}</p></div>
+        <div>
+          <h2>${this.esc(repo.full_name)}</h2>
+          <p class="d-desc">${this.esc(translator.display(repo.description||'', i18n.lang))}</p>
+          <p class="insight-quick-summary" id="insight-quick-summary"></p>
+        </div>
       </div>
       <div class="d-sec chips">
         <button class="btn btn-ghost btn-sm" onclick="app.toggleCompare(${repo.id})">${inCompare ? '✓ Compare' : '+ Compare'}</button>
         <button class="btn btn-ghost btn-sm" onclick="app.toggleMonitor(${repo.id})">${monitored ? '✓ Monitor' : '+ Monitor'}</button>
         <button class="btn btn-ghost btn-sm" onclick="app.addPersonalTag(${repo.id})">+ Tag</button>
+        <button class="btn btn-primary btn-sm" id="btn-analyze-readme" onclick="app.analyzeReadme(${repo.id}, false)">${i18n.t('insight_analyze')}</button>
+        <button class="btn btn-ghost btn-sm" id="btn-reanalyze-readme" onclick="app.analyzeReadme(${repo.id}, true)">${i18n.t('insight_reanalyze')}</button>
       </div>
       ${pTags.length ? `<div class="d-sec"><h4>Personal tags</h4><div class="chips">${pTags.map(tg => `<span class="chip">${this.esc(tg)}</span>`).join('')}</div></div>` : ''}
-      <div class="d-sec"><h4>README</h4><div class="readme-preview" id="readme-box">…</div></div>
+
+      <div class="d-sec insight-panel" id="insight-panel">
+        <div class="insight-head">
+          <h3>${i18n.t('insight_title')}</h3>
+          <span class="insight-status" id="insight-status">${i18n.t('insight_pending')}</span>
+        </div>
+        <div id="insight-body" class="insight-body">
+          <div class="insight-loading" id="insight-loading" hidden>
+            <div class="insight-spinner"></div>
+            <p>${i18n.t('insight_analyzing')}</p>
+          </div>
+          <div id="insight-content"></div>
+        </div>
+      </div>
+
+      <div class="d-sec">
+        <div class="insight-head">
+          <h4>${i18n.t('insight_original_readme')}</h4>
+          <button class="btn btn-ghost btn-sm" type="button" onclick="app.toggleReadmeRaw()">${i18n.t('insight_toggle_readme')}</button>
+        </div>
+        <div class="readme-preview" id="readme-box" hidden>…</div>
+      </div>
+
       <div class="d-stats">
         <div class="stat"><b>⭐ ${this.fmt(repo.stargazers_count)}</b><small>${i18n.t('card_stars')}</small></div>
         <div class="stat"><b>🍴 ${this.fmt(repo.forks_count)}</b><small>${i18n.t('card_forks')}</small></div>
@@ -530,16 +571,15 @@ class App {
       ${similar.length?`<div class="d-sec"><h4>${i18n.t('details_similar')}</h4><div class="similar-list">${similar.map(s=>`<button class="similar-item" onclick="app.showDetail(${s.id})"><img src="${s.owner?.avatar_url||''}" width="24" height="24" alt=""><span>${this.esc(s.name)}</span></button>`).join('')}</div></div>`:''}
       <div class="d-acts">
         <a class="btn btn-primary" href="${repo.html_url}" target="_blank" rel="noopener">${i18n.t('card_view')}</a>
+        <a class="btn btn-ghost" href="${repo.html_url}#readme" target="_blank" rel="noopener">${i18n.t('insight_open_github')}</a>
         <button class="btn btn-ghost" onclick="app.closeModal()">${i18n.t('close')}</button>
       </div>`;
     modal.classList.add('open');
-    // Lazy README + files when online + token/guest API
+
     const parts = (repo.full_name || '').split('/');
     if (parts.length === 2) {
-      const box = document.getElementById('readme-box');
-      github.getReadme(parts[0], parts[1]).then(md => {
-        if (box) box.textContent = md ? md.slice(0, 2500) : 'README not available';
-      }).catch(() => { if (box) box.textContent = 'README not available'; });
+      // Auto-start analysis
+      this.analyzeReadme(repo.id, false);
       github.getContents(parts[0], parts[1]).then(files => {
         if (!files.length) return;
         const sec = document.createElement('div');
@@ -550,6 +590,131 @@ class App {
         body.appendChild(sec);
       }).catch(() => {});
     }
+  }
+
+  toggleReadmeRaw() {
+    const box = document.getElementById('readme-box');
+    if (box) box.hidden = !box.hidden;
+  }
+
+  async analyzeReadme(repoId, force = false) {
+    const repo = this.repos.find(r => r.id === repoId) || this.liveResults.find(r => r.id === repoId) || this.currentRepo;
+    if (!repo) return;
+    const parts = (repo.full_name || '').split('/');
+    if (parts.length !== 2) return;
+
+    const status = document.getElementById('insight-status');
+    const loading = document.getElementById('insight-loading');
+    const content = document.getElementById('insight-content');
+    const box = document.getElementById('readme-box');
+    if (loading) loading.hidden = false;
+    if (status) status.textContent = i18n.t('insight_analyzing');
+    if (content) content.innerHTML = '';
+
+    let md = null;
+    try {
+      // Try cache first for raw readme
+      const cacheKey = 'readme:' + repo.full_name;
+      if (!force) {
+        md = await storage.getCache(cacheKey);
+      }
+      if (!md) {
+        md = await github.getReadme(parts[0], parts[1]);
+        if (md) await storage.setCache(cacheKey, md, 24 * 3600 * 1000);
+      }
+    } catch (e) {
+      md = null;
+    }
+
+    if (box) {
+      box.textContent = md ? md.slice(0, 8000) : (i18n.t('insight_no_readme'));
+    }
+
+    try {
+      const result = await readmeInsight.process(md || '', repo, { force, lang: i18n.lang });
+      this._lastInsight = result;
+      this.renderInsight(result.insight, result.raw, result.fromCache);
+      if (status) {
+        status.textContent = result.fromCache
+          ? i18n.t('insight_cached')
+          : i18n.t('insight_done');
+      }
+    } catch (e) {
+      if (content) content.innerHTML = `<p class="insight-miss">${this.esc(e.message || 'Analysis failed')}</p>`;
+      if (status) status.textContent = i18n.t('insight_error');
+    } finally {
+      if (loading) loading.hidden = true;
+    }
+  }
+
+  renderInsight(insight, raw, fromCache) {
+    const content = document.getElementById('insight-content');
+    const quick = document.getElementById('insight-quick-summary');
+    if (!content || !insight) return;
+
+    if (quick) quick.textContent = insight.summary || '';
+
+    const nd = insight.notDoc || 'Not documented in README.';
+    const sec = (title, bodyHtml, sourceKey) => {
+      const src = raw?.sources?.[sourceKey];
+      const srcHtml = src
+        ? `<button type="button" class="insight-src" data-src="${this.esc(src)}">${i18n.t('insight_view_source')}</button>`
+        : '';
+      return `<details class="insight-sec" open>
+        <summary>${title} ${srcHtml}</summary>
+        <div class="insight-sec-body">${bodyHtml}</div>
+      </details>`;
+    };
+
+    const list = (arr) => {
+      if (!arr || !arr.length || (arr.length === 1 && arr[0] === nd))
+        return `<p class="insight-miss">${this.esc(nd)}</p>`;
+      return '<ul>' + arr.map(i => `<li>${this.esc(i)}</li>`).join('') + '</ul>';
+    };
+
+    const cmds = (insight.commands || []);
+    const cmdHtml = cmds.length
+      ? `<ul class="insight-cmds">${cmds.map(c => `
+          <li>
+            <code class="insight-code">${this.esc(c.cmd)}</code>
+            <button type="button" class="btn btn-ghost btn-sm insight-copy" data-copy="${this.esc(c.cmd)}">${i18n.t('insight_copy')}</button>
+            <span class="insight-cmd-exp">${this.esc(c.explain || '')}</span>
+          </li>`).join('')}</ul>`
+      : `<p class="insight-miss">${this.esc(nd)}</p>`;
+
+    const ts = raw?.analyzedAt ? new Date(raw.analyzedAt).toLocaleString() : '';
+    content.innerHTML = `
+      <p class="insight-meta">${fromCache ? '📦 ' + i18n.t('insight_cached') : '✨ ' + i18n.t('insight_done')}${ts ? ' · ' + ts : ''}${raw?.level ? ' · ' + raw.level : ''}</p>
+      ${sec('🎯 ' + i18n.t('insight_what'), `<p>${this.esc(insight.whatIsIt || nd)}</p>`, 'whatIsIt')}
+      ${sec('💡 ' + i18n.t('insight_does'), `<p>${this.esc(insight.whatDoesItDo || nd)}</p>`, 'whatIsIt')}
+      ${sec('👤 ' + i18n.t('insight_who'), `<p>${this.esc(insight.whoIsItFor || nd)}</p>`, null)}
+      ${sec('✨ ' + i18n.t('insight_features'), list(insight.features), 'features')}
+      ${sec('⚙️ ' + i18n.t('insight_requirements'), list(insight.requirements), 'requirements')}
+      ${sec('📦 ' + i18n.t('insight_install'), list(insight.installSteps), 'install')}
+      ${sec('🚀 ' + i18n.t('insight_usage'), list(insight.usageSteps), 'usage')}
+      ${sec('🛠️ ' + i18n.t('insight_commands'), cmdHtml, 'install')}
+      ${sec('🔧 ' + i18n.t('insight_config'), list(insight.configuration), 'configuration')}
+      ${insight.notes && insight.notes.length ? sec('⚠️ ' + i18n.t('insight_notes'), list(insight.notes), 'notes') : ''}
+      ${sec('📌 ' + i18n.t('insight_summary'), `<p>${this.esc(insight.summary || nd)}</p>`, 'whatIsIt')}
+    `;
+
+    content.querySelectorAll('.insight-copy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(btn.getAttribute('data-copy') || '');
+          this.toast(i18n.t('insight_copied'));
+        } catch {
+          this.toast('Copy failed');
+        }
+      });
+    });
+    content.querySelectorAll('.insight-src').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toast(btn.getAttribute('data-src') || '');
+      });
+    });
   }
 
   closeModal() { document.getElementById('modal')?.classList.remove('open'); }
@@ -585,79 +750,106 @@ class App {
     this.applyFilters();
   }
 
-  /**
-   * CRITICAL: Capture input value synchronously, validate first,
-   * only persist on success. Never wipe a good stored token on failure.
-   */
-  async saveSettings() {
-    const input = document.getElementById('token-input');
-    // Read IMMEDIATELY before any await / re-render
-    const typed = (input && typeof input.value === 'string') ? input.value.trim() : '';
-    const existing = storage.getToken();
-
-    // Persist non-token settings without touching token
+  /** Save language/theme/anim/accent only — never touches PAT */
+  saveNonTokenSettings() {
     const s = storage.getSettings();
-    s.theme = this.settings.theme;
-    s.language = this.settings.language;
-    s.anim = this.settings.anim;
+    s.theme = this.settings.theme || s.theme;
+    s.language = this.settings.language || s.language;
+    s.anim = this.settings.anim || s.anim;
     s.accent = this.settings.accent || s.accent || 'purple';
-    // Keep existing token in settings object
-    s.token = existing;
+    // NEVER overwrite token from this path
+    s.token = storage.getToken();
     storage.saveSettings(s);
     this.settings = s;
+    this.toast(i18n.t('toast_saved'));
+    this.renderSettings();
+  }
+
+  /**
+   * Validate & Save token from input.
+   * - Always reads input value synchronously first
+   * - Saves to localStorage on success OR network error (so CORS/offline does not wipe work)
+   * - Only rejects persist on explicit AUTH_INVALID (401)
+   * - Never clears an existing good token unless user hits Clear
+   */
+  async saveTokenFromInput() {
+    const input = document.getElementById('token-input');
+    const typed = input ? String(input.value || '').trim() : '';
+    const existing = storage.getToken();
 
     const statusEl = document.getElementById('auth-detail');
     if (statusEl) statusEl.textContent = i18n.t('auth_checking');
 
-    // Empty input: do NOT clear existing token unless field was intentionally emptied
-    // and user confirms via Clear Token button. Here we only validate if typed.
+    // Empty field → keep existing token, do not clear
     if (!typed) {
       if (existing) {
-        // Restore field from storage so UI doesn't look wiped
-        if (input) input.value = existing;
-        this.toast(i18n.t('toast_token_saved') + ' (kept)');
+        this._fillTokenInput(existing);
         github.setToken(existing);
-        const r = await github.validateToken(existing, { keepOnFailure: true });
-        this.updateAuthUI(r);
-        this.updateRateUI(r.rate || github.rate);
+        try {
+          const r = await github.validateToken(existing, { keepOnFailure: true });
+          this.updateAuthUI(r);
+          this.updateRateUI(r.rate || github.rate);
+        } catch (_) {}
+        this.toast(i18n.t('toast_token_saved') + ' (kept)');
       } else {
         this.updateAuthUI({ status: 'guest', ok: true });
         this.toast(i18n.t('auth_guest'));
       }
-      this._fillTokenInput(storage.getToken());
       return;
     }
 
-    // Validate typed token FIRST
-    const result = await github.validateToken(typed, { keepOnFailure: true });
+    // Looks like a token — set in memory and try validate
+    github.setToken(typed);
+    let result;
+    try {
+      result = await github.validateToken(typed, { keepOnFailure: true });
+    } catch (e) {
+      result = { ok: false, status: 'error', message: e.message || 'Error', networkError: true, token: typed };
+    }
+
     if (result.ok && result.status === 'authenticated') {
       storage.saveToken(typed);
       this.settings.token = typed;
       github.setToken(typed);
+      this._fillTokenInput(typed);
       this.updateAuthUI(result);
       this.updateRateUI(result.rate || github.rate);
       this.toast(i18n.t('toast_token_saved') + (result.user ? ' (@' + result.user.login + ')' : ''));
-      this._fillTokenInput(typed);
-    } else {
-      // Failed: keep previous stored token; restore typed text in input for editing
+      return;
+    }
+
+    if (result.status === 'invalid') {
+      // Explicitly bad token from GitHub — do NOT save, keep previous
       if (existing) {
         github.setToken(existing);
         this.settings.token = existing;
+        this._fillTokenInput(typed); // keep what they typed so they can fix
+      } else {
+        github.setToken('');
+        this._fillTokenInput(typed);
       }
       this.updateAuthUI(result);
-      this.updateRateUI(result.rate || github.rate);
-      this.toast(result.status === 'invalid' ? i18n.t('auth_invalid') : (result.message || i18n.t('toast_error')));
-      this._fillTokenInput(typed);
+      this.toast(i18n.t('auth_invalid'));
+      return;
     }
+
+    // Network / CORS / rate-limit: STILL SAVE the token so it survives reload
+    // User can use it when online; prevents the "clears on save" bug offline
+    storage.saveToken(typed);
+    this.settings.token = typed;
+    github.setToken(typed);
+    this._fillTokenInput(typed);
+    this.updateAuthUI({ status: 'error', ok: false, message: result.message });
+    this.updateRateUI(result.rate || github.rate);
+    this.toast(i18n.t('toast_token_saved') + ' — ' + (result.message || 'saved locally, validate when online'));
   }
 
   _fillTokenInput(value) {
     const input = document.getElementById('token-input');
-    if (input) {
-      input.value = value || '';
-      // Prevent password manager from wiping
-      input.setAttribute('value', value || '');
-    }
+    if (!input) return;
+    // Use both property and attribute so it survives any re-render quirks
+    input.value = value || '';
+    try { input.setAttribute('value', value || ''); } catch (_) {}
   }
 
   async clearToken() {
@@ -668,6 +860,11 @@ class App {
     this.updateAuthUI({ status: 'guest', ok: true });
     this.updateRateUI({});
     this.toast(i18n.t('token_cleared'));
+  }
+
+  // Back-compat alias
+  async saveSettings() {
+    await this.saveTokenFromInput();
   }
 
   toggleDescOriginal(checked) {
