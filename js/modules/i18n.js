@@ -76,7 +76,7 @@ const T = {
     auth_ok:"Authenticated", auth_invalid:"Invalid token", auth_error:"Auth error", auth_guest:"Guest Mode",
     auth_checking:"Verifying token…", auth_header_ok:"Authorization header attached",
     token_cleared:"Token cleared", validate_token:"Validate & Save", clear_token:"Clear Token",
-    token_status:"Authentication status"
+    token_status:"Authentication status", version_label:"Version", settings_install:"Install App", settings_install_help:"Install GITREP26 as a Progressive Web App on this device.", theme_toggle:"Toggle theme", landing_title:"Discover open source", landing_sub:"Search GitHub by real-world usage, technology, and categories", landing_search_ph:"Search repositories, topics, languages…", landing_start:"Start Exploring", landing_cats:"Popular categories", landing_hint:"Press Enter to search · Esc to browse home", search_progress:"Searching…", search_page:"Page", search_of:"of", search_results_count:"results", search_prev:"Previous", search_next:"Next", search_empty:"No repositories found for this query", search_error:"Search failed. Showing local results.", confidence_explicit:"Documented in README", confidence_inferred:"Inferred from context", confidence_missing:"Not documented in README", 
   },
   fa: {
     nav_home:"خانه", nav_explore:"کاوش", nav_categories:"دسته‌بندی‌ها", nav_favorites:"علاقه‌مندی‌ها", nav_dashboard:"داشبورد", nav_compare:"مقایسه",
@@ -152,31 +152,41 @@ const T = {
     auth_ok:"احراز هویت شده", auth_invalid:"توکن نامعتبر", auth_error:"خطای احراز هویت", auth_guest:"حالت مهمان",
     auth_checking:"در حال بررسی توکن…", auth_header_ok:"هدر Authorization متصل است",
     token_cleared:"توکن پاک شد", validate_token:"اعتبارسنجی و ذخیره", clear_token:"پاک کردن توکن",
-    token_status:"وضعیت احراز هویت"
+    token_status:"وضعیت احراز هویت", version_label:"نسخه", settings_install:"نصب برنامه", settings_install_help:"نصب GITREP26 به‌عنوان وب‌اپ Progressive روی این دستگاه.", theme_toggle:"تغییر تم", landing_title:"کشف پروژه‌های متن‌باز", landing_sub:"جستجوی گیت‌هاب بر اساس کاربرد واقعی، فناوری و دسته‌بندی", landing_search_ph:"جستجوی مخزن، موضوع، زبان…", landing_start:"شروع کاوش", landing_cats:"دسته‌های محبوب", landing_hint:"Enter برای جستجو · Esc برای صفحه اصلی", search_progress:"در حال جستجو…", search_page:"صفحه", search_of:"از", search_results_count:"نتیجه", search_prev:"قبلی", search_next:"بعدی", search_empty:"مخزنی برای این عبارت یافت نشد", search_error:"جستجو ناموفق بود. نتایج محلی نمایش داده می‌شود.", confidence_explicit:"مستند در README", confidence_inferred:"استنتاج از بافت", confidence_missing:"در README مستند نشده", 
   }
 };
 
 class I18n {
   constructor() {
-    this.lang = localStorage.getItem('gpe_lang') || 'en';
+    this.lang = localStorage.getItem('gitrep26_lang') || localStorage.getItem('gpe_lang') || 'en';
   }
   t(k) { return T[this.lang]?.[k] ?? T.en[k] ?? k; }
   setLang(lang) {
     if (!T[lang]) return;
     this.lang = lang;
-    localStorage.setItem('gpe_lang', lang);
+    localStorage.setItem('gitrep26_lang', lang);
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
     document.body.classList.toggle('rtl', lang === 'fa');
     this.apply();
     window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
   }
-  apply() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      el.textContent = this.t(el.getAttribute('data-i18n'));
+  apply(root = document) {
+    root.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (k) el.textContent = this.t(k);
     });
-    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-      el.placeholder = this.t(el.getAttribute('data-i18n-ph'));
+    root.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const k = el.getAttribute('data-i18n-ph');
+      if (k) el.placeholder = this.t(k);
+    });
+    root.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.getAttribute('data-i18n-title');
+      if (k) el.title = this.t(k);
+    });
+    root.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const k = el.getAttribute('data-i18n-html');
+      if (k) el.innerHTML = this.t(k);
     });
   }
   init() {
@@ -184,6 +194,19 @@ class I18n {
     document.documentElement.dir = this.lang === 'fa' ? 'rtl' : 'ltr';
     document.body.classList.toggle('rtl', this.lang === 'fa');
     this.apply();
+    // Watch for dynamically inserted nodes
+    if (!this._obs) {
+      this._obs = new MutationObserver(muts => {
+        for (const m of muts) {
+          m.addedNodes.forEach(n => {
+            if (n.nodeType !== 1) return;
+            if (n.hasAttribute?.('data-i18n') || n.hasAttribute?.('data-i18n-ph')) this.apply(n.parentElement || document);
+            else if (n.querySelectorAll) this.apply(n);
+          });
+        }
+      });
+      this._obs.observe(document.body, { childList: true, subtree: true });
+    }
   }
 }
 export const i18n = new I18n();

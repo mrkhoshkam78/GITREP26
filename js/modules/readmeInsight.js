@@ -1,5 +1,5 @@
 /**
- * GITREP26 V5 — README Insight Engine (local, rule-based, no external AI)
+ * GITREP26 V6 — README Insight (4× quality) Engine (local, rule-based, no external AI)
  */
 import { storage } from './storage.js';
 import { translator } from './translator.js';
@@ -354,7 +354,16 @@ class ReadmeInsightEngine {
       licenseNote: licenseSec ? truncate(stripMd(licenseSec.text), 120) : (repo.license || null),
       sources,
       hasReadme: true,
-      rawLength: text.length
+      rawLength: text.length,
+      confidence: {
+        whatIsIt: intro ? 'explicit' : (desc ? 'inferred' : 'missing'),
+        features: features.length ? 'explicit' : 'missing',
+        install: installSteps.length ? 'explicit' : 'missing',
+        usage: usageSteps.length ? 'explicit' : 'missing',
+        requirements: requirements.length ? 'explicit' : 'missing',
+        configuration: configuration.length ? 'explicit' : 'missing',
+        commands: commands.length ? 'explicit' : 'missing'
+      }
     };
   }
 

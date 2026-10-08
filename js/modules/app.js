@@ -7,6 +7,7 @@ import { analyzer } from './analyzer.js';
 import { github } from './github.js';
 import { translator } from './translator.js';
 import { readmeInsight } from './readmeInsight.js';
+import { APP_VERSION, APP_NAME, APP_BUILD } from './version.js';
 
 class App {
   constructor() {
@@ -23,7 +24,12 @@ class App {
     }
     this.page = 1;
     this.liveResults = [];
-    this.defaultCollapsed = false; // new cards expanded by default
+    this.defaultCollapsed = false;
+    this.pageSize = 8;
+    this.maxPages = 13;
+    this.searchPage = 1;
+    this.searchTotal = 0;
+    this.searching = false;
   }
 
   async init() {
@@ -68,6 +74,17 @@ class App {
 
       try { this.bind(); } catch (e) { console.warn('bind', e); }
       try { this.render(); } catch (e) { console.warn('render', e); }
+      try {
+        const ver = document.getElementById('app-version-label');
+        if (ver) ver.textContent = APP_NAME + ' v' + APP_VERSION + ' · ' + APP_BUILD;
+        this.updateThemeToggleIcon();
+        // Show immersive landing on first load of session
+        if (!sessionStorage.getItem('gitrep26_entered')) {
+          this.showLanding();
+        } else {
+          this.hideLanding();
+        }
+      } catch (e) { console.warn('landing', e); }
       try { this.setupPWA(); } catch (_) {}
 
       // Token validation is non-blocking
@@ -209,6 +226,30 @@ class App {
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.closeModal(); });
     // Mobile menu
+    
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const next = (this.settings.theme === 'dark' || (!this.settings.theme && !window.matchMedia('(prefers-color-scheme: light)').matches)) ? 'light' : 'dark';
+      this.applyTheme(next);
+      this.settings.theme = next;
+      storage.saveSettings(this.settings);
+      this.updateThemeToggleIcon();
+    });
+    document.getElementById('page-prev')?.addEventListener('click', () => this.goPage(-1));
+    document.getElementById('page-next')?.addEventListener('click', () => this.goPage(1));
+    // Landing
+    const landSearch = document.getElementById('landing-search');
+    const landGo = document.getElementById('landing-go');
+    landGo?.addEventListener('click', () => this.submitLanding());
+    landSearch?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.submitLanding();
+      if (e.key === 'Escape') this.enterAppFromLanding();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !document.getElementById('landing')?.classList.contains('hidden')) {
+        this.enterAppFromLanding();
+      }
+    });
+    
     document.getElementById('menu-btn')?.addEventListener('click', () => {
       document.getElementById('side-nav')?.classList.toggle('open');
     });
@@ -221,6 +262,10 @@ class App {
     if (params.repo) this.currentRepo = params.repo;
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(`view-${view}`)?.classList.add('active');
+    if (view !== 'home' || arguments.length) {
+      sessionStorage.setItem('gitrep26_entered', '1');
+      this.hideLanding();
+    }
     document.querySelectorAll('[data-nav]').forEach(el => {
       el.classList.toggle('active', el.dataset.nav === view);
     });
@@ -266,26 +311,140 @@ class App {
     });
   }
 
-  async liveSearch() {
-    if (!this.filters.q) return;
-    if (!github.hasToken() && !navigator.onLine) {
-      this.applyFilters();
+  setSearchProgress(pct, label) {
+    const wrap = document.getElementById('search-progress');
+    const bar = document.getElementById('search-progress-bar');
+    const lab = document.getElementById('search-progress-label');
+    if (!wrap) return;
+    if (pct == null || pct < 0) {
+      wrap.hidden = true;
+      if (bar) bar.style.width = '0%';
+      this.searching = false;
       return;
     }
-    try {
-      this.showLoading(true);
-      const result = await github.search(this.filters.q, 1, 30, this.sort === 'updated' ? 'updated' : 'stars');
-      this.liveResults = result.items.map(r => ({ ...r, ...analyzer.analyze(r) }));
+    wrap.hidden = false;
+    this.searching = true;
+    if (bar) bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+    if (lab) lab.textContent = label || i18n.t('search_progress');
+  }
+
+  async liveSearch(startPage = 1) {
+    const q = (this.filters.q || '').trim();
+    if (!q) return;
+
+    // Local-only offline without token
+    if (!navigator.onLine) {
+      this.liveResults = [];
+      this.searchPage = 1;
       this.applyFilters();
       this.navigate('explore');
+      this.renderPagination();
+      return;
+    }
+
+    const sort = this.sort === 'updated' ? 'updated' : (this.sort === 'forks' ? 'forks' : 'stars');
+    const perPage = this.pageSize; // 8
+    const maxPages = this.maxPages; // 13
+    const pagesToFetch = Math.min(maxPages, 13);
+    const all = [];
+    let totalCount = 0;
+
+    this.setSearchProgress(2, i18n.t('search_progress'));
+    this.navigate('explore');
+    this.hideLanding();
+
+    try {
+      // Fetch pages sequentially to respect rate limits; stop early if fewer results
+      for (let page = 1; page <= pagesToFetch; page++) {
+        const pct = Math.round((page - 1) / pagesToFetch * 90) + 5;
+        this.setSearchProgress(pct, `${i18n.t('search_progress')} ${page}/${pagesToFetch}`);
+        try {
+          const result = await github.search(q, page, perPage, sort);
+          totalCount = result.total || totalCount;
+          const items = (result.items || []).map(r => ({ ...r, ...analyzer.analyze(r) }));
+          all.push(...items);
+          // Cache page
+          try { await storage.setCache(`search:${q}:${page}:${sort}`, items, 30 * 60 * 1000); } catch (_) {}
+          if (items.length < perPage) break; // no more pages
+        } catch (e) {
+          if (e.code === 'RATE_LIMIT') {
+            this.toast(i18n.t('rate_limited'));
+            break;
+          }
+          if (page === 1) throw e;
+          break;
+        }
+      }
+
+      // Rank: stars, forks, activity, quality
+      all.sort((a, b) => {
+        const sa = (a.stargazers_count || 0);
+        const sb = (b.stargazers_count || 0);
+        if (sb !== sa) return sb - sa;
+        const fa = (a.forks_count || 0);
+        const fb = (b.forks_count || 0);
+        if (fb !== fa) return fb - fa;
+        const ua = new Date(a.pushed_at || a.updated_at || 0).getTime();
+        const ub = new Date(b.pushed_at || b.updated_at || 0).getTime();
+        if (ub !== ua) return ub - ua;
+        return (b.quality_score || 0) - (a.quality_score || 0);
+      });
+
+      this.liveResults = all;
+      this.searchTotal = totalCount || all.length;
+      this.searchPage = startPage;
+      this.setSearchProgress(100, i18n.t('search_results_count'));
+      this.applyFilters();
+      this.renderPagination();
+      setTimeout(() => this.setSearchProgress(null), 600);
     } catch (e) {
-      console.warn('Live search failed, using local', e);
+      console.warn('Live search failed', e);
       this.liveResults = [];
       this.applyFilters();
-      if (e.code === 'RATE_LIMIT') this.toast(i18n.t('rate_limited'));
-    } finally {
-      this.showLoading(false);
+      this.toast(i18n.t('search_error'));
+      this.setSearchProgress(null);
     }
+  }
+
+  renderPagination() {
+    const el = document.getElementById('explore-pagination');
+    const info = document.getElementById('page-info');
+    if (!el) return;
+    const totalItems = this.filtered.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / this.pageSize));
+    if (totalItems <= this.pageSize && !this.liveResults.length) {
+      el.hidden = true;
+      return;
+    }
+    el.hidden = false;
+    this.searchPage = Math.min(Math.max(1, this.searchPage || 1), totalPages);
+    if (info) {
+      info.textContent = `${i18n.t('search_page')} ${this.searchPage} ${i18n.t('search_of')} ${totalPages} · ${totalItems} ${i18n.t('search_results_count')}`;
+    }
+    const prev = document.getElementById('page-prev');
+    const next = document.getElementById('page-next');
+    if (prev) prev.disabled = this.searchPage <= 1;
+    if (next) next.disabled = this.searchPage >= totalPages;
+  }
+
+  goPage(delta) {
+    const totalPages = Math.max(1, Math.ceil(this.filtered.length / this.pageSize));
+    this.searchPage = Math.min(totalPages, Math.max(1, (this.searchPage || 1) + delta));
+    this.renderExplorePage();
+    this.renderPagination();
+    document.getElementById('explore-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  renderExplorePage() {
+    const grid = document.getElementById('explore-grid');
+    if (!grid || this.view !== 'explore') return;
+    const page = this.searchPage || 1;
+    const start = (page - 1) * this.pageSize;
+    const slice = this.filtered.slice(start, start + this.pageSize);
+    grid.innerHTML = slice.length
+      ? slice.map((r, i) => this.card(r, i)).join('')
+      : `<div class="empty-state"><h3 data-i18n="search_empty">${i18n.t('search_empty')}</h3></div>`;
+    i18n.apply(grid);
   }
 
   section(key) {
@@ -323,9 +482,14 @@ class App {
     });
     const grid = document.getElementById('explore-grid');
     if (grid) {
-      grid.innerHTML = this.filtered.map((r,i) => this.card(r,i)).join('') || this.empty();
       const cnt = document.getElementById('explore-count');
       if (cnt) cnt.textContent = `${this.filtered.length} ${i18n.t('projects')}`;
+      if (this.view === 'explore') {
+        this.renderExplorePage();
+        this.renderPagination();
+      } else {
+        grid.innerHTML = this.filtered.map((r,i) => this.card(r,i)).join('') || this.empty();
+      }
     }
     if (this.view === 'category' && this.currentCat) {
       const cat = this.categories.find(c => c.id === this.currentCat);
