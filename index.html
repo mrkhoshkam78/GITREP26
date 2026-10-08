@@ -8,7 +8,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>GITREP26</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%238B5CF6'/><path d='M10 16l4 4 8-8' stroke='%23fff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/png/logo-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/png/logo-192.png">
+  <link rel="apple-touch-icon" href="assets/png/logo-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -59,15 +61,18 @@
   </div>
 
   <div id="loader">
-    <div class="loader-mark"><svg class="icon"><use href="#icon-check"></use></svg></div>
+    <div class="loader-mark">
+      <img src="assets/webp/logo-128.webp" alt="GITREP26" width="56" height="56" class="loader-logo">
+    </div>
+    <div class="loader-brand">GITREP26</div>
     <div class="loader-track"><i></i></div>
   </div>
 
   <header class="header">
     <button class="icon-btn" id="menu-btn" aria-label="Menu"><svg class="icon"><use href="#icon-menu"></use></svg></button>
     <a href="#" class="logo" data-nav="home" onclick="app.navigate('home');return false">
-      <span class="logo-mark"><svg class="icon"><use href="#icon-check"></use></svg></span>
-      <span>GITREP26</span>
+      <span class="logo-mark"><img src="assets/webp/logo-128.webp" alt="" width="28" height="28" class="logo-img"></span>
+      <span class="logo-text">GITREP26</span>
     </a>
     <nav class="nav">
       <a href="#" data-nav="home"><svg class="icon"><use href="#icon-home"></use></svg> <span data-i18n="nav_home">Home</span></a>
