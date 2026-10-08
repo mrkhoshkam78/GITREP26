@@ -625,3 +625,40 @@ body.rtl .search-box .icon {
   .insight-panel { padding: .85rem; }
   .insight-code { font-size: .72rem; }
 }
+
+/* Logo */
+.logo-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: grid; place-items: center; overflow: hidden;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 25%, transparent), transparent);
+  flex-shrink: 0;
+}
+.logo-img {
+  width: 28px; height: 28px; object-fit: contain; display: block;
+  filter: none;
+}
+.logo-text {
+  font-weight: 700; letter-spacing: 0.02em;
+}
+[data-theme="dark"] .logo-img,
+:root:not([data-theme="light"]) .logo-img {
+  /* keep original dark mark visible on dark bg via slight invert if needed */
+  filter: brightness(1.15) contrast(1.05);
+}
+[data-theme="light"] .logo-img { filter: none; }
+
+.loader-mark {
+  width: 72px !important; height: 72px !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 32px var(--glow) !important;
+  animation: pulse 1.4s ease-in-out infinite;
+  display: grid; place-items: center;
+}
+.loader-logo {
+  width: 56px; height: 56px; object-fit: contain;
+}
+.loader-brand {
+  font-weight: 700; font-size: 1.05rem; letter-spacing: 0.08em;
+  color: var(--t1); opacity: .9;
+}
