@@ -67,8 +67,10 @@ export function installLandingHelpers(AppProto) {
     const lightIcon = document.querySelector('.theme-icon-light');
     if (!darkIcon || !lightIcon) return;
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    document.body.classList.add('theme-switching');
     darkIcon.hidden = isLight;
     lightIcon.hidden = !isLight;
+    setTimeout(() => document.body.classList.remove('theme-switching'), 450);
   };
 
   AppProto.setSearchProgress = function setSearchProgress(pct, label) {
@@ -79,7 +81,10 @@ export function installLandingHelpers(AppProto) {
     if (pct == null || pct < 0) {
       wrap.setAttribute('hidden', '');
       wrap.hidden = true;
-      if (bar) { bar.style.width = '0%'; bar.style.setProperty('width', '0%'); }
+      if (bar) {
+        bar.style.width = '0%';
+        bar.style.setProperty('width', '0%');
+      }
       this.searching = false;
       return;
     }
@@ -87,33 +92,10 @@ export function installLandingHelpers(AppProto) {
     wrap.hidden = false;
     this.searching = true;
     const w = Math.min(100, Math.max(0, Number(pct) || 0));
-    if (bar) { bar.style.width = w + '%'; bar.style.setProperty('width', w + '%'); }
+    if (bar) {
+      bar.style.width = w + '%';
+      bar.style.setProperty('width', w + '%');
+    }
     if (lab) lab.textContent = label || i18n.t('search_progress');
-  };
-
-  AppProto.applyFilters = function applyFilters() {
-    let list = this.liveResults.length ? [...this.liveResults] : [...this.repos];
-    const f = this.filters;
-    const q = (f.q || '').toLowerCase();
-    if (q && !this.liveResults.length) {
-      list = list.filter(r => {
-        const t = `${r.name} ${r.description} ${(r.topics||[]).join(' ')} ${(r.tags||[]).join(' ')} ${(r.categories||[]).join(' ')} ${r.language}`.toLowerCase();
-        return t.includes(q);
-      });
-    }
-    if (f.category) {
-      list = list.filter(r => (r.categories||[]).some(c =>
-        c.toLowerCase().includes(f.category.toLowerCase()) || f.category.toLowerCase().includes(c.toLowerCase())
-      ));
-    }
-    if (f.language) list = list.filter(r => (r.language||'').toLowerCase() === f.language.toLowerCase());
-    if (f.minStars > 0) list = list.filter(r => (r.stargazers_count||0) >= f.minStars);
-    if (f.offline) list = list.filter(r => r.is_offline);
-    if (f.lightweight) list = list.filter(r => r.is_lightweight);
-    if (f.beginner) list = list.filter(r => (r.beginner_score||0) >= 70);
-    if (f.active) list = list.filter(r => (r.activity_score||0) >= 80);
-    list = this.sortList(list);
-    this.filtered = list;
-    this.renderDynamic();
   };
 }
