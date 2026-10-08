@@ -231,7 +231,7 @@
             <input type="text" id="token-input" class="token-input" data-i18n-ph="settings_token_ph" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
             <p class="sg-help" data-i18n="settings_token_help">Stored only on this device. Used solely for GitHub API requests. Leave empty for Guest Mode.</p>
             <div class="opt-row" style="margin-top:.6rem">
-              <button type="submit" class="btn btn-primary btn-sm" data-i18n="validate_token">Validate & Save</button>
+              <button type="button" class="btn btn-primary btn-sm" id="btn-save-token" data-i18n="validate_token">Validate & Save</button>
               <button type="button" class="btn btn-ghost btn-sm" id="btn-clear-token" data-i18n="clear_token">Clear Token</button>
             </div>
           </div>
@@ -265,7 +265,7 @@
               <input type="file" id="import-file" accept=".json" hidden>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" data-i18n="settings_save">Save Settings</button>
+          <button type="button" class="btn btn-primary" id="btn-save-settings" data-i18n="settings_save">Save Settings</button>
         </form>
       </div>
     </div>

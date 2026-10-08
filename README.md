@@ -1,28 +1,19 @@
-# GITREP26 V4
+# GITREP26 V5
 
-Premium client-side GitHub project discovery platform.
+Premium client-side GitHub project discovery with **README Insight Engine**.
 
-## Critical fixes
-- **PAT flow**: Validate first, save only on success, never wipe existing token on failure
-- Token stored in dedicated `localStorage` key `gitrep26_pat_token`
-- Input type text (not password) to avoid browser clearing on submit
-
-## V4 features
-- Live search autocomplete (categories, languages, repos, topics)
-- Rich project details (README preview, files, tags, monitor, compare)
-- Personal collections (local IndexedDB/localStorage)
-- Project comparison (2–3 repos)
-- Personal statistics dashboard
-- Manual personal tags
-- Update monitoring (local)
-- Custom accent themes (purple, turquoise, green, blue, orange, red)
-- Improved Persian translation engine
-- Smart offline indicators + API result caching hooks
+## New in V5
+- Local README analysis (no backend, no external AI)
+- Structured insight: what / who / features / install / usage / commands / config
+- Persian & English fluent explanations
+- IndexedDB caching of README + analysis
+- Source transparency (“View source”)
+- Copyable commands
 
 ## Run
 ```bash
 python -m http.server 8080
-# → http://localhost:8080
+# http://localhost:8080
 ```
 
-ES modules require HTTP (not file://).
+Open any repository → Details → **Analyze README**.
