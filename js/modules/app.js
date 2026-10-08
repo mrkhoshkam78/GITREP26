@@ -298,6 +298,8 @@ class App {
           const r = await github.validateToken(existing, { keepOnFailure: true });
           this.updateAuthUI(r);
           this.updateRateUI(r.rate || github.rate);
+          this.updateConnectivityBadge();
+          this.expandCategoriesIfAuthenticated();
         } catch (_) {}
         this.toast(i18n.t('toast_token_saved') + ' (kept)');
       } else {
@@ -355,6 +357,7 @@ class App {
 
   async clearToken() {
     storage.clearToken();
+    try { this.updateConnectivityBadge(); this.expandCategoriesIfAuthenticated(); } catch(_){}
     this.settings.token = '';
     github.setToken('');
     this._fillTokenInput('');
@@ -367,6 +370,7 @@ class App {
     const mode = document.getElementById('auth-mode');
     const detail = document.getElementById('auth-detail');
     const status = info.status || github.authStatus || 'guest';
+    try { this.updateConnectivityBadge(); this.expandCategoriesIfAuthenticated(); } catch(_){}
     if (mode) {
       mode.className = 'auth-badge ' + status;
       const labels = {
@@ -718,8 +722,14 @@ class App {
   }
 
   async liveSearch(startPage = 1) {
-    const q = (this.filters.q || '').trim();
-    if (!q) return;
+    const q = (this.filters.q || document.getElementById('search-input')?.value || '').trim();
+    this.filters.q = q;
+    if (!q) {
+      this.liveResults = [];
+      this.applyFilters();
+      this.navigate('explore');
+      return;
+    }
 
     // Local-only offline without token
     if (!navigator.onLine) {
@@ -955,7 +965,10 @@ class App {
         fetch('data/categories.json'),
         fetch('data/sample-repos.json')
       ]);
-      this.categories = (await catRes.json()).categories;
+      const catJson = await catRes.json();
+      this._baseCategories = (catJson.categories || []).filter(c => !c.online_only);
+      this._onlineCategories = catJson.online_categories || [];
+      this.categories = [...this._baseCategories];
       let repos = await repoRes.json();
       repos = repos.map(r => {
         if (r.quality_score == null) return { ...r, ...analyzer.analyze(r) };
@@ -1032,6 +1045,8 @@ class App {
         github.validateToken(undefined, { keepOnFailure: true }).then(r => {
           this.updateAuthUI(r);
           this.updateRateUI(r.rate || github.rate);
+          this.updateConnectivityBadge();
+          this.expandCategoriesIfAuthenticated();
           this._fillTokenInput(storage.getToken());
           this.renderSettings();
         }).catch(() => {
@@ -1055,8 +1070,9 @@ class App {
       const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     } else {
-      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
     }
+    try { this.updateThemeToggleIcon(); } catch(_){}
   }
 
   applyAnim(level) {
@@ -1122,6 +1138,232 @@ class App {
   }
 
   closeModal() { document.getElementById('modal')?.classList.remove('open'); }
+
+  /* ========== V7 methods ========== */
+  async analyzeReadme(id, force = false) {
+    const repo = this.repos.find(r => r.id === id) || this.liveResults.find(r => r.id === id) || this.currentRepo;
+    if (!repo) return;
+    const status = document.getElementById('insight-status');
+    const loading = document.getElementById('insight-loading');
+    const content = document.getElementById('insight-content');
+    const quick = document.getElementById('insight-quick-summary');
+    if (status) status.textContent = i18n.t('insight_analyzing');
+    if (loading) loading.hidden = false;
+    if (content) content.innerHTML = '';
+    try {
+      let md = null;
+      try {
+        const owner = repo.owner?.login || (repo.full_name || '').split('/')[0];
+        const name = repo.name || (repo.full_name || '').split('/')[1];
+        if (owner && name && navigator.onLine) {
+          md = await github.getReadme(owner, name);
+        }
+      } catch (e) {
+        console.warn('readme fetch', e);
+      }
+      if (!md) {
+        // fallback: description only
+        md = `# ${repo.name}\n\n${repo.description || ''}\n\nTopics: ${(repo.topics || []).join(', ')}`;
+      }
+      const result = await readmeInsight.process(md, repo, { force, lang: i18n.lang });
+      const insight = result.insight || result.raw || {};
+      if (status) status.textContent = result.fromCache ? i18n.t('insight_cached') : i18n.t('insight_done');
+      if (quick) quick.textContent = insight.summary || insight.what || '';
+      if (content) content.innerHTML = this.renderInsight(insight);
+      const box = document.getElementById('readme-box');
+      if (box) {
+        box.dataset.raw = md.slice(0, 80000);
+        if (!box.hidden) box.textContent = md.slice(0, 12000);
+      }
+      this._lastInsightMd = md;
+    } catch (e) {
+      console.error(e);
+      if (status) status.textContent = i18n.t('insight_error');
+      if (content) content.innerHTML = `<p class="insight-error">${this.esc(e.message || i18n.t('insight_error'))}</p>`;
+    } finally {
+      if (loading) loading.hidden = true;
+    }
+  }
+
+  renderInsight(insight) {
+    if (!insight) return `<p>${i18n.t('insight_no_readme')}</p>`;
+    const block = (titleKey, body) => {
+      if (!body || (Array.isArray(body) && !body.length)) return '';
+      const inner = Array.isArray(body)
+        ? `<ul>${body.map(x => `<li>${this.esc(typeof x === 'string' ? x : (x.text || x.cmd || JSON.stringify(x)))}</li>`).join('')}</ul>`
+        : `<p>${this.esc(body)}</p>`;
+      return `<div class="insight-block"><h4>${i18n.t(titleKey)}</h4>${inner}</div>`;
+    };
+    const cmds = (insight.commands || []).map(c => {
+      const cmd = typeof c === 'string' ? c : (c.cmd || c.text || '');
+      const exp = typeof c === 'object' ? (c.explain || c.explanation || '') : '';
+      return `<li class="cmd-row"><code>${this.esc(cmd)}</code>${exp ? `<span class="cmd-exp">${this.esc(exp)}</span>` : ''}
+        <button type="button" class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText(${JSON.stringify(cmd)})">${i18n.t('insight_copy')}</button></li>`;
+    }).join('');
+    return [
+      block('insight_what', insight.what),
+      block('insight_does', insight.does),
+      block('insight_who', insight.who || insight.audience),
+      block('insight_summary', insight.summary),
+      block('insight_features', insight.features),
+      block('insight_requirements', insight.requirements),
+      block('insight_install', insight.install || insight.installSteps),
+      block('insight_usage', insight.usage || insight.usageSteps),
+      cmds ? `<div class="insight-block"><h4>${i18n.t('insight_commands')}</h4><ul class="cmd-list">${cmds}</ul></div>` : '',
+      block('insight_config', insight.config),
+      block('insight_notes', insight.notes || insight.warnings)
+    ].filter(Boolean).join('') || `<p>${i18n.t('insight_no_readme')}</p>`;
+  }
+
+  toggleReadmeRaw() {
+    const box = document.getElementById('readme-box');
+    if (!box) return;
+    box.hidden = !box.hidden;
+    if (!box.hidden && box.dataset.raw) box.textContent = box.dataset.raw;
+  }
+
+  updateSuggestions(q) {
+    const box = document.getElementById('suggest-box');
+    if (!box) return;
+    const query = (q || '').trim().toLowerCase();
+    if (query.length < 2) { box.hidden = true; box.innerHTML = ''; return; }
+    const hist = (storage.getSearchHistory?.() || []).filter(s => s.toLowerCase().includes(query)).slice(0, 5);
+    const local = this.repos.filter(r => {
+      const t = `${r.name} ${r.full_name} ${r.description}`.toLowerCase();
+      return t.includes(query);
+    }).slice(0, 6);
+    const items = [];
+    hist.forEach(s => items.push(`<button type="button" role="option" class="suggest-item" data-q="${this.esc(s)}">${this.esc(s)}</button>`));
+    local.forEach(r => items.push(`<button type="button" role="option" class="suggest-item" data-id="${r.id}">${this.esc(r.full_name || r.name)}</button>`));
+    if (!items.length) { box.hidden = true; return; }
+    box.innerHTML = items.join('');
+    box.hidden = false;
+    box.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', () => {
+      const inp = document.getElementById('search-input');
+      if (inp) inp.value = b.dataset.q;
+      this.filters.q = b.dataset.q;
+      this.hideSuggestions();
+      this.liveSearch(1);
+    }));
+    box.querySelectorAll('[data-id]').forEach(b => b.addEventListener('click', () => {
+      this.hideSuggestions();
+      this.showDetail(+b.dataset.id);
+    }));
+  }
+
+  hideSuggestions() {
+    const box = document.getElementById('suggest-box');
+    if (box) { box.hidden = true; }
+  }
+
+  suggestKey(e) {
+    if (e.key === 'Escape') this.hideSuggestions();
+  }
+
+  exportData() {
+    const data = {
+      version: APP_VERSION,
+      settings: { ...this.settings, token: undefined },
+      favorites: storage.getFavorites?.() || [],
+      history: storage.getHistory?.() || [],
+      collections: storage.getCollections?.() || [],
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `gitrep26-export-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    this.toast(i18n.t('settings_export'));
+  }
+
+  async importData(e) {
+    const file = e.target?.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (data.favorites) storage.setFavorites?.(data.favorites);
+      if (data.collections) storage.setCollections?.(data.collections);
+      this.toast(i18n.t('settings_import'));
+      this.render();
+    } catch (err) {
+      this.toast(err.message || 'Import failed');
+    }
+    e.target.value = '';
+  }
+
+  toggleDescOriginal() { /* reserved */ }
+
+  toggleCompare(id) {
+    storage.toggleCompare?.(id);
+    this.showDetail(id);
+  }
+
+  toggleMonitor(id) {
+    storage.toggleMonitor?.(id);
+    this.showDetail(id);
+  }
+
+  addPersonalTag(id) {
+    const tag = prompt(i18n.t('details_topics') + ':');
+    if (tag) { storage.addTag?.(id, tag); this.showDetail(id); }
+  }
+
+  toggleCollapse() { this.collapseAll(true); }
+
+  renderCompare() {
+    const el = document.getElementById('compare-list');
+    if (!el) return;
+    const ids = storage.getCompare?.() || [];
+    const repos = ids.map(id => this.repos.find(r => r.id === id) || this.liveResults.find(r => r.id === id)).filter(Boolean);
+    el.innerHTML = repos.length
+      ? repos.map(r => this.card(r, 0)).join('')
+      : this.empty(i18n.t('empty_title'), i18n.t('empty_subtitle'));
+  }
+
+  updateConnectivityBadge() {
+    const badge = document.getElementById('hero-badge') || document.querySelector('.hero-badge');
+    if (!badge) return;
+    const online = !!github.hasToken() && github.authStatus === 'authenticated' && navigator.onLine;
+    const premium = i18n.lang === 'fa' ? 'پرمیوم' : 'Premium';
+    const mid = online
+      ? (i18n.lang === 'fa' ? 'آنلاین' : 'Online')
+      : (i18n.lang === 'fa' ? 'آفلاین' : 'Offline');
+    const bi = i18n.lang === 'fa' ? 'دوزبانه' : 'Bilingual';
+    badge.innerHTML = `${premium} · <span class="conn-pill ${online ? 'is-online' : 'is-offline'}">${mid}</span> · ${bi}`;
+    badge.classList.toggle('badge-online', online);
+    badge.classList.toggle('badge-offline', !online);
+  }
+
+  async expandCategoriesIfAuthenticated() {
+    const base = this._baseCategories || this.categories || [];
+    this._baseCategories = base.filter(c => !c.online_only);
+    if (github.hasToken() && github.authStatus === 'authenticated') {
+      let online = this._onlineCategories || [];
+      if (!online.length) {
+        try {
+          const raw = await (await fetch('data/categories.json')).json();
+          online = raw.online_categories || [];
+          this._onlineCategories = online;
+        } catch (_) {}
+      }
+      // Merge up to 100 total unique
+      const map = new Map();
+      this._baseCategories.forEach(c => map.set(c.id, c));
+      for (const c of online) {
+        if (map.size >= 100) break;
+        if (!map.has(c.id)) map.set(c.id, c);
+      }
+      this.categories = [...map.values()];
+    } else {
+      this.categories = [...this._baseCategories];
+    }
+    this.renderCategories();
+    this.fillLandingCats();
+  }
+
 
   render() {
     this.renderCategories();

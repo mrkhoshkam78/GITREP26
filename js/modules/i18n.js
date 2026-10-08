@@ -6,7 +6,7 @@ const T = {
     nav_home:"Home", nav_explore:"Explore", nav_categories:"Categories", nav_favorites:"Favorites", nav_dashboard:"Dashboard", nav_compare:"Compare",
     nav_collections:"Collections", nav_settings:"Settings", nav_search:"Search repositories...",
     hero_title:"Discover GitHub Projects", hero_subtitle:"Find open-source repositories by real-world usage, technology, and rich categories",
-    hero_cta:"Start Exploring", hero_cta2:"Browse Categories", hero_badge:"Premium · Offline-first · Bilingual",
+    hero_cta:"Start Exploring", hero_cta2:"Browse Categories", hero_badge:"Premium · Offline-first · Bilingual", hero_badge_online:"Premium · Online · Bilingual", hero_badge_offline:"Premium · Offline · Bilingual", conn_online:"Online", conn_offline:"Offline", toast_search_failed:"Search failed", toast_imported:"Data imported", toast_exported:"Data exported",
     section_trending:"Trending", section_hidden:"Hidden Gems", section_recent:"Recently Updated",
     section_offline:"Offline Projects", section_lightweight:"Lightweight", section_beginner:"Beginner Friendly",
     section_popular:"Most Popular", section_maintained:"Highly Maintained", section_rising:"New & Rising",
@@ -82,7 +82,7 @@ const T = {
     nav_home:"خانه", nav_explore:"کاوش", nav_categories:"دسته‌بندی‌ها", nav_favorites:"علاقه‌مندی‌ها", nav_dashboard:"داشبورد", nav_compare:"مقایسه",
     nav_collections:"مجموعه‌ها", nav_settings:"تنظیمات", nav_search:"جستجوی مخازن...",
     hero_title:"کشف پروژه‌های گیت‌هاب", hero_subtitle:"یافتن مخازن متن‌باز بر اساس کاربرد واقعی، فناوری و دسته‌بندی‌های غنی",
-    hero_cta:"شروع کاوش", hero_cta2:"مشاهده دسته‌ها", hero_badge:"پرمیوم · آفلاین · دوزبانه",
+    hero_cta:"شروع کاوش", hero_cta2:"مشاهده دسته‌ها", hero_badge:"پرمیوم · آفلاین · دوزبانه", hero_badge_online:"پرمیوم · آنلاین · دوزبانه", hero_badge_offline:"پرمیوم · آفلاین · دوزبانه", conn_online:"آنلاین", conn_offline:"آفلاین", toast_search_failed:"جستجو ناموفق بود", toast_imported:"داده وارد شد", toast_exported:"داده صادر شد",
     section_trending:"پرطرفدار", section_hidden:"جواهرات پنهان", section_recent:"اخیراً به‌روز شده",
     section_offline:"پروژه‌های آفلاین", section_lightweight:"سبک", section_beginner:"مناسب مبتدیان",
     section_popular:"محبوب‌ترین‌ها", section_maintained:"به‌خوبی نگهداری‌شده", section_rising:"جدید و رو به رشد",
@@ -177,9 +177,11 @@ class I18n {
       } catch (_) {}
     }
     window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+    try { window.app?.updateConnectivityBadge?.(); } catch(_){}
   }
   apply(root = document) {
     root.querySelectorAll('[data-i18n]').forEach(el => {
+      if (el.id === 'hero-badge') return;
       const k = el.getAttribute('data-i18n');
       if (k) el.textContent = this.t(k);
     });

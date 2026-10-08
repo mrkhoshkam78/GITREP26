@@ -19,6 +19,16 @@
 </head>
 <body>
   <div class="ambient" aria-hidden="true"></div>
+  <div class="bg-shapes" aria-hidden="true">
+    <span class="bg-shape s1"></span>
+    <span class="bg-shape s2"></span>
+    <span class="bg-shape s3"></span>
+    <span class="bg-shape s4"></span>
+    <span class="bg-shape s5"></span>
+    <span class="bg-shape s6"></span>
+    <span class="bg-shape s7"></span>
+    <span class="bg-shape s8"></span>
+  </div>
 
   <div style="display:none" aria-hidden="true">
     <svg xmlns="http://www.w3.org/2000/svg">
@@ -134,7 +144,26 @@
   <main class="main">
     <div id="view-home" class="view active">
       <section class="hero">
-        <div class="hero-badge" data-i18n="hero_badge">Premium · Offline-first · Bilingual</div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg class="hero-art" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+              <linearGradient id="hg2" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity=".5"/><stop offset="100%" stop-color="#a78bfa" stop-opacity=".2"/>
+              </linearGradient>
+            </defs>
+            <rect x="20" y="30" width="90" height="70" rx="12" stroke="url(#hg1)" stroke-width="1.5" opacity=".55"/>
+            <rect x="120" y="50" width="100" height="80" rx="14" stroke="url(#hg1)" stroke-width="1.5" opacity=".7"/>
+            <rect x="230" y="40" width="70" height="60" rx="10" stroke="url(#hg2)" stroke-width="1.5" opacity=".45"/>
+            <circle cx="70" cy="55" r="8" fill="url(#hg1)" opacity=".5"/>
+            <circle cx="170" cy="80" r="12" fill="url(#hg1)" opacity=".35"/>
+            <path d="M40 140c40-30 80-10 120-25s70-5 100 15" stroke="url(#hg1)" stroke-width="2" opacity=".4"/>
+            <path d="M60 160c30-20 70-8 100-18s60-12 90 8" stroke="url(#hg2)" stroke-width="1.5" opacity=".35"/>
+          </svg>
+        </div>
+        <div class="hero-badge" id="hero-badge" data-i18n="hero_badge">Premium · Offline-first · Bilingual</div>
         <h1 data-i18n="hero_title">Discover GitHub Projects</h1>
         <p data-i18n="hero_subtitle">Find open-source repositories by real-world usage, technology, and rich categories</p>
         <div class="hero-acts">

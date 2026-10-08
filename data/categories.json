@@ -8,24 +8,96 @@
       "color": "#8B5CF6",
       "gradient": "linear-gradient(135deg,#8B5CF6,#6366F1)",
       "subcategories": [
-        {"id":"ai-agents","name_en":"AI Agents","name_fa":"عامل‌های هوش مصنوعی"},
-        {"id":"llm","name_en":"LLM","name_fa":"مدل‌های زبانی بزرگ"},
-        {"id":"local-ai","name_en":"Local AI","name_fa":"هوش مصنوعی محلی"},
-        {"id":"chatbots","name_en":"Chatbots","name_fa":"چت‌بات‌ها"},
-        {"id":"rag","name_en":"RAG","name_fa":"بازیابی تقویت‌شده"},
-        {"id":"fine-tuning","name_en":"Fine-Tuning","name_fa":"تنظیم دقیق"},
-        {"id":"computer-vision","name_en":"Computer Vision","name_fa":"بینایی کامپیوتر"},
-        {"id":"ocr","name_en":"OCR","name_fa":"تشخیص نوری کاراکتر"},
-        {"id":"speech-ai","name_en":"Speech AI","name_fa":"هوش مصنوعی گفتار"},
-        {"id":"tts","name_en":"TTS","name_fa":"متن به گفتار"},
-        {"id":"stt","name_en":"STT","name_fa":"گفتار به متن"},
-        {"id":"ai-coding","name_en":"AI Coding","name_fa":"کدنویسی با هوش مصنوعی"},
-        {"id":"ai-automation","name_en":"AI Automation","name_fa":"اتوماسیون هوش مصنوعی"},
-        {"id":"image-gen","name_en":"Image Generation","name_fa":"تولید تصویر"},
-        {"id":"video-ai","name_en":"Video AI","name_fa":"هوش مصنوعی ویدیو"},
-        {"id":"multimodal","name_en":"Multimodal AI","name_fa":"هوش مصنوعی چندوجهی"},
-        {"id":"recommendation","name_en":"Recommendation Systems","name_fa":"سیستم‌های پیشنهاددهنده"},
-        {"id":"ml-frameworks","name_en":"ML Frameworks","name_fa":"چارچوب‌های یادگیری ماشین"}
+        {
+          "id": "ai-agents",
+          "name_en": "AI Agents",
+          "name_fa": "عامل‌های هوش مصنوعی"
+        },
+        {
+          "id": "llm",
+          "name_en": "LLM",
+          "name_fa": "مدل‌های زبانی بزرگ"
+        },
+        {
+          "id": "local-ai",
+          "name_en": "Local AI",
+          "name_fa": "هوش مصنوعی محلی"
+        },
+        {
+          "id": "chatbots",
+          "name_en": "Chatbots",
+          "name_fa": "چت‌بات‌ها"
+        },
+        {
+          "id": "rag",
+          "name_en": "RAG",
+          "name_fa": "بازیابی تقویت‌شده"
+        },
+        {
+          "id": "fine-tuning",
+          "name_en": "Fine-Tuning",
+          "name_fa": "تنظیم دقیق"
+        },
+        {
+          "id": "computer-vision",
+          "name_en": "Computer Vision",
+          "name_fa": "بینایی کامپیوتر"
+        },
+        {
+          "id": "ocr",
+          "name_en": "OCR",
+          "name_fa": "تشخیص نوری کاراکتر"
+        },
+        {
+          "id": "speech-ai",
+          "name_en": "Speech AI",
+          "name_fa": "هوش مصنوعی گفتار"
+        },
+        {
+          "id": "tts",
+          "name_en": "TTS",
+          "name_fa": "متن به گفتار"
+        },
+        {
+          "id": "stt",
+          "name_en": "STT",
+          "name_fa": "گفتار به متن"
+        },
+        {
+          "id": "ai-coding",
+          "name_en": "AI Coding",
+          "name_fa": "کدنویسی با هوش مصنوعی"
+        },
+        {
+          "id": "ai-automation",
+          "name_en": "AI Automation",
+          "name_fa": "اتوماسیون هوش مصنوعی"
+        },
+        {
+          "id": "image-gen",
+          "name_en": "Image Generation",
+          "name_fa": "تولید تصویر"
+        },
+        {
+          "id": "video-ai",
+          "name_en": "Video AI",
+          "name_fa": "هوش مصنوعی ویدیو"
+        },
+        {
+          "id": "multimodal",
+          "name_en": "Multimodal AI",
+          "name_fa": "هوش مصنوعی چندوجهی"
+        },
+        {
+          "id": "recommendation",
+          "name_en": "Recommendation Systems",
+          "name_fa": "سیستم‌های پیشنهاددهنده"
+        },
+        {
+          "id": "ml-frameworks",
+          "name_en": "ML Frameworks",
+          "name_fa": "چارچوب‌های یادگیری ماشین"
+        }
       ]
     },
     {
@@ -36,20 +108,76 @@
       "color": "#06B6D4",
       "gradient": "linear-gradient(135deg,#06B6D4,#3B82F6)",
       "subcategories": [
-        {"id":"frontend","name_en":"Frontend","name_fa":"فرانت‌اند"},
-        {"id":"backend","name_en":"Backend","name_fa":"بک‌اند"},
-        {"id":"fullstack","name_en":"Full Stack","name_fa":"فول‌استک"},
-        {"id":"static-sites","name_en":"Static Sites","name_fa":"سایت‌های استاتیک"},
-        {"id":"saas","name_en":"SaaS","name_fa":"نرم‌افزار به عنوان سرویس"},
-        {"id":"cms","name_en":"CMS","name_fa":"سیستم مدیریت محتوا"},
-        {"id":"ecommerce","name_en":"E-commerce","name_fa":"تجارت الکترونیک"},
-        {"id":"dashboards","name_en":"Dashboards","name_fa":"داشبوردها"},
-        {"id":"admin-panels","name_en":"Admin Panels","name_fa":"پنل‌های مدیریت"},
-        {"id":"browser-ext","name_en":"Browser Extensions","name_fa":"افزونه‌های مرورگر"},
-        {"id":"web-components","name_en":"Web Components","name_fa":"کامپوننت‌های وب"},
-        {"id":"web-tools","name_en":"Web Tools","name_fa":"ابزارهای وب"},
-        {"id":"apis","name_en":"APIs","name_fa":"رابط‌های برنامه‌نویسی"},
-        {"id":"scraping","name_en":"Scraping","name_fa":"استخراج داده"}
+        {
+          "id": "frontend",
+          "name_en": "Frontend",
+          "name_fa": "فرانت‌اند"
+        },
+        {
+          "id": "backend",
+          "name_en": "Backend",
+          "name_fa": "بک‌اند"
+        },
+        {
+          "id": "fullstack",
+          "name_en": "Full Stack",
+          "name_fa": "فول‌استک"
+        },
+        {
+          "id": "static-sites",
+          "name_en": "Static Sites",
+          "name_fa": "سایت‌های استاتیک"
+        },
+        {
+          "id": "saas",
+          "name_en": "SaaS",
+          "name_fa": "نرم‌افزار به عنوان سرویس"
+        },
+        {
+          "id": "cms",
+          "name_en": "CMS",
+          "name_fa": "سیستم مدیریت محتوا"
+        },
+        {
+          "id": "ecommerce",
+          "name_en": "E-commerce",
+          "name_fa": "تجارت الکترونیک"
+        },
+        {
+          "id": "dashboards",
+          "name_en": "Dashboards",
+          "name_fa": "داشبوردها"
+        },
+        {
+          "id": "admin-panels",
+          "name_en": "Admin Panels",
+          "name_fa": "پنل‌های مدیریت"
+        },
+        {
+          "id": "browser-ext",
+          "name_en": "Browser Extensions",
+          "name_fa": "افزونه‌های مرورگر"
+        },
+        {
+          "id": "web-components",
+          "name_en": "Web Components",
+          "name_fa": "کامپوننت‌های وب"
+        },
+        {
+          "id": "web-tools",
+          "name_en": "Web Tools",
+          "name_fa": "ابزارهای وب"
+        },
+        {
+          "id": "apis",
+          "name_en": "APIs",
+          "name_fa": "رابط‌های برنامه‌نویسی"
+        },
+        {
+          "id": "scraping",
+          "name_en": "Scraping",
+          "name_fa": "استخراج داده"
+        }
       ]
     },
     {
@@ -60,19 +188,71 @@
       "color": "#10B981",
       "gradient": "linear-gradient(135deg,#10B981,#059669)",
       "subcategories": [
-        {"id":"windows","name_en":"Windows","name_fa":"ویندوز"},
-        {"id":"linux","name_en":"Linux","name_fa":"لینوکس"},
-        {"id":"macos","name_en":"macOS","name_fa":"مک"},
-        {"id":"file-managers","name_en":"File Managers","name_fa":"مدیران فایل"},
-        {"id":"system-utils","name_en":"System Utilities","name_fa":"ابزارهای سیستم"},
-        {"id":"download-managers","name_en":"Download Managers","name_fa":"مدیران دانلود"},
-        {"id":"launchers","name_en":"Launchers","name_fa":"لانچرها"},
-        {"id":"clipboard","name_en":"Clipboard Tools","name_fa":"ابزارهای کلیپ‌بورد"},
-        {"id":"screenshot","name_en":"Screenshot Tools","name_fa":"ابزارهای اسکرین‌شات"},
-        {"id":"backup","name_en":"Backup Tools","name_fa":"ابزارهای پشتیبان‌گیری"},
-        {"id":"monitoring","name_en":"Monitoring","name_fa":"مانیتورینگ"},
-        {"id":"desktop-automation","name_en":"Automation","name_fa":"اتوماسیون"},
-        {"id":"desktop-productivity","name_en":"Productivity","name_fa":"بهره‌وری"}
+        {
+          "id": "windows",
+          "name_en": "Windows",
+          "name_fa": "ویندوز"
+        },
+        {
+          "id": "linux",
+          "name_en": "Linux",
+          "name_fa": "لینوکس"
+        },
+        {
+          "id": "macos",
+          "name_en": "macOS",
+          "name_fa": "مک"
+        },
+        {
+          "id": "file-managers",
+          "name_en": "File Managers",
+          "name_fa": "مدیران فایل"
+        },
+        {
+          "id": "system-utils",
+          "name_en": "System Utilities",
+          "name_fa": "ابزارهای سیستم"
+        },
+        {
+          "id": "download-managers",
+          "name_en": "Download Managers",
+          "name_fa": "مدیران دانلود"
+        },
+        {
+          "id": "launchers",
+          "name_en": "Launchers",
+          "name_fa": "لانچرها"
+        },
+        {
+          "id": "clipboard",
+          "name_en": "Clipboard Tools",
+          "name_fa": "ابزارهای کلیپ‌بورد"
+        },
+        {
+          "id": "screenshot",
+          "name_en": "Screenshot Tools",
+          "name_fa": "ابزارهای اسکرین‌شات"
+        },
+        {
+          "id": "backup",
+          "name_en": "Backup Tools",
+          "name_fa": "ابزارهای پشتیبان‌گیری"
+        },
+        {
+          "id": "monitoring",
+          "name_en": "Monitoring",
+          "name_fa": "مانیتورینگ"
+        },
+        {
+          "id": "desktop-automation",
+          "name_en": "Automation",
+          "name_fa": "اتوماسیون"
+        },
+        {
+          "id": "desktop-productivity",
+          "name_en": "Productivity",
+          "name_fa": "بهره‌وری"
+        }
       ]
     },
     {
@@ -83,12 +263,36 @@
       "color": "#F59E0B",
       "gradient": "linear-gradient(135deg,#F59E0B,#EF4444)",
       "subcategories": [
-        {"id":"android","name_en":"Android","name_fa":"اندروید"},
-        {"id":"ios","name_en":"iOS","name_fa":"آی‌اواس"},
-        {"id":"flutter","name_en":"Flutter","name_fa":"فلاتر"},
-        {"id":"react-native","name_en":"React Native","name_fa":"ری‌اکت نیتیو"},
-        {"id":"mobile-utils","name_en":"Mobile Utilities","name_fa":"ابزارهای موبایل"},
-        {"id":"offline-apps","name_en":"Offline Apps","name_fa":"اپلیکیشن‌های آفلاین"}
+        {
+          "id": "android",
+          "name_en": "Android",
+          "name_fa": "اندروید"
+        },
+        {
+          "id": "ios",
+          "name_en": "iOS",
+          "name_fa": "آی‌اواس"
+        },
+        {
+          "id": "flutter",
+          "name_en": "Flutter",
+          "name_fa": "فلاتر"
+        },
+        {
+          "id": "react-native",
+          "name_en": "React Native",
+          "name_fa": "ری‌اکت نیتیو"
+        },
+        {
+          "id": "mobile-utils",
+          "name_en": "Mobile Utilities",
+          "name_fa": "ابزارهای موبایل"
+        },
+        {
+          "id": "offline-apps",
+          "name_en": "Offline Apps",
+          "name_fa": "اپلیکیشن‌های آفلاین"
+        }
       ]
     },
     {
@@ -99,18 +303,66 @@
       "color": "#EC4899",
       "gradient": "linear-gradient(135deg,#EC4899,#A855F7)",
       "subcategories": [
-        {"id":"2d","name_en":"2D Games","name_fa":"بازی‌های دوبعدی"},
-        {"id":"3d","name_en":"3D Games","name_fa":"بازی‌های سه‌بعدی"},
-        {"id":"strategy","name_en":"Strategy","name_fa":"استراتژی"},
-        {"id":"simulation","name_en":"Simulation","name_fa":"شبیه‌سازی"},
-        {"id":"management","name_en":"Management","name_fa":"مدیریتی"},
-        {"id":"rpg","name_en":"RPG","name_fa":"نقش‌آفرینی"},
-        {"id":"puzzle","name_en":"Puzzle","name_fa":"پازل"},
-        {"id":"multiplayer","name_en":"Multiplayer","name_fa":"چندنفره"},
-        {"id":"game-engines","name_en":"Game Engines","name_fa":"موتورهای بازی"},
-        {"id":"physics","name_en":"Physics","name_fa":"فیزیک"},
-        {"id":"game-tools","name_en":"Game Tools","name_fa":"ابزارهای بازی"},
-        {"id":"game-editors","name_en":"Game Editors","name_fa":"ویرایشگرهای بازی"}
+        {
+          "id": "2d",
+          "name_en": "2D Games",
+          "name_fa": "بازی‌های دوبعدی"
+        },
+        {
+          "id": "3d",
+          "name_en": "3D Games",
+          "name_fa": "بازی‌های سه‌بعدی"
+        },
+        {
+          "id": "strategy",
+          "name_en": "Strategy",
+          "name_fa": "استراتژی"
+        },
+        {
+          "id": "simulation",
+          "name_en": "Simulation",
+          "name_fa": "شبیه‌سازی"
+        },
+        {
+          "id": "management",
+          "name_en": "Management",
+          "name_fa": "مدیریتی"
+        },
+        {
+          "id": "rpg",
+          "name_en": "RPG",
+          "name_fa": "نقش‌آفرینی"
+        },
+        {
+          "id": "puzzle",
+          "name_en": "Puzzle",
+          "name_fa": "پازل"
+        },
+        {
+          "id": "multiplayer",
+          "name_en": "Multiplayer",
+          "name_fa": "چندنفره"
+        },
+        {
+          "id": "game-engines",
+          "name_en": "Game Engines",
+          "name_fa": "موتورهای بازی"
+        },
+        {
+          "id": "physics",
+          "name_en": "Physics",
+          "name_fa": "فیزیک"
+        },
+        {
+          "id": "game-tools",
+          "name_en": "Game Tools",
+          "name_fa": "ابزارهای بازی"
+        },
+        {
+          "id": "game-editors",
+          "name_en": "Game Editors",
+          "name_fa": "ویرایشگرهای بازی"
+        }
       ]
     },
     {
@@ -121,14 +373,46 @@
       "color": "#3B82F6",
       "gradient": "linear-gradient(135deg,#3B82F6,#1D4ED8)",
       "subcategories": [
-        {"id":"data-science","name_en":"Data Science","name_fa":"علم داده"},
-        {"id":"data-analysis","name_en":"Data Analysis","name_fa":"تحلیل داده"},
-        {"id":"visualization","name_en":"Visualization","name_fa":"تصویرسازی"},
-        {"id":"statistics","name_en":"Statistics","name_fa":"آمار"},
-        {"id":"databases","name_en":"Databases","name_fa":"پایگاه‌های داده"},
-        {"id":"etl","name_en":"ETL","name_fa":"استخراج، تبدیل، بارگذاری"},
-        {"id":"big-data","name_en":"Big Data","name_fa":"داده بزرگ"},
-        {"id":"research-tools","name_en":"Research Tools","name_fa":"ابزارهای تحقیق"}
+        {
+          "id": "data-science",
+          "name_en": "Data Science",
+          "name_fa": "علم داده"
+        },
+        {
+          "id": "data-analysis",
+          "name_en": "Data Analysis",
+          "name_fa": "تحلیل داده"
+        },
+        {
+          "id": "visualization",
+          "name_en": "Visualization",
+          "name_fa": "تصویرسازی"
+        },
+        {
+          "id": "statistics",
+          "name_en": "Statistics",
+          "name_fa": "آمار"
+        },
+        {
+          "id": "databases",
+          "name_en": "Databases",
+          "name_fa": "پایگاه‌های داده"
+        },
+        {
+          "id": "etl",
+          "name_en": "ETL",
+          "name_fa": "استخراج، تبدیل، بارگذاری"
+        },
+        {
+          "id": "big-data",
+          "name_en": "Big Data",
+          "name_fa": "داده بزرگ"
+        },
+        {
+          "id": "research-tools",
+          "name_en": "Research Tools",
+          "name_fa": "ابزارهای تحقیق"
+        }
       ]
     },
     {
@@ -139,13 +423,41 @@
       "color": "#22C55E",
       "gradient": "linear-gradient(135deg,#22C55E,#16A34A)",
       "subcategories": [
-        {"id":"trading","name_en":"Trading","name_fa":"معاملات"},
-        {"id":"market-analysis","name_en":"Market Analysis","name_fa":"تحلیل بازار"},
-        {"id":"portfolio","name_en":"Portfolio","name_fa":"پورتفولیو"},
-        {"id":"accounting","name_en":"Accounting","name_fa":"حسابداری"},
-        {"id":"budgeting","name_en":"Budgeting","name_fa":"بودجه‌بندی"},
-        {"id":"fin-dashboards","name_en":"Financial Dashboards","name_fa":"داشبوردهای مالی"},
-        {"id":"crypto-tools","name_en":"Cryptocurrency Tools","name_fa":"ابزارهای رمزارز"}
+        {
+          "id": "trading",
+          "name_en": "Trading",
+          "name_fa": "معاملات"
+        },
+        {
+          "id": "market-analysis",
+          "name_en": "Market Analysis",
+          "name_fa": "تحلیل بازار"
+        },
+        {
+          "id": "portfolio",
+          "name_en": "Portfolio",
+          "name_fa": "پورتفولیو"
+        },
+        {
+          "id": "accounting",
+          "name_en": "Accounting",
+          "name_fa": "حسابداری"
+        },
+        {
+          "id": "budgeting",
+          "name_en": "Budgeting",
+          "name_fa": "بودجه‌بندی"
+        },
+        {
+          "id": "fin-dashboards",
+          "name_en": "Financial Dashboards",
+          "name_fa": "داشبوردهای مالی"
+        },
+        {
+          "id": "crypto-tools",
+          "name_en": "Cryptocurrency Tools",
+          "name_fa": "ابزارهای رمزارز"
+        }
       ]
     },
     {
@@ -156,15 +468,51 @@
       "color": "#EF4444",
       "gradient": "linear-gradient(135deg,#EF4444,#DC2626)",
       "subcategories": [
-        {"id":"vpn","name_en":"VPN","name_fa":"وی‌پی‌ان"},
-        {"id":"proxy","name_en":"Proxy","name_fa":"پروکسی"},
-        {"id":"privacy","name_en":"Privacy","name_fa":"حریم خصوصی"},
-        {"id":"encryption","name_en":"Encryption","name_fa":"رمزنگاری"},
-        {"id":"firewall","name_en":"Firewall","name_fa":"فایروال"},
-        {"id":"network-monitoring","name_en":"Network Monitoring","name_fa":"مانیتورینگ شبکه"},
-        {"id":"networking","name_en":"Networking","name_fa":"شبکه‌سازی"},
-        {"id":"authentication","name_en":"Authentication","name_fa":"احراز هویت"},
-        {"id":"security-tools","name_en":"Security Tools","name_fa":"ابزارهای امنیتی"}
+        {
+          "id": "vpn",
+          "name_en": "VPN",
+          "name_fa": "وی‌پی‌ان"
+        },
+        {
+          "id": "proxy",
+          "name_en": "Proxy",
+          "name_fa": "پروکسی"
+        },
+        {
+          "id": "privacy",
+          "name_en": "Privacy",
+          "name_fa": "حریم خصوصی"
+        },
+        {
+          "id": "encryption",
+          "name_en": "Encryption",
+          "name_fa": "رمزنگاری"
+        },
+        {
+          "id": "firewall",
+          "name_en": "Firewall",
+          "name_fa": "فایروال"
+        },
+        {
+          "id": "network-monitoring",
+          "name_en": "Network Monitoring",
+          "name_fa": "مانیتورینگ شبکه"
+        },
+        {
+          "id": "networking",
+          "name_en": "Networking",
+          "name_fa": "شبکه‌سازی"
+        },
+        {
+          "id": "authentication",
+          "name_en": "Authentication",
+          "name_fa": "احراز هویت"
+        },
+        {
+          "id": "security-tools",
+          "name_en": "Security Tools",
+          "name_fa": "ابزارهای امنیتی"
+        }
       ]
     },
     {
@@ -175,17 +523,61 @@
       "color": "#64748B",
       "gradient": "linear-gradient(135deg,#64748B,#334155)",
       "subcategories": [
-        {"id":"ide","name_en":"IDE","name_fa":"محیط توسعه"},
-        {"id":"code-editors","name_en":"Code Editors","name_fa":"ویرایشگرهای کد"},
-        {"id":"debugging","name_en":"Debugging","name_fa":"اشکال‌زدایی"},
-        {"id":"git-tools","name_en":"Git Tools","name_fa":"ابزارهای گیت"},
-        {"id":"api-tools","name_en":"API Tools","name_fa":"ابزارهای API"},
-        {"id":"testing","name_en":"Testing","name_fa":"تست"},
-        {"id":"build-tools","name_en":"Build Tools","name_fa":"ابزارهای ساخت"},
-        {"id":"devops","name_en":"DevOps","name_fa":"دواپس"},
-        {"id":"cicd","name_en":"CI/CD","name_fa":"یکپارچه‌سازی مداوم"},
-        {"id":"documentation","name_en":"Documentation","name_fa":"مستندات"},
-        {"id":"code-generation","name_en":"Code Generation","name_fa":"تولید کد"}
+        {
+          "id": "ide",
+          "name_en": "IDE",
+          "name_fa": "محیط توسعه"
+        },
+        {
+          "id": "code-editors",
+          "name_en": "Code Editors",
+          "name_fa": "ویرایشگرهای کد"
+        },
+        {
+          "id": "debugging",
+          "name_en": "Debugging",
+          "name_fa": "اشکال‌زدایی"
+        },
+        {
+          "id": "git-tools",
+          "name_en": "Git Tools",
+          "name_fa": "ابزارهای گیت"
+        },
+        {
+          "id": "api-tools",
+          "name_en": "API Tools",
+          "name_fa": "ابزارهای API"
+        },
+        {
+          "id": "testing",
+          "name_en": "Testing",
+          "name_fa": "تست"
+        },
+        {
+          "id": "build-tools",
+          "name_en": "Build Tools",
+          "name_fa": "ابزارهای ساخت"
+        },
+        {
+          "id": "devops",
+          "name_en": "DevOps",
+          "name_fa": "دواپس"
+        },
+        {
+          "id": "cicd",
+          "name_en": "CI/CD",
+          "name_fa": "یکپارچه‌سازی مداوم"
+        },
+        {
+          "id": "documentation",
+          "name_en": "Documentation",
+          "name_fa": "مستندات"
+        },
+        {
+          "id": "code-generation",
+          "name_en": "Code Generation",
+          "name_fa": "تولید کد"
+        }
       ]
     },
     {
@@ -196,17 +588,61 @@
       "color": "#F97316",
       "gradient": "linear-gradient(135deg,#F97316,#EA580C)",
       "subcategories": [
-        {"id":"pdf","name_en":"PDF Tools","name_fa":"ابزارهای PDF"},
-        {"id":"media-ocr","name_en":"OCR","name_fa":"تشخیص متن"},
-        {"id":"image-tools","name_en":"Image Tools","name_fa":"ابزارهای تصویر"},
-        {"id":"image-conversion","name_en":"Image Conversion","name_fa":"تبدیل تصویر"},
-        {"id":"video-tools","name_en":"Video Tools","name_fa":"ابزارهای ویدیو"},
-        {"id":"audio-tools","name_en":"Audio Tools","name_fa":"ابزارهای صوت"},
-        {"id":"compression","name_en":"Compression","name_fa":"فشرده‌سازی"},
-        {"id":"file-conversion","name_en":"File Conversion","name_fa":"تبدیل فایل"},
-        {"id":"downloading","name_en":"Downloading","name_fa":"دانلود"},
-        {"id":"file-search","name_en":"File Search","name_fa":"جستجوی فایل"},
-        {"id":"duplicate-detection","name_en":"Duplicate Detection","name_fa":"تشخیص تکراری"}
+        {
+          "id": "pdf",
+          "name_en": "PDF Tools",
+          "name_fa": "ابزارهای PDF"
+        },
+        {
+          "id": "media-ocr",
+          "name_en": "OCR",
+          "name_fa": "تشخیص متن"
+        },
+        {
+          "id": "image-tools",
+          "name_en": "Image Tools",
+          "name_fa": "ابزارهای تصویر"
+        },
+        {
+          "id": "image-conversion",
+          "name_en": "Image Conversion",
+          "name_fa": "تبدیل تصویر"
+        },
+        {
+          "id": "video-tools",
+          "name_en": "Video Tools",
+          "name_fa": "ابزارهای ویدیو"
+        },
+        {
+          "id": "audio-tools",
+          "name_en": "Audio Tools",
+          "name_fa": "ابزارهای صوت"
+        },
+        {
+          "id": "compression",
+          "name_en": "Compression",
+          "name_fa": "فشرده‌سازی"
+        },
+        {
+          "id": "file-conversion",
+          "name_en": "File Conversion",
+          "name_fa": "تبدیل فایل"
+        },
+        {
+          "id": "downloading",
+          "name_en": "Downloading",
+          "name_fa": "دانلود"
+        },
+        {
+          "id": "file-search",
+          "name_en": "File Search",
+          "name_fa": "جستجوی فایل"
+        },
+        {
+          "id": "duplicate-detection",
+          "name_en": "Duplicate Detection",
+          "name_fa": "تشخیص تکراری"
+        }
       ]
     },
     {
@@ -217,13 +653,41 @@
       "color": "#14B8A6",
       "gradient": "linear-gradient(135deg,#14B8A6,#0D9488)",
       "subcategories": [
-        {"id":"notes","name_en":"Notes","name_fa":"یادداشت‌ها"},
-        {"id":"tasks","name_en":"Tasks","name_fa":"کارها"},
-        {"id":"calendar","name_en":"Calendar","name_fa":"تقویم"},
-        {"id":"knowledge","name_en":"Knowledge Management","name_fa":"مدیریت دانش"},
-        {"id":"personal-wiki","name_en":"Personal Wiki","name_fa":"ویکی شخصی"},
-        {"id":"time-tracking","name_en":"Time Tracking","name_fa":"ردیابی زمان"},
-        {"id":"prod-automation","name_en":"Automation","name_fa":"اتوماسیون"}
+        {
+          "id": "notes",
+          "name_en": "Notes",
+          "name_fa": "یادداشت‌ها"
+        },
+        {
+          "id": "tasks",
+          "name_en": "Tasks",
+          "name_fa": "کارها"
+        },
+        {
+          "id": "calendar",
+          "name_en": "Calendar",
+          "name_fa": "تقویم"
+        },
+        {
+          "id": "knowledge",
+          "name_en": "Knowledge Management",
+          "name_fa": "مدیریت دانش"
+        },
+        {
+          "id": "personal-wiki",
+          "name_en": "Personal Wiki",
+          "name_fa": "ویکی شخصی"
+        },
+        {
+          "id": "time-tracking",
+          "name_en": "Time Tracking",
+          "name_fa": "ردیابی زمان"
+        },
+        {
+          "id": "prod-automation",
+          "name_en": "Automation",
+          "name_fa": "اتوماسیون"
+        }
       ]
     },
     {
@@ -234,12 +698,36 @@
       "color": "#A855F7",
       "gradient": "linear-gradient(135deg,#A855F7,#7C3AED)",
       "subcategories": [
-        {"id":"learning","name_en":"Learning Tools","name_fa":"ابزارهای یادگیری"},
-        {"id":"language-learning","name_en":"Language Learning","name_fa":"یادگیری زبان"},
-        {"id":"flashcards","name_en":"Flashcards","name_fa":"فلش‌کارت"},
-        {"id":"quiz","name_en":"Quiz","name_fa":"آزمون"},
-        {"id":"edu-docs","name_en":"Documentation","name_fa":"مستندات"},
-        {"id":"scientific","name_en":"Scientific Education","name_fa":"آموزش علمی"}
+        {
+          "id": "learning",
+          "name_en": "Learning Tools",
+          "name_fa": "ابزارهای یادگیری"
+        },
+        {
+          "id": "language-learning",
+          "name_en": "Language Learning",
+          "name_fa": "یادگیری زبان"
+        },
+        {
+          "id": "flashcards",
+          "name_en": "Flashcards",
+          "name_fa": "فلش‌کارت"
+        },
+        {
+          "id": "quiz",
+          "name_en": "Quiz",
+          "name_fa": "آزمون"
+        },
+        {
+          "id": "edu-docs",
+          "name_en": "Documentation",
+          "name_fa": "مستندات"
+        },
+        {
+          "id": "scientific",
+          "name_en": "Scientific Education",
+          "name_fa": "آموزش علمی"
+        }
       ]
     },
     {
@@ -250,14 +738,46 @@
       "color": "#78716C",
       "gradient": "linear-gradient(135deg,#78716C,#57534E)",
       "subcategories": [
-        {"id":"cad","name_en":"CAD","name_fa":"طراحی به کمک کامپیوتر"},
-        {"id":"3d-eng","name_en":"3D Modeling","name_fa":"مدل‌سازی سه‌بعدی"},
-        {"id":"robotics","name_en":"Robotics","name_fa":"رباتیک"},
-        {"id":"iot","name_en":"IoT","name_fa":"اینترنت اشیا"},
-        {"id":"electronics","name_en":"Electronics","name_fa":"الکترونیک"},
-        {"id":"arduino","name_en":"Arduino","name_fa":"آردوینو"},
-        {"id":"raspberry-pi","name_en":"Raspberry Pi","name_fa":"رسپبری پای"},
-        {"id":"eng-simulation","name_en":"Simulation","name_fa":"شبیه‌سازی"}
+        {
+          "id": "cad",
+          "name_en": "CAD",
+          "name_fa": "طراحی به کمک کامپیوتر"
+        },
+        {
+          "id": "3d-eng",
+          "name_en": "3D Modeling",
+          "name_fa": "مدل‌سازی سه‌بعدی"
+        },
+        {
+          "id": "robotics",
+          "name_en": "Robotics",
+          "name_fa": "رباتیک"
+        },
+        {
+          "id": "iot",
+          "name_en": "IoT",
+          "name_fa": "اینترنت اشیا"
+        },
+        {
+          "id": "electronics",
+          "name_en": "Electronics",
+          "name_fa": "الکترونیک"
+        },
+        {
+          "id": "arduino",
+          "name_en": "Arduino",
+          "name_fa": "آردوینو"
+        },
+        {
+          "id": "raspberry-pi",
+          "name_en": "Raspberry Pi",
+          "name_fa": "رسپبری پای"
+        },
+        {
+          "id": "eng-simulation",
+          "name_en": "Simulation",
+          "name_fa": "شبیه‌سازی"
+        }
       ]
     },
     {
@@ -268,12 +788,1159 @@
       "color": "#D946EF",
       "gradient": "linear-gradient(135deg,#D946EF,#C026D3)",
       "subcategories": [
-        {"id":"research","name_en":"Research","name_fa":"تحقیق"},
-        {"id":"oss-experiments","name_en":"Open Source Experiments","name_fa":"آزمایش‌های متن‌باز"},
-        {"id":"tiny-projects","name_en":"Tiny Projects","name_fa":"پروژه‌های کوچک"},
-        {"id":"hidden-gems","name_en":"Hidden Gems","name_fa":"جواهرات پنهان"},
-        {"id":"emerging","name_en":"Emerging Technologies","name_fa":"فناوری‌های نوظهور"}
+        {
+          "id": "research",
+          "name_en": "Research",
+          "name_fa": "تحقیق"
+        },
+        {
+          "id": "oss-experiments",
+          "name_en": "Open Source Experiments",
+          "name_fa": "آزمایش‌های متن‌باز"
+        },
+        {
+          "id": "tiny-projects",
+          "name_en": "Tiny Projects",
+          "name_fa": "پروژه‌های کوچک"
+        },
+        {
+          "id": "hidden-gems",
+          "name_en": "Hidden Gems",
+          "name_fa": "جواهرات پنهان"
+        },
+        {
+          "id": "emerging",
+          "name_en": "Emerging Technologies",
+          "name_fa": "فناوری‌های نوظهور"
+        }
       ]
+    },
+    {
+      "id": "cloud-devops",
+      "name_en": "Cloud & DevOps",
+      "name_fa": "کلود و دواپس",
+      "icon": "globe",
+      "color": "#0EA5E9",
+      "gradient": "linear-gradient(135deg,#0EA5E9,#6366F1)",
+      "subcategories": [
+        {
+          "id": "kubernetes",
+          "name_en": "Kubernetes",
+          "name_fa": "کوبرنتیز"
+        },
+        {
+          "id": "docker",
+          "name_en": "Docker",
+          "name_fa": "داکر"
+        },
+        {
+          "id": "ci-cd",
+          "name_en": "CI/CD",
+          "name_fa": "یکپارچه‌سازی مداوم"
+        },
+        {
+          "id": "infrastructure",
+          "name_en": "Infrastructure as Code",
+          "name_fa": "زیرساخت به‌عنوان کد"
+        },
+        {
+          "id": "observability",
+          "name_en": "Observability",
+          "name_fa": "نظارت و مشاهده‌پذیری"
+        }
+      ]
+    },
+    {
+      "id": "blockchain-web3",
+      "name_en": "Blockchain & Web3",
+      "name_fa": "بلاک‌چین و وب۳",
+      "icon": "zap",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#F59E0B,#EF4444)",
+      "subcategories": [
+        {
+          "id": "defi",
+          "name_en": "DeFi",
+          "name_fa": "مالی غیرمتمرکز"
+        },
+        {
+          "id": "smart-contracts",
+          "name_en": "Smart Contracts",
+          "name_fa": "قراردادهای هوشمند"
+        },
+        {
+          "id": "nft",
+          "name_en": "NFT",
+          "name_fa": "توکن غیرمثلی"
+        },
+        {
+          "id": "wallets",
+          "name_en": "Wallets",
+          "name_fa": "کیف‌پول‌ها"
+        }
+      ]
+    },
+    {
+      "id": "cli-automation",
+      "name_en": "CLI & Automation",
+      "name_fa": "خط فرمان و خودکارسازی",
+      "icon": "code",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#14B8A6,#22C55E)",
+      "subcategories": [
+        {
+          "id": "cli-tools",
+          "name_en": "CLI Tools",
+          "name_fa": "ابزارهای خط فرمان"
+        },
+        {
+          "id": "scripts",
+          "name_en": "Scripts",
+          "name_fa": "اسکریپت‌ها"
+        },
+        {
+          "id": "bots",
+          "name_en": "Bots",
+          "name_fa": "ربات‌ها"
+        },
+        {
+          "id": "workflow",
+          "name_en": "Workflow Automation",
+          "name_fa": "خودکارسازی جریان کار"
+        }
+      ]
+    }
+  ],
+  "online_categories": [
+    {
+      "id": "topic-rust",
+      "name_en": "Rust",
+      "name_fa": "راست",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-go",
+      "name_en": "Go",
+      "name_fa": "گو",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-python",
+      "name_en": "Python",
+      "name_fa": "پایتون",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-typescript",
+      "name_en": "TypeScript",
+      "name_fa": "تایپ‌اسکریپت",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-javascript",
+      "name_en": "JavaScript",
+      "name_fa": "جاوااسکریپت",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-react",
+      "name_en": "React",
+      "name_fa": "ری‌اکت",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-vue",
+      "name_en": "Vue",
+      "name_fa": "ویو",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-svelte",
+      "name_en": "Svelte",
+      "name_fa": "اسولت",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-nextjs",
+      "name_en": "Next.js",
+      "name_fa": "نکست‌جی‌اس",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-nodejs",
+      "name_en": "Node.js",
+      "name_fa": "نودجی‌اس",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-django",
+      "name_en": "Django",
+      "name_fa": "جنگو",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-fastapi",
+      "name_en": "FastAPI",
+      "name_fa": "فست‌ای‌پی‌آی",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-spring",
+      "name_en": "Spring",
+      "name_fa": "اسپرینگ",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-dotnet",
+      "name_en": ".NET",
+      "name_fa": "دات‌نت",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-android",
+      "name_en": "Android",
+      "name_fa": "اندروید",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-ios",
+      "name_en": "iOS",
+      "name_fa": "آی‌اواس",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-flutter",
+      "name_en": "Flutter",
+      "name_fa": "فلاتر",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-react-native",
+      "name_en": "React Native",
+      "name_fa": "ری‌اکت نیتیو",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-electron",
+      "name_en": "Electron",
+      "name_fa": "الکترون",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-tauri",
+      "name_en": "Tauri",
+      "name_fa": "تائوری",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-machine-learning",
+      "name_en": "Machine Learning",
+      "name_fa": "یادگیری ماشین",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-deep-learning",
+      "name_en": "Deep Learning",
+      "name_fa": "یادگیری عمیق",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-computer-vision",
+      "name_en": "Computer Vision",
+      "name_fa": "بینایی ماشین",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-nlp",
+      "name_en": "NLP",
+      "name_fa": "پردازش زبان طبیعی",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-data-science",
+      "name_en": "Data Science",
+      "name_fa": "علم داده",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-data-engineering",
+      "name_en": "Data Engineering",
+      "name_fa": "مهندسی داده",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-databases",
+      "name_en": "Databases",
+      "name_fa": "پایگاه داده",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-graphql",
+      "name_en": "GraphQL",
+      "name_fa": "گراف‌کیوال",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-rest-api",
+      "name_en": "REST API",
+      "name_fa": "رست ای‌پی‌آی",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-microservices",
+      "name_en": "Microservices",
+      "name_fa": "ریزسرویس‌ها",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-serverless",
+      "name_en": "Serverless",
+      "name_fa": "بدون سرور",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-aws",
+      "name_en": "AWS",
+      "name_fa": "ای‌دبلیواِس",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-azure",
+      "name_en": "Azure",
+      "name_fa": "آژور",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-gcp",
+      "name_en": "GCP",
+      "name_fa": "جی‌سی‌پی",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-terraform",
+      "name_en": "Terraform",
+      "name_fa": "ترفرم",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-ansible",
+      "name_en": "Ansible",
+      "name_fa": "انسیبل",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-monitoring",
+      "name_en": "Monitoring",
+      "name_fa": "مانیتورینگ",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-logging",
+      "name_en": "Logging",
+      "name_fa": "لاگ‌گذاری",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-security-tools",
+      "name_en": "Security Tools",
+      "name_fa": "ابزارهای امنیتی",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-pentest",
+      "name_en": "Penetration Testing",
+      "name_fa": "تست نفوذ",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-cryptography",
+      "name_en": "Cryptography",
+      "name_fa": "رمزنگاری",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-privacy",
+      "name_en": "Privacy",
+      "name_fa": "حریم خصوصی",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-osint",
+      "name_en": "OSINT",
+      "name_fa": "اطلاعات متن‌باز",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-networking",
+      "name_en": "Networking",
+      "name_fa": "شبکه",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-embedded",
+      "name_en": "Embedded",
+      "name_fa": "توکار",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-iot",
+      "name_en": "IoT",
+      "name_fa": "اینترنت اشیا",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-robotics",
+      "name_en": "Robotics",
+      "name_fa": "رباتیک",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-arduino",
+      "name_en": "Arduino",
+      "name_fa": "آردوینو",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-raspberry-pi",
+      "name_en": "Raspberry Pi",
+      "name_fa": "رزبری پای",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-game-engines",
+      "name_en": "Game Engines",
+      "name_fa": "موتورهای بازی",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-unity",
+      "name_en": "Unity",
+      "name_fa": "یونیتی",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-unreal",
+      "name_en": "Unreal Engine",
+      "name_fa": "آنریل انجین",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-godot",
+      "name_en": "Godot",
+      "name_fa": "گودو",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-graphics",
+      "name_en": "Graphics",
+      "name_fa": "گرافیک",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-shaders",
+      "name_en": "Shaders",
+      "name_fa": "شیدر",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-audio",
+      "name_en": "Audio",
+      "name_fa": "صدا",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-video",
+      "name_en": "Video",
+      "name_fa": "ویدیو",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-image-processing",
+      "name_en": "Image Processing",
+      "name_fa": "پردازش تصویر",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-3d",
+      "name_en": "3D",
+      "name_fa": "سه‌بعدی",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-cad",
+      "name_en": "CAD",
+      "name_fa": "طراحی به کمک رایانه",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-gis",
+      "name_en": "GIS",
+      "name_fa": "سامانه اطلاعات جغرافیایی",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-maps",
+      "name_en": "Maps",
+      "name_fa": "نقشه",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-finance-trading",
+      "name_en": "Trading",
+      "name_fa": "معاملات",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-quant",
+      "name_en": "Quantitative Finance",
+      "name_fa": "مالی کمی",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-accounting",
+      "name_en": "Accounting",
+      "name_fa": "حسابداری",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-ecommerce",
+      "name_en": "E-commerce",
+      "name_fa": "تجارت الکترونیک",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-cms",
+      "name_en": "CMS",
+      "name_fa": "سیستم مدیریت محتوا",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-blogging",
+      "name_en": "Blogging",
+      "name_fa": "وبلاگ‌نویسی",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-documentation",
+      "name_en": "Documentation",
+      "name_fa": "مستندسازی",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-testing",
+      "name_en": "Testing",
+      "name_fa": "تست",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-linting",
+      "name_en": "Linting",
+      "name_fa": "لینت",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-formatting",
+      "name_en": "Code Formatting",
+      "name_fa": "قالب‌بندی کد",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-package-managers",
+      "name_en": "Package Managers",
+      "name_fa": "مدیر بسته",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-build-tools",
+      "name_en": "Build Tools",
+      "name_fa": "ابزار ساخت",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-editors",
+      "name_en": "Editors & IDEs",
+      "name_fa": "ویرایشگر و IDE",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-terminal",
+      "name_en": "Terminal",
+      "name_fa": "ترمینال",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-shell",
+      "name_en": "Shell",
+      "name_fa": "شل",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-git-tools",
+      "name_en": "Git Tools",
+      "name_fa": "ابزارهای گیت",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-collaboration",
+      "name_en": "Collaboration",
+      "name_fa": "همکاری",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-chat",
+      "name_en": "Chat",
+      "name_fa": "گفتگو",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-email",
+      "name_en": "Email",
+      "name_fa": "ایمیل",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-calendar",
+      "name_en": "Calendar",
+      "name_fa": "تقویم",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-notes",
+      "name_en": "Notes",
+      "name_fa": "یادداشت",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-knowledge-base",
+      "name_en": "Knowledge Base",
+      "name_fa": "پایگاه دانش",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-search-engines",
+      "name_en": "Search",
+      "name_fa": "جستجو",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-crawlers",
+      "name_en": "Crawlers",
+      "name_fa": "خزنده‌ها",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-scraping",
+      "name_en": "Scraping",
+      "name_fa": "استخراج داده",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-browser-extensions",
+      "name_en": "Browser Extensions",
+      "name_fa": "افزونه‌های مرورگر",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-vscode-extensions",
+      "name_en": "VS Code Extensions",
+      "name_fa": "افزونه‌های VS Code",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-design-systems",
+      "name_en": "Design Systems",
+      "name_fa": "سیستم طراحی",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-ui-kits",
+      "name_en": "UI Kits",
+      "name_fa": "کیت رابط کاربری",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-icons",
+      "name_en": "Icons",
+      "name_fa": "آیکون‌ها",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-fonts",
+      "name_en": "Fonts",
+      "name_fa": "فونت‌ها",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-animation",
+      "name_en": "Animation",
+      "name_fa": "انیمیشن",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-accessibility",
+      "name_en": "Accessibility",
+      "name_fa": "دسترسی‌پذیری",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-i18n-l10n",
+      "name_en": "i18n & l10n",
+      "name_fa": "بین‌المللی‌سازی",
+      "icon": "sparkles",
+      "color": "#14B8A6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-open-science",
+      "name_en": "Open Science",
+      "name_fa": "علم باز",
+      "icon": "sparkles",
+      "color": "#8B5CF6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-bioinformatics",
+      "name_en": "Bioinformatics",
+      "name_fa": "بیوانفورماتیک",
+      "icon": "sparkles",
+      "color": "#06B6D4",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-climate",
+      "name_en": "Climate & Environment",
+      "name_fa": "اقلیم و محیط زیست",
+      "icon": "sparkles",
+      "color": "#10B981",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-education-tools",
+      "name_en": "Education Tools",
+      "name_fa": "ابزار آموزشی",
+      "icon": "sparkles",
+      "color": "#F59E0B",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-math",
+      "name_en": "Mathematics",
+      "name_fa": "ریاضیات",
+      "icon": "sparkles",
+      "color": "#EF4444",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-physics",
+      "name_en": "Physics",
+      "name_fa": "فیزیک",
+      "icon": "sparkles",
+      "color": "#3B82F6",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
+    },
+    {
+      "id": "topic-chemistry",
+      "name_en": "Chemistry",
+      "name_fa": "شیمی",
+      "icon": "sparkles",
+      "color": "#EC4899",
+      "gradient": "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+      "subcategories": [],
+      "online_only": true
     }
   ]
 }
