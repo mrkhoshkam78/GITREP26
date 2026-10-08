@@ -1,0 +1,63 @@
+/* Theme toggle icon animation + transparent logo */
+#theme-toggle {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.25s;
+}
+#theme-toggle:active {
+  transform: scale(0.88) rotate(15deg);
+}
+#theme-toggle .theme-icon-dark,
+#theme-toggle .theme-icon-light {
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+#theme-toggle .theme-icon-dark[hidden],
+#theme-toggle .theme-icon-light[hidden] {
+  display: none !important;
+}
+body.theme-switching #theme-toggle .icon {
+  animation: themeSpin 0.45s ease;
+}
+@keyframes themeSpin {
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  50% { transform: rotate(90deg) scale(0.6); opacity: 0; }
+  100% { transform: rotate(180deg) scale(1); opacity: 1; }
+}
+
+/* Transparent logo — no background plate */
+.logo-img, .loader-logo, .landing-logo {
+  background: transparent !important;
+  object-fit: contain;
+  mix-blend-mode: normal;
+}
+.logo-mark, .loader-mark {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+[data-theme="light"] .logo-img,
+[data-theme="light"] .landing-logo,
+[data-theme="light"] .loader-logo {
+  filter: brightness(0.35) !important;
+}
+:root:not([data-theme="light"]) .logo-img,
+:root:not([data-theme="light"]) .landing-logo,
+:root:not([data-theme="light"]) .loader-logo {
+  filter: brightness(1.35) contrast(1.05) !important;
+}
+
+/* Landing polish */
+.landing-inner {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.landing-search {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 18px;
+}
+.landing-logo {
+  background: transparent !important;
+}
