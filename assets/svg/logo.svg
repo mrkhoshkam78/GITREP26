@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <g stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- outer circuit arcs -->
+    <path d="M36 78 C28 62 32 42 48 32 C52 28 58 26 60 22"/>
+    <path d="M84 78 C92 62 88 42 72 32 C68 28 62 26 60 22"/>
+    <path d="M42 88 C30 78 28 58 38 46"/>
+    <path d="M78 88 C90 78 92 58 82 46"/>
+    <!-- center stem -->
+    <path d="M60 22 V88"/>
+    <!-- branches -->
+    <path d="M60 40 C48 48 44 58 42 70"/>
+    <path d="M60 40 C72 48 76 58 78 70"/>
+    <path d="M60 55 C52 62 50 72 48 82"/>
+    <path d="M60 55 C68 62 70 72 72 82"/>
+    <!-- right code slash -->
+    <path d="M78 48 L88 62"/>
+    <path d="M72 52 L82 66"/>
+  </g>
+  <!-- nodes -->
+  <circle cx="60" cy="20" r="5" fill="currentColor"/>
+  <circle cx="60" cy="42" r="4" fill="currentColor"/>
+  <circle cx="60" cy="90" r="5" fill="currentColor"/>
+  <circle cx="38" cy="72" r="4" fill="currentColor"/>
+  <circle cx="38" cy="88" r="3.5" fill="currentColor"/>
+  <circle cx="82" cy="72" r="4" fill="currentColor"/>
+</svg>
