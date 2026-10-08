@@ -18,47 +18,80 @@ class App {
     this.currentRepo = null;
     this.filters = { q:'', category:null, language:null, minStars:0, offline:false, lightweight:false, beginner:false, active:false };
     this.sort = 'stars';
-    this.settings = storage.getSettings();
+    try { this.settings = storage.getSettings(); } catch (_) {
+      this.settings = { theme:'dark', language:'en', token:'', anim:'full', accent:'purple' };
+    }
     this.page = 1;
     this.liveResults = [];
     this.defaultCollapsed = false; // new cards expanded by default
   }
 
   async init() {
-    await storage.init();
-    i18n.init();
-    translator.loadShowOriginal();
-    // Robust token restore from dedicated storage key
-    const token = storage.getToken();
-    this.settings.token = token;
-    if (token) {
-      github.setToken(token);
+    // Always dismiss loader — even if something throws
+    const hideLoader = () => {
+      try {
+        const el = document.getElementById('loader');
+        if (el) el.classList.add('hidden');
+      } catch (_) {}
+    };
+    // Safety: force-hide after 4s no matter what
+    const forceTimer = setTimeout(hideLoader, 4000);
+
+    try {
+      // IndexedDB with timeout so a locked DB cannot freeze the app
+      await Promise.race([
+        storage.init().catch(e => console.warn('IDB init', e)),
+        new Promise(r => setTimeout(r, 2500))
+      ]);
+
+      try { i18n.init(); } catch (e) { console.warn('i18n', e); }
+      try { translator.loadShowOriginal(); } catch (_) {}
+
+      const token = storage.getToken();
+      this.settings = storage.getSettings();
+      this.settings.token = token;
+      if (token) github.setToken(token);
+
+      try {
+        this.applyTheme(this.settings.theme);
+        this.applyAccent(this.settings.accent || 'purple');
+        this.applyAnim(this.settings.anim || 'full');
+      } catch (e) { console.warn('theme', e); }
+
+      this.online = navigator.onLine;
+
+      try { await this.loadData(); } catch (e) {
+        console.warn('loadData', e);
+        this.repos = this.repos || [];
+        this.filtered = [...this.repos];
+      }
+
+      try { this.bind(); } catch (e) { console.warn('bind', e); }
+      try { this.render(); } catch (e) { console.warn('render', e); }
+      try { this.setupPWA(); } catch (_) {}
+
+      // Token validation is non-blocking
+      if (token) {
+        github.setToken(token);
+        github.validateToken(undefined, { keepOnFailure: true }).then(r => {
+          this.updateAuthUI(r);
+          this.updateRateUI(r.rate || github.rate);
+          this._fillTokenInput(storage.getToken());
+          this.renderSettings();
+        }).catch(() => {
+          this._fillTokenInput(storage.getToken());
+          this.updateAuthUI({ status: 'error', ok: false, message: 'Offline / network' });
+        });
+      } else {
+        this.updateAuthUI({ status: 'guest', ok: true });
+      }
+    } catch (e) {
+      console.error('GITREP26 init failed', e);
+    } finally {
+      clearTimeout(forceTimer);
+      // Brief polish delay then hide
+      setTimeout(hideLoader, 350);
     }
-    this.applyTheme(this.settings.theme);
-    this.applyAccent(this.settings.accent || 'purple');
-    this.applyAnim(this.settings.anim || 'full');
-    this.online = navigator.onLine;
-    await this.loadData();
-    this.bind();
-    this.render();
-    this.setupPWA();
-    // Validate existing token without clearing it
-    if (token) {
-      github.setToken(token);
-      github.validateToken(undefined, { keepOnFailure: true }).then(r => {
-        this.updateAuthUI(r);
-        this.updateRateUI(r.rate || github.rate);
-        this._fillTokenInput(storage.getToken());
-        this.renderSettings();
-      }).catch(() => {
-        // Network fail — token still kept
-        this._fillTokenInput(storage.getToken());
-        this.updateAuthUI({ status: 'error', ok: false, message: 'Offline / network' });
-      });
-    } else {
-      this.updateAuthUI({ status: 'guest', ok: true });
-    }
-    setTimeout(() => document.getElementById('loader')?.classList.add('hidden'), 700);
   }
 
   async loadData() {
@@ -87,24 +120,30 @@ class App {
     document.querySelectorAll('[data-nav]').forEach(el => {
       el.addEventListener('click', e => { e.preventDefault(); this.navigate(el.dataset.nav); });
     });
-    const search = document.getElementById('search-input');
-    if (search) {
-      let t;
-      search.addEventListener('input', e => {
-        clearTimeout(t);
-        t = setTimeout(() => {
-          this.filters.q = e.target.value.trim();
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      let debounceTimer;
+      searchInput.addEventListener('input', e => {
+        const val = e.target.value.trim();
+        this.updateSuggestions(e.target.value);
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          this.filters.q = val;
           if (this.filters.q) storage.addSearch(this.filters.q);
           this.applyFilters();
           if (this.view !== 'explore') this.navigate('explore');
         }, 320);
       });
-      search.addEventListener('keydown', e => {
+      searchInput.addEventListener('keydown', e => {
+        this.suggestKey(e);
         if (e.key === 'Enter') {
-          this.filters.q = search.value.trim();
+          this.filters.q = searchInput.value.trim();
+          this.hideSuggestions();
           this.liveSearch();
         }
       });
+      searchInput.addEventListener('blur', () => setTimeout(() => this.hideSuggestions(), 150));
+      searchInput.addEventListener('focus', () => this.updateSuggestions(searchInput.value));
     }
     document.querySelectorAll('[data-lang]').forEach(b => {
       b.addEventListener('click', () => {
@@ -161,14 +200,6 @@ class App {
       const name = prompt(i18n.t('collections_new') + ':');
       if (name) { storage.createCollection(name); this.renderCollections(); }
     });
-    // Autocomplete
-    const search = document.getElementById('search-input');
-    if (search) {
-      search.addEventListener('input', () => this.updateSuggestions(search.value));
-      search.addEventListener('keydown', e => this.suggestKey(e));
-      search.addEventListener('blur', () => setTimeout(() => this.hideSuggestions(), 150));
-      search.addEventListener('focus', () => this.updateSuggestions(search.value));
-    }
     window.addEventListener('online', () => { this.online = true; this.toast(i18n.t('online_mode')); });
     window.addEventListener('offline', () => { this.online = false; this.toast(i18n.t('offline_mode')); });
     window.addEventListener('langchange', () => this.render());
@@ -961,8 +992,6 @@ class App {
     d.textContent = s||'';
     return d.innerHTML;
   }
-}
-
 
   applyAccent(accent) {
     document.documentElement.setAttribute('data-accent', accent || 'purple');
@@ -1021,11 +1050,11 @@ class App {
   }
 
   applySuggestion(type, id, label) {
-    const search = document.getElementById('search-input');
+    const searchEl = document.getElementById('search-input');
     if (type === 'category' || type === 'sub') this.openCat(id);
     else if (type === 'repo') this.showDetail(Number(id));
     else {
-      if (search) search.value = label;
+      if (searchEl) searchEl.value = label;
       this.filters.q = label;
       if (type === 'language') this.filters.language = label;
       this.applyFilters();
@@ -1171,9 +1200,20 @@ class App {
     this.toast('Compare ' + storage.getCompare().length + '/3');
     if (storage.getCompare().length >= 2) this.navigate('compare');
   }
-
+}
 
 const app = new App();
 window.app = app;
-document.addEventListener('DOMContentLoaded', () => app.init());
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    app.init();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('loader')?.classList.add('hidden');
+  }
+});
+// If module evaluated but init never reached, still clear loader
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader')?.classList.add('hidden'), 5000);
+});
 export default app;

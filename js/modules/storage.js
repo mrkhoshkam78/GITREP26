@@ -12,23 +12,42 @@ class Storage {
   }
 
   async init() {
-    return new Promise((res, rej) => {
-      const r = indexedDB.open(DB, VER);
-      r.onerror = () => rej(r.error);
-      r.onsuccess = () => { this.db = r.result; res(this.db); };
-      r.onupgradeneeded = e => {
-        const db = e.target.result;
-        const stores = [
-          ['repos', 'id'], ['cache', 'key'], ['favorites', 'id'],
-          ['history', 'id'], ['collections', 'id'], ['searches', 'key'],
-          ['tags', 'repoId'], ['monitor', 'id'], ['translations', 'key']
-        ];
-        stores.forEach(([name, keyPath]) => {
-          if (!db.objectStoreNames.contains(name)) {
-            db.createObjectStore(name, { keyPath });
-          }
-        });
+    if (this.db) return this.db;
+    return new Promise((res) => {
+      let done = false;
+      const finish = (db) => {
+        if (done) return;
+        done = true;
+        if (db) this.db = db;
+        res(this.db);
       };
+      // Hard timeout — never block app boot
+      const timer = setTimeout(() => {
+        console.warn('IndexedDB init timeout — continuing without IDB');
+        finish(null);
+      }, 2000);
+      try {
+        const r = indexedDB.open(DB, VER);
+        r.onerror = () => { clearTimeout(timer); finish(null); };
+        r.onsuccess = () => { clearTimeout(timer); finish(r.result); };
+        r.onupgradeneeded = e => {
+          const db = e.target.result;
+          const stores = [
+            ['repos', 'id'], ['cache', 'key'], ['favorites', 'id'],
+            ['history', 'id'], ['collections', 'id'], ['searches', 'key'],
+            ['tags', 'repoId'], ['monitor', 'id'], ['translations', 'key']
+          ];
+          stores.forEach(([name, keyPath]) => {
+            if (!db.objectStoreNames.contains(name)) {
+              db.createObjectStore(name, { keyPath });
+            }
+          });
+        };
+        r.onblocked = () => { clearTimeout(timer); finish(null); };
+      } catch (e) {
+        clearTimeout(timer);
+        finish(null);
+      }
     });
   }
 
@@ -245,6 +264,7 @@ class Storage {
   /* ─── IndexedDB helpers ─── */
   async saveRepos(repos) {
     if (!this.db) await this.init();
+    if (!this.db) return;
     const tx = this.db.transaction('repos', 'readwrite');
     const store = tx.objectStore('repos');
     repos.forEach(r => store.put(r));
@@ -252,6 +272,7 @@ class Storage {
   }
   async getRepos() {
     if (!this.db) await this.init();
+    if (!this.db) return [];
     return new Promise((res, rej) => {
       const r = this.db.transaction('repos', 'readonly').objectStore('repos').getAll();
       r.onsuccess = () => res(r.result || []);
@@ -260,12 +281,14 @@ class Storage {
   }
   async setCache(key, data, ttl = 3600000) {
     if (!this.db) await this.init();
+    if (!this.db) return;
     const tx = this.db.transaction('cache', 'readwrite');
     tx.objectStore('cache').put({ key, data, exp: Date.now() + ttl });
     return new Promise(res => { tx.oncomplete = () => res(); });
   }
   async getCache(key) {
     if (!this.db) await this.init();
+    if (!this.db) return null;
     return new Promise(res => {
       const r = this.db.transaction('cache', 'readonly').objectStore('cache').get(key);
       r.onsuccess = () => {
@@ -277,6 +300,7 @@ class Storage {
   }
   async clearCache() {
     if (!this.db) await this.init();
+    if (!this.db) return;
     const tx = this.db.transaction('cache', 'readwrite');
     tx.objectStore('cache').clear();
     return new Promise(res => { tx.oncomplete = () => res(); });
